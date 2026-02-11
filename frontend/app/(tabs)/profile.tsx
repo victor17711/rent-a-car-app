@@ -101,7 +101,7 @@ export default function ProfileScreen() {
           <Text style={styles.menuTitle}>Colaborare</Text>
           <TouchableOpacity style={styles.menuItem} onPress={handleBecomePartner}>
             <View style={styles.menuItemLeft}>
-              <Ionicons name="handshake-outline" size={22} color="#34C759" />
+              <Ionicons name="people-outline" size={22} color="#34C759" />
               <Text style={styles.menuItemText}>Devino Partener</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
