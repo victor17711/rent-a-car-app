@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert, Dimensions, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +21,12 @@ export default function CarDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  
+  // Booking form
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAge, setCustomerAge] = useState('');
 
   useEffect(() => {
     fetchCarDetails();
@@ -64,7 +70,7 @@ export default function CarDetailScreen() {
     }
   };
 
-  const handleBooking = async () => {
+  const handleReservePress = () => {
     if (!isAuthenticated) {
       Alert.alert(
         'Autentificare necesară',
@@ -74,6 +80,22 @@ export default function CarDetailScreen() {
           { text: 'Autentifică-te', onPress: () => router.push('/') },
         ]
       );
+      return;
+    }
+    setShowBookingModal(true);
+  };
+
+  const handleBookingSubmit = async () => {
+    if (!customerName.trim()) {
+      Alert.alert('Eroare', 'Introduceți numele complet');
+      return;
+    }
+    if (!customerPhone.trim()) {
+      Alert.alert('Eroare', 'Introduceți numărul de telefon');
+      return;
+    }
+    if (!customerAge.trim() || parseInt(customerAge) < 18 || parseInt(customerAge) > 99) {
+      Alert.alert('Eroare', 'Introduceți o vârstă validă (18-99)');
       return;
     }
 
@@ -87,11 +109,15 @@ export default function CarDetailScreen() {
         end_time: filters.endTime,
         location: filters.location,
         insurance: filters.insurance,
+        customer_name: customerName.trim(),
+        customer_phone: customerPhone.trim(),
+        customer_age: parseInt(customerAge),
       });
       
+      setShowBookingModal(false);
       Alert.alert(
         'Succes!',
-        'Rezervarea a fost creată cu succes. Veți primi o confirmare în curând.',
+        'Rezervarea a fost creată cu succes. Veți fi contactat în curând pentru confirmare.',
         [{ text: 'OK', onPress: () => router.push('/(tabs)/bookings') }]
       );
     } catch (error: any) {
@@ -215,6 +241,14 @@ export default function CarDetailScreen() {
           </View>
         </View>
 
+        {/* Description */}
+        {car.description && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Descriere</Text>
+            <Text style={styles.descriptionText}>{car.description}</Text>
+          </View>
+        )}
+
         {/* Detailed Specs */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Specificații</Text>
@@ -280,7 +314,7 @@ export default function CarDetailScreen() {
           </View>
         </View>
 
-        {/* Pricing Table */}
+        {/* Pricing Table - WITHOUT CASCO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Prețuri</Text>
           <View style={styles.pricingTable}>
@@ -303,10 +337,6 @@ export default function CarDetailScreen() {
             <View style={styles.pricingRow}>
               <Text style={styles.pricingLabel}>20+ zile</Text>
               <Text style={styles.pricingValue}>{car.pricing.day_20} €/zi</Text>
-            </View>
-            <View style={[styles.pricingRow, styles.pricingRowHighlight]}>
-              <Text style={styles.pricingLabel}>CASCO/zi</Text>
-              <Text style={styles.pricingValue}>{car.casco_price} €/zi</Text>
             </View>
           </View>
         </View>
@@ -350,7 +380,7 @@ export default function CarDetailScreen() {
           </View>
         )}
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 120 }} />
       </ScrollView>
 
       {/* Booking Footer */}
@@ -360,20 +390,98 @@ export default function CarDetailScreen() {
           <Text style={styles.footerPriceValue}>{price?.total_price || '...'} €</Text>
         </View>
         <TouchableOpacity
-          style={[styles.bookButton, booking && styles.bookButtonDisabled]}
-          onPress={handleBooking}
-          disabled={booking}
+          style={styles.bookButton}
+          onPress={handleReservePress}
         >
-          {booking ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <>
-              <Ionicons name="calendar-outline" size={20} color="#fff" />
-              <Text style={styles.bookButtonText}>Rezervă Acum</Text>
-            </>
-          )}
+          <Ionicons name="calendar-outline" size={20} color="#fff" />
+          <Text style={styles.bookButtonText}>Rezervă Acum</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Booking Modal */}
+      <Modal visible={showBookingModal} animationType="slide" transparent>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalContainer}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Date Contact</Text>
+              <TouchableOpacity onPress={() => setShowBookingModal(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              <Text style={styles.modalSubtitle}>Completați datele pentru rezervare</Text>
+              
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Nume complet *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ex: Ion Popescu"
+                  placeholderTextColor="#999"
+                  value={customerName}
+                  onChangeText={setCustomerName}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Telefon *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ex: +373 69 123 456"
+                  placeholderTextColor="#999"
+                  keyboardType="phone-pad"
+                  value={customerPhone}
+                  onChangeText={setCustomerPhone}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Vârsta *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ex: 25"
+                  placeholderTextColor="#999"
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  value={customerAge}
+                  onChangeText={setCustomerAge}
+                />
+              </View>
+
+              <View style={styles.bookingSummary}>
+                <Text style={styles.summaryTitle}>{car?.name}</Text>
+                <Text style={styles.summaryText}>
+                  {filters.startDate.toLocaleDateString('ro-RO')} - {filters.endDate.toLocaleDateString('ro-RO')}
+                </Text>
+                <Text style={styles.summaryText}>
+                  {filters.startTime} - {filters.endTime}
+                </Text>
+                <Text style={styles.summaryText}>
+                  {getLocationLabel(filters.location)} • {filters.insurance.toUpperCase()}
+                </Text>
+                <Text style={styles.summaryPrice}>Total: {price?.total_price} €</Text>
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={[styles.submitButton, booking && styles.submitButtonDisabled]}
+                onPress={handleBookingSubmit}
+                disabled={booking}
+              >
+                {booking ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.submitButtonText}>Trimite Rezervarea</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -408,7 +516,7 @@ const styles = StyleSheet.create({
   },
   galleryImage: {
     width: width,
-    height: 280,
+    height: 300,
     backgroundColor: '#e0e0e0',
   },
   noImage: {
@@ -478,6 +586,11 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
     marginBottom: 16,
   },
+  descriptionText: {
+    fontSize: 15,
+    color: '#444',
+    lineHeight: 24,
+  },
   specsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -523,9 +636,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-  },
-  pricingRowHighlight: {
-    backgroundColor: '#e6f2ff',
   },
   pricingLabel: {
     fontSize: 15,
@@ -581,6 +691,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    paddingBottom: 24,
     borderTopWidth: 1,
     borderTopColor: '#eee',
     shadowColor: '#000',
@@ -608,10 +719,98 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
   },
-  bookButtonDisabled: {
+  bookButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '85%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1a1a1a',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: '#1a1a1a',
+  },
+  bookingSummary: {
+    backgroundColor: '#e6f2ff',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 8,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#007AFF',
+    marginBottom: 8,
+  },
+  summaryText: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 4,
+  },
+  summaryPrice: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#007AFF',
+    marginTop: 8,
+  },
+  modalFooter: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  submitButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  submitButtonDisabled: {
     opacity: 0.7,
   },
-  bookButtonText: {
+  submitButtonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
