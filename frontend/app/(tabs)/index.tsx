@@ -156,7 +156,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Single Banner with Fade Animation */}
+        {/* Single Banner with Fade Animation - No Overlay */}
         {currentBannerData && (
           <View style={styles.bannerSection}>
             <Animated.View style={[styles.bannerContainer, { opacity: fadeAnim }]}>
@@ -165,17 +165,6 @@ export default function HomeScreen() {
                 style={styles.bannerImage}
                 resizeMode="cover"
               />
-              <View style={styles.bannerOverlay}>
-                <Text style={styles.bannerTitle}>{currentBannerData.title}</Text>
-                {currentBannerData.subtitle && (
-                  <Text style={styles.bannerText}>{currentBannerData.subtitle}</Text>
-                )}
-                {currentBannerData.badge && (
-                  <View style={styles.bannerBadge}>
-                    <Text style={styles.bannerBadgeText}>{currentBannerData.badge}</Text>
-                  </View>
-                )}
-              </View>
             </Animated.View>
             
             {/* Pagination dots */}
