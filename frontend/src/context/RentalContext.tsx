@@ -9,7 +9,7 @@ interface RentalContextType {
 
 const defaultFilters: RentalFilters = {
   startDate: new Date(),
-  endDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+  endDate: new Date(), // Same day = 1 day rental
   startTime: '10:00',
   endTime: '10:00',
   location: 'office',
