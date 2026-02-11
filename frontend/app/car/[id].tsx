@@ -782,7 +782,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#007AFF',
+    color: '#A31621',
     marginBottom: 8,
   },
   summaryText: {
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   summaryPrice: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#007AFF',
+    color: '#A31621',
     marginTop: 8,
   },
   modalFooter: {
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#eee',
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#A31621',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
