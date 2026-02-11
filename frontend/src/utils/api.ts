@@ -166,6 +166,9 @@ export const api = {
   
   getAdminStats: () => apiCall('/admin/stats'),
   
+  // Banners
+  getBanners: () => apiCall('/banners'),
+  
   // Seed
   seedData: () => apiCall('/seed', { method: 'POST' }),
 };
