@@ -469,7 +469,7 @@ async def get_cars(
     if available_only:
         query["available"] = True
     
-    cars = await db.cars.find(query, {"_id": 0}).to_list(100)
+    cars = await db.cars.find(query, {"_id": 0}).sort("order", 1).to_list(100)
     return cars
 
 @api_router.get("/cars/{car_id}")
