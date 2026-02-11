@@ -153,11 +153,14 @@ backend:
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "POST /api/calculate-price calculates correctly: base price from day tier (1,3,5,10,20 days), CASCO per day, location fee (150€ for Iasi), outside hours fee (25€ each for before 9:00 or after 18:00)"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/calculate-price working perfectly. All 3 test scenarios passed: 1) 1 day office RCA = 55€ ✓, 2) 3 days office CASCO = 195€ (150€ base + 45€ CASCO) ✓, 3) 5 days Iasi outside hours = 425€ (225€ base + 150€ location + 50€ outside hours) ✓. Day tiers, CASCO pricing, location fees, and outside hours fees all calculated correctly"
 
   - task: "Google Auth session exchange"
     implemented: true
