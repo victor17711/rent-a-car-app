@@ -216,7 +216,7 @@
                                     </div>
                                 </div>
                                 <div class="spec-section">
-                                    <h6>Dotări</h6>
+                                    <h6>Dotări Standard</h6>
                                     <div class="row">
                                         <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specAc"><label class="form-check-label">Aer Condiționat</label></div></div>
                                         <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specGps"><label class="form-check-label">GPS</label></div></div>
@@ -224,6 +224,14 @@
                                         <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specLeather"><label class="form-check-label">Scaune Piele</label></div></div>
                                         <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specCruise"><label class="form-check-label">Cruise Control</label></div></div>
                                     </div>
+                                </div>
+                                <div class="spec-section">
+                                    <h6>Dotări Personalizate</h6>
+                                    <div class="d-flex gap-2 mb-2">
+                                        <input type="text" class="form-control form-control-sm" id="customFeatureInput" placeholder="Introduceți o dotare (ex: Cameră marsarier)">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addCustomFeature()"><i class="bi bi-plus"></i> Adaugă</button>
+                                    </div>
+                                    <div id="customFeaturesContainer"></div>
                                 </div>
                             </div>
                             
