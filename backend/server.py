@@ -145,12 +145,17 @@ class Booking(BaseModel):
     user_id: str
     car_id: str
     car_name: str
+    car_image: str = ""  # main car image
     start_date: str
     end_date: str
     start_time: str
     end_time: str
     location: str
     insurance: str
+    # Customer info
+    customer_name: str
+    customer_phone: str
+    customer_age: int
     total_price: float
     status: str = "pending"  # pending, confirmed, completed, cancelled
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -163,6 +168,9 @@ class BookingCreate(BaseModel):
     end_time: str
     location: str
     insurance: str
+    customer_name: str
+    customer_phone: str
+    customer_age: int
 
 class PartnerRequest(BaseModel):
     request_id: str = Field(default_factory=lambda: f"req_{uuid.uuid4().hex[:12]}")
