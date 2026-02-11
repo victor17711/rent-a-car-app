@@ -201,6 +201,32 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+class Banner(BaseModel):
+    banner_id: str = Field(default_factory=lambda: f"banner_{uuid.uuid4().hex[:12]}")
+    title: str
+    subtitle: str = ""
+    badge: str = ""
+    image: str  # base64 image
+    order: int = 0
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BannerCreate(BaseModel):
+    title: str
+    subtitle: str = ""
+    badge: str = ""
+    image: str
+    order: int = 0
+    active: bool = True
+
+class BannerUpdate(BaseModel):
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+    badge: Optional[str] = None
+    image: Optional[str] = None
+    order: Optional[int] = None
+    active: Optional[bool] = None
+
 # ==================== AUTH HELPERS ====================
 
 async def get_session_token(request: Request) -> Optional[str]:
