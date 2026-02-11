@@ -804,6 +804,45 @@ async def get_admin_stats(request: Request):
         }
     }
 
+# ==================== BANNER ENDPOINTS ====================
+
+@api_router.get("/banners")
+async def get_banners(active_only: bool = False):
+    """Get all banners (public endpoint)"""
+    query = {"active": True} if active_only else {}
+    banners = await db.banners.find(query, {"_id": 0}).sort("order", 1).to_list(100)
+    return banners
+
+@api_router.post("/admin/banners")
+async def create_banner(data: BannerCreate, request: Request):
+    """Create a new banner (admin only)"""
+    await require_admin(request)
+    banner = Banner(**data.model_dump())
+    await db.banners.insert_one(banner.model_dump())
+    return banner.model_dump()
+
+@api_router.put("/admin/banners/{banner_id}")
+async def update_banner(banner_id: str, data: BannerUpdate, request: Request):
+    """Update a banner (admin only)"""
+    await require_admin(request)
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    result = await db.banners.update_one({"banner_id": banner_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Banner not found")
+    banner = await db.banners.find_one({"banner_id": banner_id}, {"_id": 0})
+    return banner
+
+@api_router.delete("/admin/banners/{banner_id}")
+async def delete_banner(banner_id: str, request: Request):
+    """Delete a banner (admin only)"""
+    await require_admin(request)
+    result = await db.banners.delete_one({"banner_id": banner_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Banner not found")
+    return {"message": "Banner deleted successfully"}
+
 # ==================== SEED DATA ====================
 
 @api_router.post("/seed")
