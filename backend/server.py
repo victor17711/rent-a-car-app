@@ -851,14 +851,14 @@ async def seed_data():
     await db.cars.insert_many(sample_cars)
     return {"message": f"Seeded {len(sample_cars)} cars"}
 
-# Include the router
-app.include_router(api_router)
-
-# Serve admin panel
+# Serve admin panel - MUST be before include_router
 @api_router.get("/admin/")
 @api_router.get("/admin")
 async def admin_panel():
     return FileResponse(ROOT_DIR / 'static' / 'admin.html')
+
+# Include the router
+app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
