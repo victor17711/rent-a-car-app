@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#A31621',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
