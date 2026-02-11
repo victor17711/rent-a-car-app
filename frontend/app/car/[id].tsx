@@ -678,7 +678,7 @@ const styles = StyleSheet.create({
   totalValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#007AFF',
+    color: '#A31621',
   },
   footer: {
     position: 'absolute',
