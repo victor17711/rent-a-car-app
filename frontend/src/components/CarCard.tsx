@@ -55,10 +55,16 @@ export default function CarCard({ car }: CarCardProps) {
     return labels[f] || f;
   };
 
+  // Get main image
+  const mainImageIndex = car.main_image_index || 0;
+  const mainImage = car.images && car.images.length > mainImageIndex 
+    ? car.images[mainImageIndex] 
+    : car.images?.[0] || 'https://via.placeholder.com/300x200';
+
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.8}>
       <Image
-        source={{ uri: car.images[0] || 'https://via.placeholder.com/300x200' }}
+        source={{ uri: mainImage }}
         style={styles.image}
         resizeMode="cover"
       />
@@ -119,7 +125,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 180,
+    height: 220,
     backgroundColor: '#f0f0f0',
   },
   content: {
