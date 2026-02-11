@@ -269,6 +269,6 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#007AFF',
+    color: '#A31621',
   },
 });
