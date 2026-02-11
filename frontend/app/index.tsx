@@ -75,7 +75,7 @@ export default function LoginScreen() {
               {/* Features */}
               <View style={styles.features}>
                 <View style={styles.feature}>
-                  <Ionicons name="checkmark-circle" size={24} color="#34C759" />
+                  <Ionicons name="checkmark-circle" size={24} color="#A31621" />
                   <Text style={styles.featureText}>Mașini premium verificate</Text>
                 </View>
                 <View style={styles.feature}>
