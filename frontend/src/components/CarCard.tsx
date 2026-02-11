@@ -90,7 +90,7 @@ export default function CarCard({ car }: CarCardProps) {
         
         <View style={styles.priceRow}>
           {loading ? (
-            <ActivityIndicator size="small" color="#007AFF" />
+            <ActivityIndicator size="small" color="#A31621" />
           ) : price ? (
             <View style={styles.priceContainer}>
               <Text style={styles.price}>{price.total_price} €</Text>
