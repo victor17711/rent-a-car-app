@@ -74,6 +74,7 @@ class Car(BaseModel):
     brand: str
     model: str
     year: int
+    body_type: str = "sedan"  # sedan, suv, hatchback, bus, coupe, wagon
     transmission: str  # manual or automatic
     fuel: str  # diesel, petrol, electric, hybrid
     seats: int
@@ -92,6 +93,7 @@ class CarCreate(BaseModel):
     brand: str
     model: str
     year: int
+    body_type: str = "sedan"
     transmission: str
     fuel: str
     seats: int
@@ -109,6 +111,7 @@ class CarUpdate(BaseModel):
     brand: Optional[str] = None
     model: Optional[str] = None
     year: Optional[int] = None
+    body_type: Optional[str] = None
     transmission: Optional[str] = None
     fuel: Optional[str] = None
     seats: Optional[int] = None
