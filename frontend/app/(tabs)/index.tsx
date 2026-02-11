@@ -203,7 +203,7 @@ export default function HomeScreen() {
           
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#007AFF" />
+              <ActivityIndicator size="large" color="#A31621" />
               <Text style={styles.loadingText}>Se încarcă mașinile...</Text>
             </View>
           ) : cars.length === 0 ? (
