@@ -9,7 +9,9 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -111,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = async () => {
+  const loginWithGoogle = async () => {
     try {
       setIsLoading(true);
       
@@ -135,6 +137,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      const result = await api.login({ email, password });
+      if (result.session_token) {
+        await setAuthToken(result.session_token);
+      }
+      if (result.user) {
+        setUser(result.user);
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (email: string, password: string, name: string) => {
+    try {
+      setIsLoading(true);
+      const result = await api.register({ email, password, name });
+      if (result.session_token) {
+        await setAuthToken(result.session_token);
+      }
+      if (result.user) {
+        setUser(result.user);
+      }
+    } catch (error) {
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -166,7 +202,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isLoading,
         isAuthenticated: !!user,
-        login,
+        loginWithGoogle,
+        loginWithEmail,
+        register,
         logout,
         refreshUser,
       }}
