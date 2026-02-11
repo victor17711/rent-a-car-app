@@ -587,7 +587,7 @@
             }
             tbody.innerHTML = allBookings.map(b => `
                 <tr>
-                    <td><img src="${b.car_image || 'https://via.placeholder.com/60x45?text=No+Image'}" class="booking-image" onerror="this.src='https://via.placeholder.com/60x45?text=Error'"><br><small><strong>${b.car_name}</strong></small></td>
+                    <td><img src="${b.car_image || 'https://via.placeholder.com/70x50?text=No+Image'}" class="booking-image" onerror="this.src='https://via.placeholder.com/70x50?text=Error'"><br><small><strong>${b.car_name || 'N/A'}</strong></small></td>
                     <td><strong>${b.customer_name || '-'}</strong></td>
                     <td>${b.customer_phone || '-'}</td>
                     <td>${b.customer_age || '-'}</td>
@@ -597,7 +597,7 @@
                     <td>${b.insurance?.toUpperCase() || 'RCA'}</td>
                     <td><strong>${b.total_price}€</strong></td>
                     <td><span class="badge-status badge-${b.status}">${getStatusLabel(b.status)}</span></td>
-                    <td><select class="form-select form-select-sm" style="width:110px" onchange="updateBookingStatus('${b.booking_id}', this.value)">
+                    <td><select class="status-select" onchange="updateBookingStatus('${b.booking_id}', this.value)">
                         <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>În așteptare</option>
                         <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Confirmată</option>
                         <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Finalizată</option>
