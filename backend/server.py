@@ -515,7 +515,10 @@ async def get_cars(
     if available_only:
         query["available"] = True
     
-    cars = await db.cars.find(query, {"_id": 0}).sort("order", 1).to_list(100)
+    # Sort by order field (ascending), then by name for items without order
+    cars = await db.cars.find(query, {"_id": 0}).to_list(100)
+    # Sort: items with order first (by order), then items without order (by name)
+    cars.sort(key=lambda x: (x.get('order') is None, x.get('order', 999), x.get('name', '')))
     return cars
 
 @api_router.get("/cars/{car_id}")
