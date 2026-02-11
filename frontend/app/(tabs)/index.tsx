@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   paginationDotActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#A31621',
     width: 24,
   },
   summaryContainer: {
