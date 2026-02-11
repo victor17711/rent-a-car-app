@@ -295,6 +295,12 @@
         let currentUser = null;
         let sessionToken = localStorage.getItem('admin_session_token');
         let uploadedImages = [];
+        let customFeatures = [];
+        let bannerImage = '';
+        let allCars = [];
+        let allBookings = [];
+        let allPartners = [];
+        let allBanners = [];
 
         async function apiCall(endpoint, options = {}) {
             const headers = { 'Content-Type': 'application/json', ...options.headers };
@@ -348,49 +354,80 @@
         }
 
         function logout() { localStorage.removeItem('admin_session_token'); sessionToken = null; currentUser = null; document.getElementById('login').style.display = 'block'; document.getElementById('app').style.display = 'none'; }
-        function showApp() { document.getElementById('login').style.display = 'none'; document.getElementById('app').style.display = 'block'; document.getElementById('userName').textContent = currentUser.name; document.getElementById('userAvatarInitial').textContent = currentUser.name.charAt(0).toUpperCase(); loadDashboard(); }
-
-        function showSection(section) {
-            document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
-            document.getElementById(`section-${section}`).style.display = 'block';
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            event.target.classList.add('active');
-            if (section === 'dashboard') loadDashboard();
-            if (section === 'cars') loadCars();
-            if (section === 'bookings') loadBookings();
-            if (section === 'partners') loadPartners();
+        
+        async function showApp() { 
+            document.getElementById('login').style.display = 'none'; 
+            document.getElementById('app').style.display = 'block'; 
+            document.getElementById('userName').textContent = currentUser.name; 
+            document.getElementById('userAvatarInitial').textContent = currentUser.name.charAt(0).toUpperCase(); 
+            await loadAllData();
+            loadDashboard(); 
         }
 
-        async function loadDashboard() {
+        async function loadAllData() {
             try {
-                const stats = await apiCall('/admin/stats');
-                document.getElementById('stat-cars').textContent = stats.cars.total;
-                document.getElementById('stat-bookings').textContent = stats.bookings.total;
-                document.getElementById('stat-pending').textContent = stats.bookings.pending;
-                document.getElementById('stat-partners').textContent = stats.partner_requests.pending;
-            } catch (error) { console.error(error); }
+                const [cars, bookings, partners, banners] = await Promise.all([
+                    apiCall('/cars?available_only=false'),
+                    apiCall('/admin/bookings'),
+                    apiCall('/admin/partner-requests'),
+                    apiCall('/banners').catch(() => [])
+                ]);
+                allCars = cars;
+                allBookings = bookings;
+                allPartners = partners;
+                allBanners = banners;
+            } catch (error) { console.error('Failed to load data:', error); }
+        }
+
+        function showSection(section, event) {
+            if (event) event.preventDefault();
+            document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+            document.getElementById(`section-${section}`).style.display = 'block';
+            document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            
+            if (section === 'dashboard') loadDashboard();
+            if (section === 'cars') renderCars();
+            if (section === 'bookings') renderBookings();
+            if (section === 'partners') renderPartners();
+            if (section === 'banners') renderBanners();
+        }
+
+        function loadDashboard() {
+            document.getElementById('stat-cars').textContent = allCars.length;
+            document.getElementById('stat-bookings').textContent = allBookings.length;
+            document.getElementById('stat-pending').textContent = allBookings.filter(b => b.status === 'pending').length;
+            document.getElementById('stat-partners').textContent = allPartners.filter(p => p.status === 'pending').length;
+        }
+
+        function renderCars() {
+            const tbody = document.getElementById('cars-table');
+            if (allCars.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Nicio mașină adăugată</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allCars.map(car => {
+                const mainImg = car.images && car.images.length > 0 ? car.images[car.main_image_index || 0] : 'https://via.placeholder.com/80x60?text=No+Image';
+                return `<tr>
+                    <td>${car.order || 0}</td>
+                    <td><img src="${mainImg}" class="car-image" onerror="this.src='https://via.placeholder.com/80x60?text=Error'"></td>
+                    <td><strong>${car.name}</strong></td>
+                    <td>${car.brand} ${car.model}</td>
+                    <td>${car.year}</td>
+                    <td>${car.pricing?.day_1 || 0}€</td>
+                    <td><span class="badge ${car.available ? 'bg-success' : 'bg-secondary'}">${car.available ? 'Disponibilă' : 'Indisponibilă'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editCar('${car.car_id}')"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCar('${car.car_id}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
         }
 
         async function loadCars() {
             try {
-                const cars = await apiCall('/cars?available_only=false');
-                const tbody = document.getElementById('cars-table');
-                tbody.innerHTML = cars.map(car => {
-                    const mainImg = car.images && car.images.length > 0 ? car.images[car.main_image_index || 0] : 'https://via.placeholder.com/80x60';
-                    return `<tr>
-                        <td>${car.order || 0}</td>
-                        <td><img src="${mainImg}" class="car-image"></td>
-                        <td><strong>${car.name}</strong></td>
-                        <td>${car.brand} ${car.model}</td>
-                        <td>${car.year}</td>
-                        <td>${car.pricing.day_1}€</td>
-                        <td><span class="badge ${car.available ? 'bg-success' : 'bg-secondary'}">${car.available ? 'Disponibilă' : 'Indisponibilă'}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="editCar('${car.car_id}')"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCar('${car.car_id}')"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>`;
-                }).join('');
+                allCars = await apiCall('/cars?available_only=false');
+                renderCars();
             } catch (error) { console.error(error); }
         }
 
@@ -421,11 +458,38 @@
         function setMainImage(index) { document.getElementById('carMainImageIndex').value = index; renderImagePreviews(); }
         function removeImage(index) { uploadedImages.splice(index, 1); const mainIndex = parseInt(document.getElementById('carMainImageIndex').value); if (index <= mainIndex && mainIndex > 0) document.getElementById('carMainImageIndex').value = mainIndex - 1; renderImagePreviews(); }
 
+        // Custom Features
+        function addCustomFeature() {
+            const input = document.getElementById('customFeatureInput');
+            const feature = input.value.trim();
+            if (feature && !customFeatures.includes(feature)) {
+                customFeatures.push(feature);
+                renderCustomFeatures();
+                input.value = '';
+            }
+        }
+
+        function removeCustomFeature(index) {
+            customFeatures.splice(index, 1);
+            renderCustomFeatures();
+        }
+
+        function renderCustomFeatures() {
+            const container = document.getElementById('customFeaturesContainer');
+            container.innerHTML = customFeatures.map((f, i) => `
+                <span class="custom-feature-item">
+                    ${f}
+                    <button class="remove-btn" onclick="removeCustomFeature(${i})">&times;</button>
+                </span>
+            `).join('');
+        }
+
         function openCarModal(car = null) {
             document.getElementById('carModalTitle').textContent = car ? 'Editează Mașină' : 'Adaugă Mașină';
             document.getElementById('carForm').reset();
             document.getElementById('carId').value = car?.car_id || '';
             uploadedImages = car?.images || [];
+            customFeatures = car?.specs?.custom_features || [];
             document.getElementById('carMainImageIndex').value = car?.main_image_index || 0;
             
             if (car) {
@@ -440,11 +504,11 @@
                 document.getElementById('carCasco').value = car.casco_price;
                 document.getElementById('carDescription').value = car.description || '';
                 document.getElementById('carAvailable').checked = car.available;
-                document.getElementById('price1').value = car.pricing.day_1;
-                document.getElementById('price3').value = car.pricing.day_3;
-                document.getElementById('price5').value = car.pricing.day_5;
-                document.getElementById('price10').value = car.pricing.day_10;
-                document.getElementById('price20').value = car.pricing.day_20;
+                document.getElementById('price1').value = car.pricing?.day_1;
+                document.getElementById('price3').value = car.pricing?.day_3;
+                document.getElementById('price5').value = car.pricing?.day_5;
+                document.getElementById('price10').value = car.pricing?.day_10;
+                document.getElementById('price20').value = car.pricing?.day_20;
                 document.getElementById('specEngine').value = car.specs?.engine || '';
                 document.getElementById('specPower').value = car.specs?.power || '';
                 document.getElementById('specConsumption').value = car.specs?.consumption || '';
@@ -456,10 +520,14 @@
                 document.getElementById('specCruise').checked = car.specs?.cruise_control || false;
             }
             renderImagePreviews();
+            renderCustomFeatures();
             new bootstrap.Modal(document.getElementById('carModal')).show();
         }
 
-        async function editCar(carId) { try { const car = await apiCall(`/cars/${carId}`); openCarModal(car); } catch (error) { alert('Eroare: ' + error.message); } }
+        async function editCar(carId) { 
+            const car = allCars.find(c => c.car_id === carId);
+            if (car) openCarModal(car);
+        }
 
         async function saveCar() {
             const carId = document.getElementById('carId').value;
@@ -487,84 +555,210 @@
                     gps: document.getElementById('specGps').checked,
                     bluetooth: document.getElementById('specBluetooth').checked,
                     leather_seats: document.getElementById('specLeather').checked,
-                    cruise_control: document.getElementById('specCruise').checked
+                    cruise_control: document.getElementById('specCruise').checked,
+                    custom_features: customFeatures
                 }
             };
             try {
                 if (carId) await apiCall(`/admin/cars/${carId}`, { method: 'PUT', body: JSON.stringify(data) });
                 else await apiCall('/admin/cars', { method: 'POST', body: JSON.stringify(data) });
                 bootstrap.Modal.getInstance(document.getElementById('carModal')).hide();
-                loadCars();
+                await loadCars();
             } catch (error) { alert('Eroare: ' + error.message); }
         }
 
-        async function deleteCar(carId) { if (!confirm('Sigur doriți să ștergeți?')) return; try { await apiCall(`/admin/cars/${carId}`, { method: 'DELETE' }); loadCars(); } catch (error) { alert('Eroare: ' + error.message); } }
+        async function deleteCar(carId) { 
+            if (!confirm('Sigur doriți să ștergeți această mașină?')) return; 
+            try { 
+                await apiCall(`/admin/cars/${carId}`, { method: 'DELETE' }); 
+                await loadCars(); 
+            } catch (error) { alert('Eroare: ' + error.message); } 
+        }
+
+        function renderBookings() {
+            const tbody = document.getElementById('bookings-table');
+            if (allBookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="11" class="text-center py-4 text-muted">Nicio rezervare</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allBookings.map(b => `
+                <tr>
+                    <td><img src="${b.car_image || 'https://via.placeholder.com/60x45?text=No+Image'}" class="booking-image" onerror="this.src='https://via.placeholder.com/60x45?text=Error'"><br><small><strong>${b.car_name}</strong></small></td>
+                    <td><strong>${b.customer_name || '-'}</strong></td>
+                    <td>${b.customer_phone || '-'}</td>
+                    <td>${b.customer_age || '-'}</td>
+                    <td>${b.start_date}<br><small>${b.start_time}</small></td>
+                    <td>${b.end_date}<br><small>${b.end_time}</small></td>
+                    <td>${getLocationLabel(b.location)}</td>
+                    <td>${b.insurance?.toUpperCase() || 'RCA'}</td>
+                    <td><strong>${b.total_price}€</strong></td>
+                    <td><span class="badge-status badge-${b.status}">${getStatusLabel(b.status)}</span></td>
+                    <td><select class="form-select form-select-sm" style="width:110px" onchange="updateBookingStatus('${b.booking_id}', this.value)">
+                        <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>În așteptare</option>
+                        <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Confirmată</option>
+                        <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Finalizată</option>
+                        <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Anulată</option>
+                    </select></td>
+                </tr>
+            `).join('');
+        }
 
         async function loadBookings() {
             try {
-                const bookings = await apiCall('/admin/bookings');
-                const tbody = document.getElementById('bookings-table');
-                tbody.innerHTML = bookings.length === 0 ? '<tr><td colspan="11" class="text-center py-4 text-muted">Nicio rezervare</td></tr>' : bookings.map(b => `
-                    <tr>
-                        <td><img src="${b.car_image || 'https://via.placeholder.com/60x45'}" class="booking-image"><br><small><strong>${b.car_name}</strong></small></td>
-                        <td><strong>${b.customer_name || '-'}</strong></td>
-                        <td>${b.customer_phone || '-'}</td>
-                        <td>${b.customer_age || '-'}</td>
-                        <td>${b.start_date}<br><small>${b.start_time}</small></td>
-                        <td>${b.end_date}<br><small>${b.end_time}</small></td>
-                        <td>${getLocationLabel(b.location)}</td>
-                        <td>${b.insurance.toUpperCase()}</td>
-                        <td><strong>${b.total_price}€</strong></td>
-                        <td><span class="badge-status badge-${b.status}">${getStatusLabel(b.status)}</span></td>
-                        <td><select class="form-select form-select-sm" style="width:110px" onchange="updateBookingStatus('${b.booking_id}', this.value)">
-                            <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>În așteptare</option>
-                            <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Confirmată</option>
-                            <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Finalizată</option>
-                            <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Anulată</option>
-                        </select></td>
-                    </tr>
-                `).join('');
+                allBookings = await apiCall('/admin/bookings');
+                renderBookings();
             } catch (error) { console.error(error); }
         }
 
-        async function updateBookingStatus(bookingId, status) { try { await apiCall(`/admin/bookings/${bookingId}/status`, { method: 'PUT', body: JSON.stringify({ status }) }); loadBookings(); } catch (error) { alert('Eroare: ' + error.message); } }
+        async function updateBookingStatus(bookingId, status) { 
+            try { 
+                await apiCall(`/admin/bookings/${bookingId}/status`, { method: 'PUT', body: JSON.stringify({ status }) }); 
+                await loadBookings(); 
+            } catch (error) { alert('Eroare: ' + error.message); } 
+        }
+
+        function renderPartners() {
+            const tbody = document.getElementById('partners-table');
+            if (allPartners.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Nicio cerere de parteneriat</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allPartners.map(p => `
+                <tr>
+                    <td>${new Date(p.created_at).toLocaleDateString('ro-RO')}</td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.email}</td>
+                    <td>${p.phone}</td>
+                    <td>${p.company || '-'}</td>
+                    <td><span class="badge-status badge-${p.status}">${getPartnerStatusLabel(p.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info" onclick="viewPartner('${p.request_id}')"><i class="bi bi-eye"></i></button>
+                        <select class="form-select form-select-sm d-inline-block" style="width:100px" onchange="updatePartnerStatus('${p.request_id}', this.value)">
+                            <option value="pending" ${p.status === 'pending' ? 'selected' : ''}>Nou</option>
+                            <option value="contacted" ${p.status === 'contacted' ? 'selected' : ''}>Contactat</option>
+                            <option value="approved" ${p.status === 'approved' ? 'selected' : ''}>Aprobat</option>
+                            <option value="rejected" ${p.status === 'rejected' ? 'selected' : ''}>Respins</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
         async function loadPartners() {
             try {
-                const partners = await apiCall('/admin/partner-requests');
-                const tbody = document.getElementById('partners-table');
-                tbody.innerHTML = partners.length === 0 ? '<tr><td colspan="7" class="text-center py-4 text-muted">Nicio cerere</td></tr>' : partners.map(p => `
-                    <tr>
-                        <td>${new Date(p.created_at).toLocaleDateString('ro-RO')}</td>
-                        <td><strong>${p.name}</strong></td>
-                        <td>${p.email}</td>
-                        <td>${p.phone}</td>
-                        <td>${p.company || '-'}</td>
-                        <td><span class="badge-status badge-${p.status}">${getPartnerStatusLabel(p.status)}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-info" onclick="viewPartner('${p.request_id}')"><i class="bi bi-eye"></i></button>
-                            <select class="form-select form-select-sm d-inline-block" style="width:100px" onchange="updatePartnerStatus('${p.request_id}', this.value)">
-                                <option value="pending" ${p.status === 'pending' ? 'selected' : ''}>Nou</option>
-                                <option value="contacted" ${p.status === 'contacted' ? 'selected' : ''}>Contactat</option>
-                                <option value="approved" ${p.status === 'approved' ? 'selected' : ''}>Aprobat</option>
-                                <option value="rejected" ${p.status === 'rejected' ? 'selected' : ''}>Respins</option>
-                            </select>
-                        </td>
-                    </tr>
-                `).join('');
+                allPartners = await apiCall('/admin/partner-requests');
+                renderPartners();
             } catch (error) { console.error(error); }
         }
 
-        async function viewPartner(requestId) {
-            const partners = await apiCall('/admin/partner-requests');
-            const p = partners.find(x => x.request_id === requestId);
+        function viewPartner(requestId) {
+            const p = allPartners.find(x => x.request_id === requestId);
             if (p) {
                 document.getElementById('partnerDetails').innerHTML = `<p><strong>Nume:</strong> ${p.name}</p><p><strong>Email:</strong> ${p.email}</p><p><strong>Telefon:</strong> ${p.phone}</p><p><strong>Companie:</strong> ${p.company || 'N/A'}</p><p><strong>Mesaj:</strong></p><div class="bg-light p-3 rounded">${p.message}</div><p class="mt-3 text-muted small">Data: ${new Date(p.created_at).toLocaleString('ro-RO')}</p>`;
                 new bootstrap.Modal(document.getElementById('partnerModal')).show();
             }
         }
 
-        async function updatePartnerStatus(requestId, status) { try { await apiCall(`/admin/partner-requests/${requestId}/status`, { method: 'PUT', body: JSON.stringify({ status }) }); loadPartners(); } catch (error) { alert('Eroare: ' + error.message); } }
+        async function updatePartnerStatus(requestId, status) { 
+            try { 
+                await apiCall(`/admin/partner-requests/${requestId}/status`, { method: 'PUT', body: JSON.stringify({ status }) }); 
+                await loadPartners(); 
+            } catch (error) { alert('Eroare: ' + error.message); } 
+        }
+
+        // BANNERS
+        function renderBanners() {
+            const tbody = document.getElementById('banners-table');
+            if (allBanners.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Niciun banner adăugat</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allBanners.map(b => `
+                <tr>
+                    <td>${b.order || 0}</td>
+                    <td><img src="${b.image}" class="banner-preview" onerror="this.src='https://via.placeholder.com/200x100?text=Error'"></td>
+                    <td><strong>${b.title}</strong></td>
+                    <td>${b.subtitle || '-'}</td>
+                    <td>${b.badge || '-'}</td>
+                    <td><span class="badge ${b.active ? 'bg-success' : 'bg-secondary'}">${b.active ? 'Activ' : 'Inactiv'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editBanner('${b.banner_id}')"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteBanner('${b.banner_id}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadBanners() {
+            try {
+                allBanners = await apiCall('/banners');
+                renderBanners();
+            } catch (error) { console.error(error); allBanners = []; }
+        }
+
+        function handleBannerImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    bannerImage = e.target.result;
+                    document.getElementById('bannerImagePreview').innerHTML = `<img src="${bannerImage}" class="banner-preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openBannerModal(banner = null) {
+            document.getElementById('bannerModalTitle').textContent = banner ? 'Editează Banner' : 'Adaugă Banner';
+            document.getElementById('bannerForm').reset();
+            document.getElementById('bannerId').value = banner?.banner_id || '';
+            bannerImage = banner?.image || '';
+            
+            if (banner) {
+                document.getElementById('bannerTitle').value = banner.title;
+                document.getElementById('bannerSubtitle').value = banner.subtitle || '';
+                document.getElementById('bannerBadge').value = banner.badge || '';
+                document.getElementById('bannerOrder').value = banner.order || 0;
+                document.getElementById('bannerActive').checked = banner.active !== false;
+            }
+            
+            document.getElementById('bannerImagePreview').innerHTML = bannerImage ? `<img src="${bannerImage}" class="banner-preview">` : '';
+            new bootstrap.Modal(document.getElementById('bannerModal')).show();
+        }
+
+        function editBanner(bannerId) {
+            const banner = allBanners.find(b => b.banner_id === bannerId);
+            if (banner) openBannerModal(banner);
+        }
+
+        async function saveBanner() {
+            const bannerId = document.getElementById('bannerId').value;
+            if (!bannerImage) { alert('Selectați o imagine pentru banner'); return; }
+            
+            const data = {
+                title: document.getElementById('bannerTitle').value,
+                subtitle: document.getElementById('bannerSubtitle').value,
+                badge: document.getElementById('bannerBadge').value,
+                order: parseInt(document.getElementById('bannerOrder').value) || 0,
+                active: document.getElementById('bannerActive').checked,
+                image: bannerImage
+            };
+            
+            try {
+                if (bannerId) await apiCall(`/admin/banners/${bannerId}`, { method: 'PUT', body: JSON.stringify(data) });
+                else await apiCall('/admin/banners', { method: 'POST', body: JSON.stringify(data) });
+                bootstrap.Modal.getInstance(document.getElementById('bannerModal')).hide();
+                await loadBanners();
+            } catch (error) { alert('Eroare: ' + error.message); }
+        }
+
+        async function deleteBanner(bannerId) {
+            if (!confirm('Sigur doriți să ștergeți acest banner?')) return;
+            try {
+                await apiCall(`/admin/banners/${bannerId}`, { method: 'DELETE' });
+                await loadBanners();
+            } catch (error) { alert('Eroare: ' + error.message); }
+        }
 
         function getLocationLabel(loc) { return { office: 'Oficiu', chisinau_airport: 'Aeroport Chișinău', iasi_airport: 'Aeroport Iași' }[loc] || loc; }
         function getStatusLabel(status) { return { pending: 'În așteptare', confirmed: 'Confirmată', completed: 'Finalizată', cancelled: 'Anulată' }[status] || status; }
