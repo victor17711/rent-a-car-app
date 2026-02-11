@@ -477,6 +477,20 @@ async def logout(request: Request, response: Response):
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
 
+@api_router.put("/users/profile-picture")
+async def update_profile_picture(data: ProfilePictureUpdate, request: Request):
+    """Update user's profile picture"""
+    user = await get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Nu ești autentificat")
+    
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {"picture": data.picture}}
+    )
+    
+    return {"message": "Poza de profil a fost actualizată"}
+
 # ==================== CAR ENDPOINTS ====================
 
 @api_router.get("/cars")
