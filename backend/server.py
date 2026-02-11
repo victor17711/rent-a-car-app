@@ -78,9 +78,12 @@ class Car(BaseModel):
     fuel: str  # diesel, petrol, electric, hybrid
     seats: int
     images: List[str] = []  # base64 images
+    main_image_index: int = 0  # index of main image
     pricing: CarPricing
     casco_price: float  # daily CASCO price
+    description: str = ""  # car description
     specs: dict = {}  # additional specs
+    order: int = 0  # display order
     available: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -93,9 +96,12 @@ class CarCreate(BaseModel):
     fuel: str
     seats: int
     images: List[str] = []
+    main_image_index: int = 0
     pricing: CarPricing
     casco_price: float
+    description: str = ""
     specs: dict = {}
+    order: int = 0
     available: bool = True
 
 class CarUpdate(BaseModel):
@@ -107,9 +113,12 @@ class CarUpdate(BaseModel):
     fuel: Optional[str] = None
     seats: Optional[int] = None
     images: Optional[List[str]] = None
+    main_image_index: Optional[int] = None
     pricing: Optional[CarPricing] = None
     casco_price: Optional[float] = None
+    description: Optional[str] = None
     specs: Optional[dict] = None
+    order: Optional[int] = None
     available: Optional[bool] = None
 
 class PriceCalculationRequest(BaseModel):
