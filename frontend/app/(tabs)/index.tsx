@@ -153,9 +153,15 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>Bună, {user?.name?.split(' ')[0] || 'Vizitator'}!</Text>
             <Text style={styles.subtitle}>Găsește mașina perfectă</Text>
           </View>
-          <View style={styles.logoSmall}>
-            <Ionicons name="car-sport" size={28} color="#A31621" />
-          </View>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} style={styles.profileButton}>
+            {user?.picture ? (
+              <Image source={{ uri: user.picture }} style={styles.profileImage} />
+            ) : (
+              <View style={styles.profilePlaceholder}>
+                <Ionicons name="person" size={20} color="#fff" />
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
 
         {/* Single Banner with Fade Animation - No Overlay */}
