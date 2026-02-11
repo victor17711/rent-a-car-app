@@ -242,6 +242,101 @@ async def require_admin(request: Request) -> User:
 
 # ==================== AUTH ENDPOINTS ====================
 
+@api_router.post("/auth/register")
+async def register(data: UserRegister, response: Response):
+    """Register a new user with email/password"""
+    # Check if email already exists
+    existing_user = await db.users.find_one({"email": data.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email-ul este deja înregistrat")
+    
+    # Hash password
+    hashed_password = pwd_context.hash(data.password)
+    
+    # Create user
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    new_user = {
+        "user_id": user_id,
+        "email": data.email,
+        "name": data.name,
+        "password": hashed_password,
+        "picture": None,
+        "role": "user",
+        "auth_type": "email",
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.users.insert_one(new_user)
+    
+    # Create session
+    session_token = f"sess_{uuid.uuid4().hex}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    session = {
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session)
+    
+    # Get user data (without password)
+    user_doc = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password": 0})
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=7 * 24 * 60 * 60,
+        path="/"
+    )
+    
+    return {"user": user_doc, "session_token": session_token}
+
+@api_router.post("/auth/login")
+async def login(data: UserLogin, response: Response):
+    """Login with email/password"""
+    # Find user
+    user = await db.users.find_one({"email": data.email})
+    if not user:
+        raise HTTPException(status_code=401, detail="Email sau parolă incorectă")
+    
+    # Check if user has password (not Google-only user)
+    if "password" not in user or not user["password"]:
+        raise HTTPException(status_code=401, detail="Acest cont folosește autentificarea Google. Folosiți butonul 'Continuă cu Google'.")
+    
+    # Verify password
+    if not pwd_context.verify(data.password, user["password"]):
+        raise HTTPException(status_code=401, detail="Email sau parolă incorectă")
+    
+    # Create session
+    session_token = f"sess_{uuid.uuid4().hex}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    session = {
+        "user_id": user["user_id"],
+        "session_token": session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session)
+    
+    # Get user data (without password)
+    user_doc = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0, "password": 0})
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=7 * 24 * 60 * 60,
+        path="/"
+    )
+    
+    return {"user": user_doc, "session_token": session_token}
+
 @api_router.post("/auth/session")
 async def create_session(request: Request, response: Response):
     """Exchange session_id for session_token"""
