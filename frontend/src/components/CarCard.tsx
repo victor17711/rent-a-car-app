@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#007AFF',
+    color: '#A31621',
   },
   priceLabel: {
     fontSize: 14,
