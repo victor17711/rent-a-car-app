@@ -855,8 +855,8 @@ async def seed_data():
 app.include_router(api_router)
 
 # Serve admin panel
-@app.get("/admin/")
-@app.get("/admin")
+@api_router.get("/admin/")
+@api_router.get("/admin")
 async def admin_panel():
     return FileResponse(ROOT_DIR / 'static' / 'admin.html')
 
