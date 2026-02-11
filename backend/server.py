@@ -150,6 +150,23 @@ class BookingCreate(BaseModel):
     location: str
     insurance: str
 
+class PartnerRequest(BaseModel):
+    request_id: str = Field(default_factory=lambda: f"req_{uuid.uuid4().hex[:12]}")
+    name: str
+    email: str
+    phone: str
+    company: Optional[str] = None
+    message: str
+    status: str = "pending"  # pending, contacted, approved, rejected
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PartnerRequestCreate(BaseModel):
+    name: str
+    email: str
+    phone: str
+    company: Optional[str] = None
+    message: str
+
 # ==================== AUTH HELPERS ====================
 
 async def get_session_token(request: Request) -> Optional[str]:
