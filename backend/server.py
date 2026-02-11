@@ -168,6 +168,15 @@ class PartnerRequestCreate(BaseModel):
     company: Optional[str] = None
     message: str
 
+class UserRegister(BaseModel):
+    email: str
+    password: str
+    name: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
 # ==================== AUTH HELPERS ====================
 
 async def get_session_token(request: Request) -> Optional[str]:
