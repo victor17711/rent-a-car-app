@@ -25,6 +25,14 @@ export default function RootLayout() {
               headerBackTitle: 'Înapoi',
             }} 
           />
+          <Stack.Screen 
+            name="partner" 
+            options={{ 
+              headerShown: true,
+              headerTitle: 'Devino Partener',
+              headerBackTitle: 'Înapoi',
+            }} 
+          />
         </Stack>
       </RentalProvider>
     </AuthProvider>
