@@ -64,7 +64,7 @@ export default function LoginScreen() {
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
-              <Ionicons name="car-sport" size={64} color="#007AFF" />
+              <Ionicons name="car-sport" size={64} color="#A31621" />
             </View>
             <Text style={styles.brandName}>DriveMate</Text>
             <Text style={styles.tagline}>Închirieri Auto Premium</Text>
