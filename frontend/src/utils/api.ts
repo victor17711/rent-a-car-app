@@ -126,6 +126,31 @@ export const api = {
   
   makeAdmin: () => apiCall('/admin/make-admin', { method: 'POST' }),
   
+  // Partner Requests
+  submitPartnerRequest: (data: {
+    name: string;
+    email: string;
+    phone: string;
+    company?: string;
+    message: string;
+  }) => apiCall('/partner-request', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  getPartnerRequests: (status?: string) => {
+    const params = status ? `?status=${status}` : '';
+    return apiCall(`/admin/partner-requests${params}`);
+  },
+  
+  updatePartnerRequestStatus: (requestId: string, status: string) =>
+    apiCall(`/admin/partner-requests/${requestId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    }),
+  
+  getAdminStats: () => apiCall('/admin/stats'),
+  
   // Seed
   seedData: () => apiCall('/seed', { method: 'POST' }),
 };
