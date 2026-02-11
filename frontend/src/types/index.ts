@@ -39,9 +39,12 @@ export interface Car {
   fuel: string;
   seats: number;
   images: string[];
+  main_image_index: number;
   pricing: CarPricing;
   casco_price: number;
+  description: string;
   specs: CarSpecs;
+  order: number;
   available: boolean;
   created_at: string;
 }
