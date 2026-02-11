@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, RefreshControl, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, RefreshControl, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
@@ -9,6 +9,35 @@ import { Car } from '../../src/types';
 import CarCard from '../../src/components/CarCard';
 import RentalFilters from '../../src/components/RentalFilters';
 
+const { width } = Dimensions.get('window');
+
+const BANNERS = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?w=800',
+    title: 'Ofertă Specială!',
+    subtitle: '-15% pentru închirieri de 7+ zile',
+    badge: 'COD: DRIVE15',
+    bgColor: 'rgba(0,122,255,0.85)',
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800',
+    title: 'Mașini Premium',
+    subtitle: 'BMW, Mercedes, Audi disponibile',
+    badge: 'NOUĂ FLOTĂ',
+    bgColor: 'rgba(52,199,89,0.85)',
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800',
+    title: 'Aeroport Transfer',
+    subtitle: 'Preluare gratuită Chișinău',
+    badge: 'GRATUIT',
+    bgColor: 'rgba(255,149,0,0.85)',
+  },
+];
+
 export default function HomeScreen() {
   const { user } = useAuth();
   const { filters } = useRental();
@@ -16,6 +45,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [seeded, setSeeded] = useState(false);
+  const [currentBanner, setCurrentBanner] = useState(0);
+  const bannerScrollRef = useRef<ScrollView>(null);
 
   const fetchCars = async () => {
     try {
@@ -41,6 +72,16 @@ export default function HomeScreen() {
     fetchCars();
   }, []);
 
+  // Auto-scroll banners
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextBanner = (currentBanner + 1) % BANNERS.length;
+      setCurrentBanner(nextBanner);
+      bannerScrollRef.current?.scrollTo({ x: nextBanner * (width - 32), animated: true });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [currentBanner]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchCars();
@@ -50,6 +91,11 @@ export default function HomeScreen() {
     const start = new Date(filters.startDate);
     const end = new Date(filters.endDate);
     return Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+  };
+
+  const handleBannerScroll = (event: any) => {
+    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / (width - 32));
+    setCurrentBanner(slideIndex);
   };
 
   return (
@@ -71,19 +117,47 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Promotional Banner */}
-        <View style={styles.bannerContainer}>
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1720907662942-f552fa04eb3b?w=800' }}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-          <View style={styles.bannerOverlay}>
-            <Text style={styles.bannerTitle}>Ofertă Specială!</Text>
-            <Text style={styles.bannerText}>-15% pentru închirieri de 7+ zile</Text>
-            <View style={styles.bannerBadge}>
-              <Text style={styles.bannerBadgeText}>COD: DRIVE15</Text>
-            </View>
+        {/* Banner Slider */}
+        <View style={styles.bannerSection}>
+          <ScrollView
+            ref={bannerScrollRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleBannerScroll}
+            decelerationRate="fast"
+            snapToInterval={width - 32}
+            contentContainerStyle={styles.bannerScroll}
+          >
+            {BANNERS.map((banner, index) => (
+              <View key={banner.id} style={styles.bannerContainer}>
+                <Image
+                  source={{ uri: banner.image }}
+                  style={styles.bannerImage}
+                  resizeMode="cover"
+                />
+                <View style={[styles.bannerOverlay, { backgroundColor: banner.bgColor }]}>
+                  <Text style={styles.bannerTitle}>{banner.title}</Text>
+                  <Text style={styles.bannerText}>{banner.subtitle}</Text>
+                  <View style={styles.bannerBadge}>
+                    <Text style={styles.bannerBadgeText}>{banner.badge}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+          
+          {/* Pagination dots */}
+          <View style={styles.pagination}>
+            {BANNERS.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.paginationDot,
+                  currentBanner === index && styles.paginationDotActive,
+                ]}
+              />
+            ))}
           </View>
         </View>
 
@@ -155,11 +229,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  bannerSection: {
+    marginBottom: 8,
+  },
+  bannerScroll: {
+    paddingHorizontal: 16,
+  },
   bannerContainer: {
-    marginHorizontal: 16,
+    width: width - 32,
+    height: 200,
     borderRadius: 16,
     overflow: 'hidden',
-    height: 180,
+    marginRight: 0,
   },
   bannerImage: {
     width: '100%',
@@ -171,32 +252,53 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
-    padding: 20,
+    padding: 24,
   },
   bannerTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '800',
     color: '#fff',
     marginBottom: 8,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   bannerText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#fff',
-    marginBottom: 12,
+    marginBottom: 16,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   bannerBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FF9500',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
   },
   bannerBadgeText: {
-    color: '#fff',
+    color: '#1a1a1a',
     fontWeight: '700',
     fontSize: 14,
+  },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 12,
+    gap: 8,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ccc',
+  },
+  paginationDotActive: {
+    backgroundColor: '#007AFF',
+    width: 24,
   },
   summaryContainer: {
     marginHorizontal: 16,
