@@ -485,7 +485,7 @@ async def update_profile_picture(data: ProfilePictureUpdate, request: Request):
         raise HTTPException(status_code=401, detail="Nu ești autentificat")
     
     await db.users.update_one(
-        {"user_id": user["user_id"]},
+        {"user_id": user.user_id},
         {"$set": {"picture": data.picture}}
     )
     
