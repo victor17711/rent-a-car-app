@@ -170,8 +170,7 @@
             color: var(--primary);
         }
         
-        .google-btn {
-            background: var(--primary);
+        .auth-btn {
             color: white;
             border: none;
             padding: 14px 24px;
@@ -183,13 +182,63 @@
             justify-content: center;
             gap: 10px;
             transition: all 0.2s;
+            margin-bottom: 12px;
         }
         
-        .google-btn:hover {
-            background: #0056b3;
+        .auth-btn:hover {
             transform: translateY(-2px);
         }
         
+        .auth-btn.primary {
+            background: var(--primary);
+        }
+        
+        .auth-btn.primary:hover {
+            background: #0056b3;
+        }
+        
+        .auth-btn.outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .form-control {
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .divider span {
+            padding: 0 16px;
+            color: #999;
+            font-size: 14px;
+        }
+
         #app { display: none; }
         #login { display: block; }
         
@@ -207,6 +256,16 @@
             font-size: 14px;
             margin-right: 4px;
         }
+        
+        .toggle-link {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -218,10 +277,65 @@
                 <h3 class="mt-3 fw-bold">DriveMate Admin</h3>
                 <p class="text-muted">Panou de Administrare</p>
             </div>
-            <button class="google-btn" onclick="login()">
-                <i class="bi bi-google"></i>
-                Autentifică-te cu Google
-            </button>
+            
+            <!-- Email Login Form -->
+            <div id="emailLoginForm">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="admin@exemplu.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Parolă</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="Parola ta">
+                </div>
+                <button class="auth-btn primary" onclick="loginWithEmail()">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Autentifică-te
+                </button>
+                
+                <div class="divider"><span>sau</span></div>
+                
+                <button class="auth-btn outline" onclick="loginWithGoogle()">
+                    <i class="bi bi-google"></i>
+                    Continuă cu Google
+                </button>
+                
+                <p class="text-center mt-3">
+                    Nu ai cont? <a class="toggle-link" onclick="showRegisterForm()">Înregistrează-te</a>
+                </p>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" style="display:none;">
+                <div class="mb-3">
+                    <label class="form-label">Nume</label>
+                    <input type="text" class="form-control" id="registerName" placeholder="Nume complet">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" placeholder="admin@exemplu.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Parolă</label>
+                    <input type="password" class="form-control" id="registerPassword" placeholder="Minim 6 caractere">
+                </div>
+                <button class="auth-btn primary" onclick="registerUser()">
+                    <i class="bi bi-person-plus"></i>
+                    Înregistrează-te
+                </button>
+                
+                <div class="divider"><span>sau</span></div>
+                
+                <button class="auth-btn outline" onclick="loginWithGoogle()">
+                    <i class="bi bi-google"></i>
+                    Continuă cu Google
+                </button>
+                
+                <p class="text-center mt-3">
+                    Ai deja cont? <a class="toggle-link" onclick="showLoginForm()">Autentifică-te</a>
+                </p>
+            </div>
+            
             <p class="text-center text-muted mt-4 small">
                 Acces rezervat administratorilor
             </p>
@@ -261,7 +375,7 @@
             </ul>
             <div class="mt-auto p-3 border-top">
                 <div class="d-flex align-items-center mb-3">
-                    <img id="userAvatar" src="" class="rounded-circle me-2" width="40" height="40">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:40px;height:40px;" id="userAvatarInitial">A</div>
                     <div>
                         <small class="fw-bold" id="userName"></small>
                         <br><small class="text-muted">Admin</small>
@@ -538,10 +652,95 @@
             return response.json();
         }
 
+        // Form Toggle
+        function showLoginForm() {
+            document.getElementById('emailLoginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+        
+        function showRegisterForm() {
+            document.getElementById('emailLoginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
         // Auth Functions
-        function login() {
-            const redirectUrl = window.location.origin + '/admin/';
+        function loginWithGoogle() {
+            const redirectUrl = window.location.origin + '/api/admin/';
             window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+        }
+        
+        async function loginWithEmail() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Completați toate câmpurile');
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                sessionToken = result.session_token;
+                localStorage.setItem('admin_session_token', sessionToken);
+                currentUser = result.user;
+                
+                // Check if admin
+                if (currentUser.role !== 'admin') {
+                    try {
+                        await apiCall('/admin/make-admin', { method: 'POST' });
+                        currentUser.role = 'admin';
+                    } catch (e) {
+                        alert('Nu aveți acces de administrator. Contactați administratorul principal.');
+                        logout();
+                        return;
+                    }
+                }
+                
+                showApp();
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+        
+        async function registerUser() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!name || !email || !password) {
+                alert('Completați toate câmpurile');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Parola trebuie să aibă minim 6 caractere');
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ name, email, password })
+                });
+                sessionToken = result.session_token;
+                localStorage.setItem('admin_session_token', sessionToken);
+                currentUser = result.user;
+                
+                // Make admin
+                try {
+                    await apiCall('/admin/make-admin', { method: 'POST' });
+                    currentUser.role = 'admin';
+                } catch (e) {
+                    // Ignore
+                }
+                
+                showApp();
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
         }
 
         async function processAuth() {
@@ -562,7 +761,6 @@
                     
                     // Check if admin
                     if (currentUser.role !== 'admin') {
-                        // Try to make admin
                         try {
                             await apiCall('/admin/make-admin', { method: 'POST' });
                             currentUser.role = 'admin';
@@ -582,9 +780,14 @@
                 try {
                     currentUser = await apiCall('/auth/me');
                     if (currentUser.role !== 'admin') {
-                        alert('Nu aveți acces de administrator.');
-                        logout();
-                        return;
+                        try {
+                            await apiCall('/admin/make-admin', { method: 'POST' });
+                            currentUser.role = 'admin';
+                        } catch (e) {
+                            alert('Nu aveți acces de administrator.');
+                            logout();
+                            return;
+                        }
                     }
                     showApp();
                 } catch (error) {
@@ -606,7 +809,7 @@
             document.getElementById('login').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             document.getElementById('userName').textContent = currentUser.name;
-            document.getElementById('userAvatar').src = currentUser.picture || 'https://via.placeholder.com/40';
+            document.getElementById('userAvatarInitial').textContent = currentUser.name.charAt(0).toUpperCase();
             loadDashboard();
         }
 
@@ -745,7 +948,7 @@
             try {
                 const bookings = await apiCall('/admin/bookings');
                 const tbody = document.getElementById('bookings-table');
-                tbody.innerHTML = bookings.map(b => `
+                tbody.innerHTML = bookings.length === 0 ? '<tr><td colspan="7" class="text-center text-muted py-4">Nicio rezervare</td></tr>' : bookings.map(b => `
                     <tr>
                         <td><small>${b.booking_id.slice(0, 12)}...</small></td>
                         <td><strong>${b.car_name}</strong></td>
@@ -785,7 +988,7 @@
             try {
                 const partners = await apiCall('/admin/partner-requests');
                 const tbody = document.getElementById('partners-table');
-                tbody.innerHTML = partners.map(p => `
+                tbody.innerHTML = partners.length === 0 ? '<tr><td colspan="7" class="text-center text-muted py-4">Nicio cerere</td></tr>' : partners.map(p => `
                     <tr>
                         <td>${new Date(p.created_at).toLocaleDateString('ro-RO')}</td>
                         <td><strong>${p.name}</strong></td>
