@@ -44,30 +44,30 @@ export default function ProfileScreen() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.7,
+        quality: 0.5,
         base64: true,
       });
 
-      if (!result.canceled && result.assets[0].base64) {
+      if (!result.canceled && result.assets && result.assets[0] && result.assets[0].base64) {
         setUploadingPhoto(true);
         try {
           const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
-          const response = await api.updateProfilePicture(base64Image);
-          if (updateUser) {
+          await api.updateProfilePicture(base64Image);
+          if (updateUser && user) {
             updateUser({ ...user, picture: base64Image });
           }
           Alert.alert('Succes', 'Poza de profil a fost actualizată!');
-        } catch (error) {
+        } catch (error: any) {
           console.error('Upload error:', error);
-          Alert.alert('Eroare', 'Nu s-a putut actualiza poza de profil.');
+          Alert.alert('Eroare', error?.message || 'Nu s-a putut actualiza poza de profil.');
         } finally {
           setUploadingPhoto(false);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Image picker error:', error);
       Alert.alert('Eroare', 'A apărut o eroare la selectarea imaginii.');
     }
