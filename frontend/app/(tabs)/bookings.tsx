@@ -94,7 +94,7 @@ export default function BookingsScreen() {
     return (
       <SafeAreaView style={styles.container} edges={[]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
+          <ActivityIndicator size="large" color="#A31621" />
           <Text style={styles.loadingText}>Se încarcă rezervările...</Text>
         </View>
       </SafeAreaView>
