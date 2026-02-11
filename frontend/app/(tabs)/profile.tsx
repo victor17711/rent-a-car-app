@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
-import { api } from '../../src/utils/api';
 
 export default function ProfileScreen() {
-  const { user, isAuthenticated, logout, refreshUser } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -16,19 +15,20 @@ export default function ProfileScreen() {
       'Sigur dorești să te deconectezi?',
       [
         { text: 'Anulează', style: 'cancel' },
-        { text: 'Deconectează-mă', style: 'destructive', onPress: logout },
+        { 
+          text: 'Deconectează-mă', 
+          style: 'destructive', 
+          onPress: async () => {
+            await logout();
+            router.replace('/');
+          }
+        },
       ]
     );
   };
 
-  const handleMakeAdmin = async () => {
-    try {
-      await api.makeAdmin();
-      await refreshUser();
-      Alert.alert('Succes', 'Acum ești administrator!');
-    } catch (error: any) {
-      Alert.alert('Eroare', error.message);
-    }
+  const handleBecomePartner = () => {
+    router.push('/partner');
   };
 
   if (!isAuthenticated) {
@@ -71,7 +71,7 @@ export default function ProfileScreen() {
         <View style={styles.menuSection}>
           <Text style={styles.menuTitle}>Cont</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/bookings')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="calendar-outline" size={22} color="#007AFF" />
               <Text style={styles.menuItemText}>Rezervările mele</Text>
@@ -96,19 +96,17 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Admin Section */}
-        {user?.role !== 'admin' && (
-          <View style={styles.menuSection}>
-            <Text style={styles.menuTitle}>Admin</Text>
-            <TouchableOpacity style={styles.menuItem} onPress={handleMakeAdmin}>
-              <View style={styles.menuItemLeft}>
-                <Ionicons name="key-outline" size={22} color="#34C759" />
-                <Text style={styles.menuItemText}>Devino Administrator</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </TouchableOpacity>
-          </View>
-        )}
+        {/* Partner Section */}
+        <View style={styles.menuSection}>
+          <Text style={styles.menuTitle}>Colaborare</Text>
+          <TouchableOpacity style={styles.menuItem} onPress={handleBecomePartner}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="handshake-outline" size={22} color="#34C759" />
+              <Text style={styles.menuItemText}>Devino Partener</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.menuSection}>
           <Text style={styles.menuTitle}>Suport</Text>
