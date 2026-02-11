@@ -72,12 +72,16 @@ export interface Booking {
   user_id: string;
   car_id: string;
   car_name: string;
+  car_image: string;
   start_date: string;
   end_date: string;
   start_time: string;
   end_time: string;
   location: string;
   insurance: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_age: number;
   total_price: number;
   status: string;
   created_at: string;
