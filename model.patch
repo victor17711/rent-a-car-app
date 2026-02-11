@@ -1,73 +1,91 @@
-diff --git a/test_result.md b/test_result.md
-index fb19e90..e954ed1 100644
---- a/test_result.md
-+++ b/test_result.md
-@@ -123,11 +123,14 @@ backend:
-     file: "backend/server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: true
-         agent: "main"
-         comment: "GET /api/cars returns list of cars with all fields"
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ TESTED: GET /api/cars returns 6 cars with correct structure including pricing tiers (day_1: 55€, day_3: 50€, day_5: 45€, day_10: 40€, day_20: 35€), all required fields present (car_id, name, brand, model, year, transmission, fuel, seats, pricing, casco_price, available)"
- 
-   - task: "Get car by ID"
-     implemented: true
-@@ -135,11 +138,14 @@ backend:
-     file: "backend/server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: true
-         agent: "main"
-         comment: "GET /api/cars/{id} endpoint implemented"
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ TESTED: GET /api/cars/car_bmw_seria3 returns correct car data with all required fields (car_id, name, brand, model, year, transmission, fuel, seats, pricing, casco_price). BMW Seria 3 - BMW 320d (2023) with pricing tiers and 15€/day CASCO price"
- 
-   - task: "Calculate price with day tiers"
-     implemented: true
-@@ -147,11 +153,14 @@ backend:
-     file: "backend/server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: true
-         agent: "main"
-         comment: "POST /api/calculate-price calculates correctly: base price from day tier (1,3,5,10,20 days), CASCO per day, location fee (150€ for Iasi), outside hours fee (25€ each for before 9:00 or after 18:00)"
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ TESTED: POST /api/calculate-price working perfectly. All 3 test scenarios passed: 1) 1 day office RCA = 55€ ✓, 2) 3 days office CASCO = 195€ (150€ base + 45€ CASCO) ✓, 3) 5 days Iasi outside hours = 425€ (225€ base + 150€ location + 50€ outside hours) ✓. Day tiers, CASCO pricing, location fees, and outside hours fees all calculated correctly"
- 
-   - task: "Google Auth session exchange"
-     implemented: true
-@@ -269,14 +278,13 @@ metadata:
-   run_ui: false
- 
- test_plan:
--  current_focus:
--    - "Get all cars"
--    - "Calculate price with day tiers"
--    - "Get car by ID"
-+  current_focus: []
-   stuck_tasks: []
-   test_all: false
-   test_priority: "high_first"
- 
- agent_communication:
-   - agent: "main"
--    message: "Mobile car rental app MVP implemented. Backend has car CRUD, price calculator with day tiers (1,3,5,10,20 days), insurance (RCA free, CASCO paid per day), location fees (office/Chisinau free, Iasi 150€), and outside hours fees (25€ before 9:00 or after 18:00). Frontend has login, home with filters, car cards, detail page, and bookings. Need to test backend APIs."
-\ No newline at end of file
-+    message: "Mobile car rental app MVP implemented. Backend has car CRUD, price calculator with day tiers (1,3,5,10,20 days), insurance (RCA free, CASCO paid per day), location fees (office/Chisinau free, Iasi 150€), and outside hours fees (25€ before 9:00 or after 18:00). Frontend has login, home with filters, car cards, detail page, and bookings. Need to test backend APIs."
-+  - agent: "testing"
-+    message: "✅ BACKEND TESTING COMPLETE: All 3 high-priority backend tasks tested successfully. GET /api/cars returns 6 cars with correct pricing tiers, GET /api/cars/{id} works for specific car lookup, POST /api/calculate-price accurately calculates all pricing scenarios including day tiers, CASCO insurance, location fees, and outside hours fees. Database is properly seeded. All backend APIs are working correctly."
-\ No newline at end of file
+diff --git a/frontend/app/index.tsx b/frontend/app/index.tsx
+index e3886e8..a526339 100644
+--- a/frontend/app/index.tsx
++++ b/frontend/app/index.tsx
+@@ -64,7 +64,7 @@ export default function LoginScreen() {
+           {/* Logo Section */}
+           <View style={styles.logoSection}>
+             <View style={styles.logoContainer}>
+-              <Ionicons name="car-sport" size={64} color="#007AFF" />
++              <Ionicons name="car-sport" size={64} color="#A31621" />
+             </View>
+             <Text style={styles.brandName}>DriveMate</Text>
+             <Text style={styles.tagline}>Închirieri Auto Premium</Text>
+diff --git a/model.patch b/model.patch
+index bd229c5..e69de29 100644
+--- a/model.patch
++++ b/model.patch
+@@ -1,73 +0,0 @@
+-diff --git a/test_result.md b/test_result.md
+-index fb19e90..e954ed1 100644
+---- a/test_result.md
+-+++ b/test_result.md
+-@@ -123,11 +123,14 @@ backend:
+-     file: "backend/server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: true
+-         agent: "main"
+-         comment: "GET /api/cars returns list of cars with all fields"
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ TESTED: GET /api/cars returns 6 cars with correct structure including pricing tiers (day_1: 55€, day_3: 50€, day_5: 45€, day_10: 40€, day_20: 35€), all required fields present (car_id, name, brand, model, year, transmission, fuel, seats, pricing, casco_price, available)"
+- 
+-   - task: "Get car by ID"
+-     implemented: true
+-@@ -135,11 +138,14 @@ backend:
+-     file: "backend/server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: true
+-         agent: "main"
+-         comment: "GET /api/cars/{id} endpoint implemented"
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ TESTED: GET /api/cars/car_bmw_seria3 returns correct car data with all required fields (car_id, name, brand, model, year, transmission, fuel, seats, pricing, casco_price). BMW Seria 3 - BMW 320d (2023) with pricing tiers and 15€/day CASCO price"
+- 
+-   - task: "Calculate price with day tiers"
+-     implemented: true
+-@@ -147,11 +153,14 @@ backend:
+-     file: "backend/server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: true
+-         agent: "main"
+-         comment: "POST /api/calculate-price calculates correctly: base price from day tier (1,3,5,10,20 days), CASCO per day, location fee (150€ for Iasi), outside hours fee (25€ each for before 9:00 or after 18:00)"
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ TESTED: POST /api/calculate-price working perfectly. All 3 test scenarios passed: 1) 1 day office RCA = 55€ ✓, 2) 3 days office CASCO = 195€ (150€ base + 45€ CASCO) ✓, 3) 5 days Iasi outside hours = 425€ (225€ base + 150€ location + 50€ outside hours) ✓. Day tiers, CASCO pricing, location fees, and outside hours fees all calculated correctly"
+- 
+-   - task: "Google Auth session exchange"
+-     implemented: true
+-@@ -269,14 +278,13 @@ metadata:
+-   run_ui: false
+- 
+- test_plan:
+--  current_focus:
+--    - "Get all cars"
+--    - "Calculate price with day tiers"
+--    - "Get car by ID"
+-+  current_focus: []
+-   stuck_tasks: []
+-   test_all: false
+-   test_priority: "high_first"
+- 
+- agent_communication:
+-   - agent: "main"
+--    message: "Mobile car rental app MVP implemented. Backend has car CRUD, price calculator with day tiers (1,3,5,10,20 days), insurance (RCA free, CASCO paid per day), location fees (office/Chisinau free, Iasi 150€), and outside hours fees (25€ before 9:00 or after 18:00). Frontend has login, home with filters, car cards, detail page, and bookings. Need to test backend APIs."
+-\ No newline at end of file
+-+    message: "Mobile car rental app MVP implemented. Backend has car CRUD, price calculator with day tiers (1,3,5,10,20 days), insurance (RCA free, CASCO paid per day), location fees (office/Chisinau free, Iasi 150€), and outside hours fees (25€ before 9:00 or after 18:00). Frontend has login, home with filters, car cards, detail page, and bookings. Need to test backend APIs."
+-+  - agent: "testing"
+-+    message: "✅ BACKEND TESTING COMPLETE: All 3 high-priority backend tasks tested successfully. GET /api/cars returns 6 cars with correct pricing tiers, GET /api/cars/{id} works for specific car lookup, POST /api/calculate-price accurately calculates all pricing scenarios including day tiers, CASCO insurance, location fees, and outside hours fees. Database is properly seeded. All backend APIs are working correctly."
+-\ No newline at end of file
