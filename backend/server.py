@@ -854,6 +854,12 @@ async def seed_data():
 # Include the router
 app.include_router(api_router)
 
+# Serve admin panel
+@app.get("/admin/")
+@app.get("/admin")
+async def admin_panel():
+    return FileResponse(ROOT_DIR / 'static' / 'admin.html')
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
