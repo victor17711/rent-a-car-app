@@ -19,7 +19,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_URL = 'https://auth.emergentagent.com';
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://drivemate-11.preview.emergentagent.com';
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://rentalfleet-9.preview.emergentagent.com';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
