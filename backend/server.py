@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +7,10 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
-from datetime import datetime
-
+from datetime import datetime, timezone, timedelta
+import httpx
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -17,42 +18,751 @@ load_dotenv(ROOT_DIR / '.env')
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'car_rental_db')]
 
-# Create the main app without a prefix
+# Create the main app
 app = FastAPI()
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-# Define Models
-class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+# ==================== MODELS ====================
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class User(BaseModel):
+    user_id: str
+    email: str
+    name: str
+    picture: Optional[str] = None
+    role: str = "user"  # user or admin
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
+class UserSession(BaseModel):
+    user_id: str
+    session_token: str
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
+class SessionDataResponse(BaseModel):
+    id: str
+    email: str
+    name: str
+    picture: Optional[str] = None
+    session_token: str
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+class CarPricing(BaseModel):
+    day_1: float
+    day_3: float
+    day_5: float
+    day_10: float
+    day_20: float
 
-# Include the router in the main app
+class Car(BaseModel):
+    car_id: str = Field(default_factory=lambda: f"car_{uuid.uuid4().hex[:12]}")
+    name: str
+    brand: str
+    model: str
+    year: int
+    transmission: str  # manual or automatic
+    fuel: str  # diesel, petrol, electric, hybrid
+    seats: int
+    images: List[str] = []  # base64 images
+    pricing: CarPricing
+    casco_price: float  # daily CASCO price
+    specs: dict = {}  # additional specs
+    available: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CarCreate(BaseModel):
+    name: str
+    brand: str
+    model: str
+    year: int
+    transmission: str
+    fuel: str
+    seats: int
+    images: List[str] = []
+    pricing: CarPricing
+    casco_price: float
+    specs: dict = {}
+    available: bool = True
+
+class CarUpdate(BaseModel):
+    name: Optional[str] = None
+    brand: Optional[str] = None
+    model: Optional[str] = None
+    year: Optional[int] = None
+    transmission: Optional[str] = None
+    fuel: Optional[str] = None
+    seats: Optional[int] = None
+    images: Optional[List[str]] = None
+    pricing: Optional[CarPricing] = None
+    casco_price: Optional[float] = None
+    specs: Optional[dict] = None
+    available: Optional[bool] = None
+
+class PriceCalculationRequest(BaseModel):
+    car_id: str
+    start_date: str  # ISO date string
+    end_date: str
+    start_time: str  # HH:MM format
+    end_time: str
+    location: str  # office, chisinau_airport, iasi_airport
+    insurance: str  # rca or casco
+
+class PriceCalculationResponse(BaseModel):
+    car_id: str
+    days: int
+    base_price: float
+    casco_price: float
+    location_fee: float
+    outside_hours_fee: float
+    total_price: float
+    breakdown: dict
+
+class Booking(BaseModel):
+    booking_id: str = Field(default_factory=lambda: f"booking_{uuid.uuid4().hex[:12]}")
+    user_id: str
+    car_id: str
+    car_name: str
+    start_date: str
+    end_date: str
+    start_time: str
+    end_time: str
+    location: str
+    insurance: str
+    total_price: float
+    status: str = "pending"  # pending, confirmed, completed, cancelled
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BookingCreate(BaseModel):
+    car_id: str
+    start_date: str
+    end_date: str
+    start_time: str
+    end_time: str
+    location: str
+    insurance: str
+
+# ==================== AUTH HELPERS ====================
+
+async def get_session_token(request: Request) -> Optional[str]:
+    """Extract session token from cookies or Authorization header"""
+    # Try cookies first
+    session_token = request.cookies.get("session_token")
+    if session_token:
+        return session_token
+    
+    # Try Authorization header
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        return auth_header[7:]
+    
+    return None
+
+async def get_current_user(request: Request) -> Optional[User]:
+    """Get current user from session token"""
+    session_token = await get_session_token(request)
+    if not session_token:
+        return None
+    
+    session = await db.user_sessions.find_one(
+        {"session_token": session_token},
+        {"_id": 0}
+    )
+    if not session:
+        return None
+    
+    # Check expiry with timezone awareness
+    expires_at = session["expires_at"]
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    
+    if expires_at < datetime.now(timezone.utc):
+        return None
+    
+    user_doc = await db.users.find_one(
+        {"user_id": session["user_id"]},
+        {"_id": 0}
+    )
+    if user_doc:
+        return User(**user_doc)
+    return None
+
+async def require_auth(request: Request) -> User:
+    """Require authentication - raises 401 if not authenticated"""
+    user = await get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return user
+
+async def require_admin(request: Request) -> User:
+    """Require admin role"""
+    user = await require_auth(request)
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+# ==================== AUTH ENDPOINTS ====================
+
+@api_router.post("/auth/session")
+async def create_session(request: Request, response: Response):
+    """Exchange session_id for session_token"""
+    body = await request.json()
+    session_id = body.get("session_id")
+    
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id required")
+    
+    # Call Emergent Auth API
+    async with httpx.AsyncClient() as client:
+        try:
+            auth_response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id}
+            )
+            if auth_response.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid session_id")
+            
+            user_data = auth_response.json()
+        except Exception as e:
+            logger.error(f"Auth API error: {e}")
+            raise HTTPException(status_code=500, detail="Authentication failed")
+    
+    session_data = SessionDataResponse(**user_data)
+    
+    # Check if user exists
+    existing_user = await db.users.find_one(
+        {"email": session_data.email},
+        {"_id": 0}
+    )
+    
+    if existing_user:
+        user_id = existing_user["user_id"]
+    else:
+        # Create new user
+        user_id = f"user_{uuid.uuid4().hex[:12]}"
+        new_user = {
+            "user_id": user_id,
+            "email": session_data.email,
+            "name": session_data.name,
+            "picture": session_data.picture,
+            "role": "user",
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.users.insert_one(new_user)
+    
+    # Create session
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    session = {
+        "user_id": user_id,
+        "session_token": session_data.session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session)
+    
+    # Get user data
+    user_doc = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_data.session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=7 * 24 * 60 * 60,
+        path="/"
+    )
+    
+    return {"user": user_doc, "session_token": session_data.session_token}
+
+@api_router.get("/auth/me")
+async def get_me(request: Request):
+    """Get current user"""
+    user = await get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return user.model_dump()
+
+@api_router.post("/auth/logout")
+async def logout(request: Request, response: Response):
+    """Logout user"""
+    session_token = await get_session_token(request)
+    if session_token:
+        await db.user_sessions.delete_many({"session_token": session_token})
+    
+    response.delete_cookie(key="session_token", path="/")
+    return {"message": "Logged out successfully"}
+
+# ==================== CAR ENDPOINTS ====================
+
+@api_router.get("/cars")
+async def get_cars(
+    brand: Optional[str] = None,
+    transmission: Optional[str] = None,
+    fuel: Optional[str] = None,
+    min_seats: Optional[int] = None,
+    available_only: bool = True
+):
+    """Get all cars with optional filters"""
+    query = {}
+    
+    if brand:
+        query["brand"] = {"$regex": brand, "$options": "i"}
+    if transmission:
+        query["transmission"] = transmission
+    if fuel:
+        query["fuel"] = fuel
+    if min_seats:
+        query["seats"] = {"$gte": min_seats}
+    if available_only:
+        query["available"] = True
+    
+    cars = await db.cars.find(query, {"_id": 0}).to_list(100)
+    return cars
+
+@api_router.get("/cars/{car_id}")
+async def get_car(car_id: str):
+    """Get car by ID"""
+    car = await db.cars.find_one({"car_id": car_id}, {"_id": 0})
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    return car
+
+@api_router.post("/calculate-price")
+async def calculate_price(request: PriceCalculationRequest):
+    """Calculate rental price"""
+    # Get car
+    car = await db.cars.find_one({"car_id": request.car_id}, {"_id": 0})
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    
+    # Calculate days
+    start = datetime.fromisoformat(request.start_date)
+    end = datetime.fromisoformat(request.end_date)
+    days = (end - start).days + 1
+    
+    if days < 1:
+        raise HTTPException(status_code=400, detail="Invalid date range")
+    
+    # Get base price based on day tier
+    pricing = car["pricing"]
+    if days >= 20:
+        daily_rate = pricing["day_20"]
+    elif days >= 10:
+        daily_rate = pricing["day_10"]
+    elif days >= 5:
+        daily_rate = pricing["day_5"]
+    elif days >= 3:
+        daily_rate = pricing["day_3"]
+    else:
+        daily_rate = pricing["day_1"]
+    
+    base_price = daily_rate * days
+    
+    # CASCO insurance
+    casco_price = 0
+    if request.insurance == "casco":
+        casco_price = car["casco_price"] * days
+    
+    # Location fee
+    location_fee = 0
+    if request.location == "iasi_airport":
+        location_fee = 150
+    
+    # Outside hours fee (before 09:00 or after 18:00)
+    outside_hours_fee = 0
+    start_hour = int(request.start_time.split(":")[0])
+    end_hour = int(request.end_time.split(":")[0])
+    
+    if start_hour < 9 or start_hour >= 18:
+        outside_hours_fee += 25
+    if end_hour < 9 or end_hour >= 18:
+        outside_hours_fee += 25
+    
+    total_price = base_price + casco_price + location_fee + outside_hours_fee
+    
+    return PriceCalculationResponse(
+        car_id=request.car_id,
+        days=days,
+        base_price=base_price,
+        casco_price=casco_price,
+        location_fee=location_fee,
+        outside_hours_fee=outside_hours_fee,
+        total_price=total_price,
+        breakdown={
+            "daily_rate": daily_rate,
+            "days": days,
+            "base": base_price,
+            "casco": casco_price,
+            "location": location_fee,
+            "outside_hours": outside_hours_fee
+        }
+    )
+
+# ==================== BOOKING ENDPOINTS ====================
+
+@api_router.post("/bookings")
+async def create_booking(booking_data: BookingCreate, request: Request):
+    """Create a new booking"""
+    user = await require_auth(request)
+    
+    # Get car
+    car = await db.cars.find_one({"car_id": booking_data.car_id}, {"_id": 0})
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    
+    # Calculate price
+    price_request = PriceCalculationRequest(
+        car_id=booking_data.car_id,
+        start_date=booking_data.start_date,
+        end_date=booking_data.end_date,
+        start_time=booking_data.start_time,
+        end_time=booking_data.end_time,
+        location=booking_data.location,
+        insurance=booking_data.insurance
+    )
+    price_result = await calculate_price(price_request)
+    
+    booking = Booking(
+        user_id=user.user_id,
+        car_id=booking_data.car_id,
+        car_name=car["name"],
+        start_date=booking_data.start_date,
+        end_date=booking_data.end_date,
+        start_time=booking_data.start_time,
+        end_time=booking_data.end_time,
+        location=booking_data.location,
+        insurance=booking_data.insurance,
+        total_price=price_result.total_price
+    )
+    
+    await db.bookings.insert_one(booking.model_dump())
+    
+    return booking.model_dump()
+
+@api_router.get("/bookings")
+async def get_user_bookings(request: Request):
+    """Get current user's bookings"""
+    user = await require_auth(request)
+    
+    bookings = await db.bookings.find(
+        {"user_id": user.user_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return bookings
+
+# ==================== ADMIN ENDPOINTS ====================
+
+@api_router.post("/admin/cars")
+async def create_car(car_data: CarCreate, request: Request):
+    """Create a new car (admin only)"""
+    await require_admin(request)
+    
+    car = Car(**car_data.model_dump())
+    await db.cars.insert_one(car.model_dump())
+    
+    return car.model_dump()
+
+@api_router.put("/admin/cars/{car_id}")
+async def update_car(car_id: str, car_data: CarUpdate, request: Request):
+    """Update a car (admin only)"""
+    await require_admin(request)
+    
+    update_data = {k: v for k, v in car_data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = await db.cars.update_one(
+        {"car_id": car_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Car not found")
+    
+    car = await db.cars.find_one({"car_id": car_id}, {"_id": 0})
+    return car
+
+@api_router.delete("/admin/cars/{car_id}")
+async def delete_car(car_id: str, request: Request):
+    """Delete a car (admin only)"""
+    await require_admin(request)
+    
+    result = await db.cars.delete_one({"car_id": car_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Car not found")
+    
+    return {"message": "Car deleted successfully"}
+
+@api_router.get("/admin/bookings")
+async def get_all_bookings(request: Request, status: Optional[str] = None):
+    """Get all bookings (admin only)"""
+    await require_admin(request)
+    
+    query = {}
+    if status:
+        query["status"] = status
+    
+    bookings = await db.bookings.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return bookings
+
+@api_router.put("/admin/bookings/{booking_id}/status")
+async def update_booking_status(booking_id: str, request: Request):
+    """Update booking status (admin only)"""
+    await require_admin(request)
+    
+    body = await request.json()
+    new_status = body.get("status")
+    
+    if new_status not in ["pending", "confirmed", "completed", "cancelled"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    result = await db.bookings.update_one(
+        {"booking_id": booking_id},
+        {"$set": {"status": new_status}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    return {"message": "Status updated successfully"}
+
+@api_router.post("/admin/make-admin")
+async def make_admin(request: Request):
+    """Make current user admin (for testing)"""
+    user = await require_auth(request)
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"role": "admin"}}
+    )
+    
+    return {"message": "User is now admin"}
+
+# ==================== SEED DATA ====================
+
+@api_router.post("/seed")
+async def seed_data():
+    """Seed database with sample cars"""
+    # Check if cars exist
+    existing = await db.cars.count_documents({})
+    if existing > 0:
+        return {"message": f"Database already has {existing} cars"}
+    
+    sample_cars = [
+        {
+            "car_id": "car_bmw_seria3",
+            "name": "BMW Seria 3",
+            "brand": "BMW",
+            "model": "320d",
+            "year": 2023,
+            "transmission": "automatic",
+            "fuel": "diesel",
+            "seats": 5,
+            "images": [
+                "https://images.unsplash.com/photo-1579317471790-0e30bd51b55e?w=800",
+                "https://images.unsplash.com/photo-1717082832138-b8f332d86a2a?w=800"
+            ],
+            "pricing": {
+                "day_1": 55,
+                "day_3": 50,
+                "day_5": 45,
+                "day_10": 40,
+                "day_20": 35
+            },
+            "casco_price": 15,
+            "specs": {
+                "engine": "2.0L Turbo Diesel",
+                "power": "190 CP",
+                "consumption": "5.5L/100km",
+                "trunk": "480L",
+                "ac": True,
+                "gps": True,
+                "bluetooth": True
+            },
+            "available": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "car_id": "car_mercedes_cclass",
+            "name": "Mercedes-Benz C-Class",
+            "brand": "Mercedes-Benz",
+            "model": "C200",
+            "year": 2023,
+            "transmission": "automatic",
+            "fuel": "petrol",
+            "seats": 5,
+            "images": [
+                "https://images.unsplash.com/photo-1618836436067-3665afbc4ee9?w=800",
+                "https://images.unsplash.com/photo-1582733460601-0ae67a942777?w=800"
+            ],
+            "pricing": {
+                "day_1": 65,
+                "day_3": 58,
+                "day_5": 52,
+                "day_10": 45,
+                "day_20": 40
+            },
+            "casco_price": 18,
+            "specs": {
+                "engine": "2.0L Turbo",
+                "power": "204 CP",
+                "consumption": "7.0L/100km",
+                "trunk": "455L",
+                "ac": True,
+                "gps": True,
+                "bluetooth": True,
+                "leather_seats": True
+            },
+            "available": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "car_id": "car_audi_a4",
+            "name": "Audi A4",
+            "brand": "Audi",
+            "model": "A4 35 TDI",
+            "year": 2022,
+            "transmission": "automatic",
+            "fuel": "diesel",
+            "seats": 5,
+            "images": [
+                "https://images.unsplash.com/photo-1603623627643-9742fd3d0349?w=800",
+                "https://images.unsplash.com/photo-1558661091-5cc1b64d0dc5?w=800"
+            ],
+            "pricing": {
+                "day_1": 60,
+                "day_3": 55,
+                "day_5": 48,
+                "day_10": 42,
+                "day_20": 38
+            },
+            "casco_price": 16,
+            "specs": {
+                "engine": "2.0L TDI",
+                "power": "163 CP",
+                "consumption": "5.2L/100km",
+                "trunk": "460L",
+                "ac": True,
+                "gps": True,
+                "bluetooth": True,
+                "cruise_control": True
+            },
+            "available": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "car_id": "car_vw_passat",
+            "name": "Volkswagen Passat",
+            "brand": "Volkswagen",
+            "model": "Passat 2.0 TDI",
+            "year": 2022,
+            "transmission": "automatic",
+            "fuel": "diesel",
+            "seats": 5,
+            "images": [
+                "https://images.unsplash.com/photo-1720907662942-f552fa04eb3b?w=800"
+            ],
+            "pricing": {
+                "day_1": 45,
+                "day_3": 40,
+                "day_5": 35,
+                "day_10": 32,
+                "day_20": 28
+            },
+            "casco_price": 12,
+            "specs": {
+                "engine": "2.0L TDI",
+                "power": "150 CP",
+                "consumption": "5.0L/100km",
+                "trunk": "586L",
+                "ac": True,
+                "gps": True,
+                "bluetooth": True
+            },
+            "available": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "car_id": "car_toyota_corolla",
+            "name": "Toyota Corolla",
+            "brand": "Toyota",
+            "model": "Corolla Hybrid",
+            "year": 2023,
+            "transmission": "automatic",
+            "fuel": "hybrid",
+            "seats": 5,
+            "images": [
+                "https://images.unsplash.com/photo-1720907662945-7a10856cd0d4?w=800"
+            ],
+            "pricing": {
+                "day_1": 40,
+                "day_3": 35,
+                "day_5": 32,
+                "day_10": 28,
+                "day_20": 25
+            },
+            "casco_price": 10,
+            "specs": {
+                "engine": "1.8L Hybrid",
+                "power": "122 CP",
+                "consumption": "4.5L/100km",
+                "trunk": "361L",
+                "ac": True,
+                "gps": True,
+                "bluetooth": True,
+                "eco_mode": True
+            },
+            "available": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "car_id": "car_skoda_octavia",
+            "name": "Skoda Octavia",
+            "brand": "Skoda",
+            "model": "Octavia 1.5 TSI",
+            "year": 2023,
+            "transmission": "manual",
+            "fuel": "petrol",
+            "seats": 5,
+            "images": [
+                "https://images.unsplash.com/photo-1680425210909-d1680d778e76?w=800"
+            ],
+            "pricing": {
+                "day_1": 35,
+                "day_3": 32,
+                "day_5": 28,
+                "day_10": 25,
+                "day_20": 22
+            },
+            "casco_price": 10,
+            "specs": {
+                "engine": "1.5L TSI",
+                "power": "150 CP",
+                "consumption": "6.0L/100km",
+                "trunk": "600L",
+                "ac": True,
+                "bluetooth": True
+            },
+            "available": True,
+            "created_at": datetime.now(timezone.utc)
+        }
+    ]
+    
+    await db.cars.insert_many(sample_cars)
+    return {"message": f"Seeded {len(sample_cars)} cars"}
+
+# Include the router
 app.include_router(api_router)
 
 app.add_middleware(
@@ -62,13 +772,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
