@@ -92,15 +92,27 @@ export default function ProfileScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile Header */}
         <View style={styles.profileHeader}>
-          {user?.picture ? (
-            <Image source={{ uri: user.picture }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Ionicons name="person" size={40} color="#fff" />
+          <TouchableOpacity onPress={handleChangeProfilePicture} style={styles.avatarContainer}>
+            {uploadingPhoto ? (
+              <View style={styles.avatarPlaceholder}>
+                <ActivityIndicator size="large" color="#fff" />
+              </View>
+            ) : user?.picture ? (
+              <Image source={{ uri: user.picture }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarPlaceholder}>
+                <Ionicons name="person" size={40} color="#fff" />
+              </View>
+            )}
+            <View style={styles.editBadge}>
+              <Ionicons name="camera" size={16} color="#fff" />
             </View>
-          )}
+          </TouchableOpacity>
           <Text style={styles.userName}>{user?.name}</Text>
           <Text style={styles.userEmail}>{user?.email}</Text>
+          <TouchableOpacity style={styles.changePhotoButton} onPress={handleChangeProfilePicture}>
+            <Text style={styles.changePhotoText}>Schimbă poza</Text>
+          </TouchableOpacity>
           {user?.role === 'admin' && (
             <View style={styles.adminBadge}>
               <Ionicons name="shield-checkmark" size={14} color="#fff" />
