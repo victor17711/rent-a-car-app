@@ -77,7 +77,7 @@ export default function PartnerScreen() {
           {/* Header Info */}
           <View style={styles.headerInfo}>
             <View style={styles.iconContainer}>
-              <Ionicons name="handshake-outline" size={48} color="#007AFF" />
+              <Ionicons name="people-outline" size={48} color="#007AFF" />
             </View>
             <Text style={styles.headerTitle}>Devino Partener DriveMate</Text>
             <Text style={styles.headerText}>
