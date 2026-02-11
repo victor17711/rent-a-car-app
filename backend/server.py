@@ -715,7 +715,21 @@ async def get_all_bookings(request: Request, status: Optional[str] = None):
         query["status"] = status
     
     bookings = await db.bookings.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
-    return bookings
+    
+    # Enrich bookings with car images if missing
+    enriched_bookings = []
+    for booking in bookings:
+        if not booking.get("car_image") and booking.get("car_id"):
+            car = await db.cars.find_one({"car_id": booking["car_id"]}, {"images": 1, "main_image_index": 1})
+            if car and car.get("images"):
+                main_idx = car.get("main_image_index", 0)
+                if len(car["images"]) > main_idx:
+                    booking["car_image"] = car["images"][main_idx]
+                elif len(car["images"]) > 0:
+                    booking["car_image"] = car["images"][0]
+        enriched_bookings.append(booking)
+    
+    return enriched_bookings
 
 @api_router.put("/admin/bookings/{booking_id}/status")
 async def update_booking_status(booking_id: str, request: Request):
