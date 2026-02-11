@@ -101,3 +101,182 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Car rental mobile app with Google Auth, price calculator based on day tiers, insurance (RCA/CASCO), location fees, and outside hours fees. Admin panel for managing cars."
+
+backend:
+  - task: "Seed database with sample cars"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "POST /api/seed returns seeded 6 cars successfully"
+
+  - task: "Get all cars"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/cars returns list of cars with all fields"
+
+  - task: "Get car by ID"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/cars/{id} endpoint implemented"
+
+  - task: "Calculate price with day tiers"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "POST /api/calculate-price calculates correctly: base price from day tier (1,3,5,10,20 days), CASCO per day, location fee (150€ for Iasi), outside hours fee (25€ each for before 9:00 or after 18:00)"
+
+  - task: "Google Auth session exchange"
+    implemented: true
+    working: NA
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "POST /api/auth/session - needs real Google session to test"
+
+  - task: "Create booking (authenticated)"
+    implemented: true
+    working: NA
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "POST /api/bookings - needs authentication to test"
+
+  - task: "Admin car management"
+    implemented: true
+    working: NA
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "CRUD endpoints for admin - needs admin role to test"
+
+frontend:
+  - task: "Login screen with Google Auth"
+    implemented: true
+    working: true
+    file: "frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Login screen displays with logo, features, and Google button"
+
+  - task: "Home screen with banner and filters"
+    implemented: true
+    working: NA
+    file: "frontend/app/(tabs)/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "Home screen with promotional banner, rental filters (date, time, location, insurance), and car list"
+
+  - task: "Car card with price calculation"
+    implemented: true
+    working: NA
+    file: "frontend/src/components/CarCard.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "Car card shows specs and calculated price based on filters"
+
+  - task: "Car detail page with gallery"
+    implemented: true
+    working: NA
+    file: "frontend/app/car/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "Detail page with image gallery, specs, pricing table, and booking button"
+
+  - task: "Bookings list screen"
+    implemented: true
+    working: NA
+    file: "frontend/app/(tabs)/bookings.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "Shows user's bookings with status badges"
+
+  - task: "Profile screen"
+    implemented: true
+    working: NA
+    file: "frontend/app/(tabs)/profile.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: NA
+        agent: "main"
+        comment: "Profile with user info, menu items, logout"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Get all cars"
+    - "Calculate price with day tiers"
+    - "Get car by ID"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Mobile car rental app MVP implemented. Backend has car CRUD, price calculator with day tiers (1,3,5,10,20 days), insurance (RCA free, CASCO paid per day), location fees (office/Chisinau free, Iasi 150€), and outside hours fees (25€ before 9:00 or after 18:00). Frontend has login, home with filters, car cards, detail page, and bookings. Need to test backend APIs."
