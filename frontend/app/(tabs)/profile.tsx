@@ -238,6 +238,31 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: 16,
   },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 8,
+  },
+  editBadge: {
+    position: 'absolute',
+    bottom: 16,
+    right: 0,
+    backgroundColor: '#A31621',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  changePhotoButton: {
+    marginBottom: 12,
+  },
+  changePhotoText: {
+    color: '#A31621',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   avatarPlaceholder: {
     width: 100,
     height: 100,
