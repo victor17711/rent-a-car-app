@@ -268,7 +268,7 @@ export default function RentalFilters() {
                 </Text>
               </View>
               {filters.insurance === ins.id && (
-                <Ionicons name="checkmark-circle" size={24} color="#007AFF" />
+                <Ionicons name="checkmark-circle" size={24} color="#A31621" />
               )}
             </TouchableOpacity>
           ))}
