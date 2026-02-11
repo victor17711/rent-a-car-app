@@ -43,6 +43,18 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
 
 export const api = {
   // Auth
+  register: (data: { email: string; password: string; name: string }) =>
+    apiCall('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  
+  login: (data: { email: string; password: string }) =>
+    apiCall('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  
   exchangeSession: (sessionId: string) => 
     apiCall('/auth/session', {
       method: 'POST',
