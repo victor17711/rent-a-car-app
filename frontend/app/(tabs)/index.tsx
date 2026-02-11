@@ -152,7 +152,7 @@ export default function HomeScreen() {
             <Text style={styles.subtitle}>Găsește mașina perfectă</Text>
           </View>
           <View style={styles.logoSmall}>
-            <Ionicons name="car-sport" size={28} color="#007AFF" />
+            <Ionicons name="car-sport" size={28} color="#A31621" />
           </View>
         </View>
 
