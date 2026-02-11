@@ -169,6 +169,12 @@ export const api = {
   // Banners
   getBanners: () => apiCall('/banners'),
   
+  // Profile
+  updateProfilePicture: (picture: string) => apiCall('/users/profile-picture', { 
+    method: 'PUT', 
+    body: JSON.stringify({ picture }) 
+  }),
+  
   // Seed
   seedData: () => apiCall('/seed', { method: 'POST' }),
 };
