@@ -608,6 +608,35 @@ async def update_partner_request_status(request_id: str, request: Request):
     
     return {"message": "Status updated successfully"}
 
+@api_router.get("/admin/stats")
+async def get_admin_stats(request: Request):
+    """Get admin dashboard statistics"""
+    await require_admin(request)
+    
+    total_cars = await db.cars.count_documents({})
+    available_cars = await db.cars.count_documents({"available": True})
+    total_bookings = await db.bookings.count_documents({})
+    pending_bookings = await db.bookings.count_documents({"status": "pending"})
+    confirmed_bookings = await db.bookings.count_documents({"status": "confirmed"})
+    total_partner_requests = await db.partner_requests.count_documents({})
+    pending_partner_requests = await db.partner_requests.count_documents({"status": "pending"})
+    
+    return {
+        "cars": {
+            "total": total_cars,
+            "available": available_cars
+        },
+        "bookings": {
+            "total": total_bookings,
+            "pending": pending_bookings,
+            "confirmed": confirmed_bookings
+        },
+        "partner_requests": {
+            "total": total_partner_requests,
+            "pending": pending_partner_requests
+        }
+    }
+
 # ==================== SEED DATA ====================
 
 @api_router.post("/seed")
