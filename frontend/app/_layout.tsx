@@ -33,6 +33,14 @@ export default function RootLayout() {
               headerBackTitle: 'Înapoi',
             }} 
           />
+          <Stack.Screen 
+            name="register" 
+            options={{ 
+              headerShown: true,
+              headerTitle: 'Înregistrare',
+              headerBackTitle: 'Înapoi',
+            }} 
+          />
         </Stack>
       </RentalProvider>
     </AuthProvider>
