@@ -227,15 +227,15 @@ export default function CarDetailScreen() {
           {/* Quick Specs */}
           <View style={styles.quickSpecs}>
             <View style={styles.quickSpec}>
-              <Ionicons name="cog-outline" size={24} color="#007AFF" />
+              <Ionicons name="cog-outline" size={24} color="#A31621" />
               <Text style={styles.quickSpecText}>{getTransmissionLabel(car.transmission)}</Text>
             </View>
             <View style={styles.quickSpec}>
-              <Ionicons name="water-outline" size={24} color="#007AFF" />
+              <Ionicons name="water-outline" size={24} color="#A31621" />
               <Text style={styles.quickSpecText}>{getFuelLabel(car.fuel)}</Text>
             </View>
             <View style={styles.quickSpec}>
-              <Ionicons name="people-outline" size={24} color="#007AFF" />
+              <Ionicons name="people-outline" size={24} color="#A31621" />
               <Text style={styles.quickSpecText}>{car.seats} locuri</Text>
             </View>
           </View>
