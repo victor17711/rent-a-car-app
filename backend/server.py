@@ -575,16 +575,28 @@ async def create_booking(booking_data: BookingCreate, request: Request):
     )
     price_result = await calculate_price(price_request)
     
+    # Get main car image
+    main_image_index = car.get("main_image_index", 0)
+    car_image = ""
+    if car.get("images") and len(car["images"]) > main_image_index:
+        car_image = car["images"][main_image_index]
+    elif car.get("images") and len(car["images"]) > 0:
+        car_image = car["images"][0]
+    
     booking = Booking(
         user_id=user.user_id,
         car_id=booking_data.car_id,
         car_name=car["name"],
+        car_image=car_image,
         start_date=booking_data.start_date,
         end_date=booking_data.end_date,
         start_time=booking_data.start_time,
         end_time=booking_data.end_time,
         location=booking_data.location,
         insurance=booking_data.insurance,
+        customer_name=booking_data.customer_name,
+        customer_phone=booking_data.customer_phone,
+        customer_age=booking_data.customer_age,
         total_price=price_result.total_price
     )
     
