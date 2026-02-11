@@ -127,7 +127,7 @@ export default function ProfileScreen() {
           
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/bookings')}>
             <View style={styles.menuItemLeft}>
-              <Ionicons name="calendar-outline" size={22} color="#007AFF" />
+              <Ionicons name="calendar-outline" size={22} color="#A31621" />
               <Text style={styles.menuItemText}>Rezervările mele</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
