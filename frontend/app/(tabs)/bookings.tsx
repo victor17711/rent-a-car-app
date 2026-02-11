@@ -42,7 +42,7 @@ export default function BookingsScreen() {
     const colors: Record<string, string> = {
       pending: '#FF9500',
       confirmed: '#34C759',
-      completed: '#007AFF',
+      completed: '#A31621',
       cancelled: '#FF3B30',
     };
     return colors[status] || '#666';
