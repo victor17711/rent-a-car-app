@@ -138,11 +138,14 @@ backend:
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/cars/{id} endpoint implemented"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/cars/car_bmw_seria3 returns correct car data with all required fields (car_id, name, brand, model, year, transmission, fuel, seats, pricing, casco_price). BMW Seria 3 - BMW 320d (2023) with pricing tiers and 15€/day CASCO price"
 
   - task: "Calculate price with day tiers"
     implemented: true
