@@ -72,26 +72,6 @@ export default function LoginScreen() {
 
           {mode === 'options' ? (
             <>
-              {/* Features */}
-              <View style={styles.features}>
-                <View style={styles.feature}>
-                  <Ionicons name="checkmark-circle" size={24} color="#A31621" />
-                  <Text style={styles.featureText}>Mașini premium verificate</Text>
-                </View>
-                <View style={styles.feature}>
-                  <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-                  <Text style={styles.featureText}>Prețuri transparente</Text>
-                </View>
-                <View style={styles.feature}>
-                  <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-                  <Text style={styles.featureText}>Asigurare completă</Text>
-                </View>
-                <View style={styles.feature}>
-                  <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-                  <Text style={styles.featureText}>Preluare de la aeroport</Text>
-                </View>
-              </View>
-
               {/* Login Options */}
               <View style={styles.loginSection}>
                 <TouchableOpacity style={styles.emailButton} onPress={() => setMode('email')}>
@@ -100,7 +80,7 @@ export default function LoginScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.googleButton} onPress={loginWithGoogle}>
-                  <Ionicons name="logo-google" size={24} color="#007AFF" />
+                  <Ionicons name="logo-google" size={24} color="#A31621" />
                   <Text style={styles.googleButtonText}>Continuă cu Google</Text>
                 </TouchableOpacity>
                 
