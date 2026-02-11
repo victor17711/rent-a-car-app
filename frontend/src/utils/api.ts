@@ -103,6 +103,9 @@ export const api = {
     end_time: string;
     location: string;
     insurance: string;
+    customer_name: string;
+    customer_phone: string;
+    customer_age: number;
   }) => apiCall('/bookings', {
     method: 'POST',
     body: JSON.stringify(data),
