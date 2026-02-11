@@ -1,13 +1,16 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../src/context/AuthContext';
+import { api } from '../../src/utils/api';
 
 export default function ProfileScreen() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, updateUser } = useAuth();
   const router = useRouter();
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
@@ -29,6 +32,45 @@ export default function ProfileScreen() {
 
   const handleBecomePartner = () => {
     router.push('/partner');
+  };
+
+  const handleChangeProfilePicture = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (!permissionResult.granted) {
+        Alert.alert('Permisiune necesară', 'Te rugăm să permiți accesul la galerie pentru a schimba poza de profil.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0].base64) {
+        setUploadingPhoto(true);
+        try {
+          const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+          const response = await api.updateProfilePicture(base64Image);
+          if (updateUser) {
+            updateUser({ ...user, picture: base64Image });
+          }
+          Alert.alert('Succes', 'Poza de profil a fost actualizată!');
+        } catch (error) {
+          console.error('Upload error:', error);
+          Alert.alert('Eroare', 'Nu s-a putut actualiza poza de profil.');
+        } finally {
+          setUploadingPhoto(false);
+        }
+      }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      Alert.alert('Eroare', 'A apărut o eroare la selectarea imaginii.');
+    }
   };
 
   if (!isAuthenticated) {
