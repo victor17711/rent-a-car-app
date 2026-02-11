@@ -708,13 +708,13 @@ const styles = StyleSheet.create({
   footerPriceValue: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#007AFF',
+    color: '#A31621',
   },
   bookButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#A31621',
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 12,
