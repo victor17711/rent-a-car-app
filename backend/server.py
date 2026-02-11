@@ -566,6 +566,48 @@ async def make_admin(request: Request):
     
     return {"message": "User is now admin"}
 
+# ==================== PARTNER REQUEST ENDPOINTS ====================
+
+@api_router.post("/partner-request")
+async def create_partner_request(data: PartnerRequestCreate):
+    """Submit a partner request (public endpoint)"""
+    partner_request = PartnerRequest(**data.model_dump())
+    await db.partner_requests.insert_one(partner_request.model_dump())
+    return {"message": "Cererea a fost trimisă cu succes!", "request_id": partner_request.request_id}
+
+@api_router.get("/admin/partner-requests")
+async def get_partner_requests(request: Request, status: Optional[str] = None):
+    """Get all partner requests (admin only)"""
+    await require_admin(request)
+    
+    query = {}
+    if status:
+        query["status"] = status
+    
+    requests = await db.partner_requests.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return requests
+
+@api_router.put("/admin/partner-requests/{request_id}/status")
+async def update_partner_request_status(request_id: str, request: Request):
+    """Update partner request status (admin only)"""
+    await require_admin(request)
+    
+    body = await request.json()
+    new_status = body.get("status")
+    
+    if new_status not in ["pending", "contacted", "approved", "rejected"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    result = await db.partner_requests.update_one(
+        {"request_id": request_id},
+        {"$set": {"status": new_status}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Request not found")
+    
+    return {"message": "Status updated successfully"}
+
 # ==================== SEED DATA ====================
 
 @api_router.post("/seed")
