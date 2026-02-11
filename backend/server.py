@@ -227,6 +227,9 @@ class BannerUpdate(BaseModel):
     order: Optional[int] = None
     active: Optional[bool] = None
 
+class ProfilePictureUpdate(BaseModel):
+    picture: str  # base64 image
+
 # ==================== AUTH HELPERS ====================
 
 async def get_session_token(request: Request) -> Optional[str]:
