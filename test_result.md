@@ -123,11 +123,14 @@ backend:
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/cars returns list of cars with all fields"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/cars returns 6 cars with correct structure including pricing tiers (day_1: 55€, day_3: 50€, day_5: 45€, day_10: 40€, day_20: 35€), all required fields present (car_id, name, brand, model, year, transmission, fuel, seats, pricing, casco_price, available)"
 
   - task: "Get car by ID"
     implemented: true
