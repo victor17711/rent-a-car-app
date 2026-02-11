@@ -37,7 +37,7 @@ export interface Car {
   year: number;
   transmission: string;
   fuel: string;
-  seats: int;
+  seats: number;
   images: string[];
   pricing: CarPricing;
   casco_price: number;
