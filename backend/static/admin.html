@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveMate Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --success: #34C759;
+            --warning: #FF9500;
+            --danger: #FF3B30;
+            --dark: #1a1a1a;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .sidebar {
+            background: white;
+            min-height: 100vh;
+            border-right: 1px solid #e0e0e0;
+            position: fixed;
+            width: 250px;
+            padding-top: 20px;
+        }
+        
+        .sidebar .logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar .logo i {
+            font-size: 48px;
+            color: var(--primary);
+        }
+        
+        .sidebar .logo h4 {
+            margin-top: 10px;
+            color: var(--dark);
+            font-weight: 700;
+        }
+        
+        .sidebar .nav-link {
+            color: #666;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 12px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: #e6f2ff;
+            color: var(--primary);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 16px 16px 0 0 !important;
+        }
+        
+        .table th {
+            border-top: none;
+            color: #666;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .badge-pending { background: #fff3e0; color: #e65100; }
+        .badge-confirmed { background: #e8f5e9; color: #2e7d32; }
+        .badge-completed { background: #e3f2fd; color: #1565c0; }
+        .badge-cancelled { background: #ffebee; color: #c62828; }
+        .badge-contacted { background: #e0f7fa; color: #00838f; }
+        .badge-approved { background: #e8f5e9; color: #2e7d32; }
+        .badge-rejected { background: #ffebee; color: #c62828; }
+        
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .modal-content {
+            border-radius: 16px;
+        }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .login-card .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .login-card .logo i {
+            font-size: 64px;
+            color: var(--primary);
+        }
+        
+        .google-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        
+        .google-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        #app { display: none; }
+        #login { display: block; }
+        
+        .car-image {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login" class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <i class="bi bi-car-front-fill"></i>
+                <h3 class="mt-3 fw-bold">DriveMate Admin</h3>
+                <p class="text-muted">Panou de Administrare</p>
+            </div>
+            <button class="google-btn" onclick="login()">
+                <i class="bi bi-google"></i>
+                Autentifică-te cu Google
+            </button>
+            <p class="text-center text-muted mt-4 small">
+                Acces rezervat administratorilor
+            </p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="bi bi-car-front-fill"></i>
+                <h4>DriveMate</h4>
+                <small class="text-muted">Admin Panel</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('cars')">
+                        <i class="bi bi-car-front"></i> Mașini
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('bookings')">
+                        <i class="bi bi-calendar-check"></i> Rezervări
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('partners')">
+                        <i class="bi bi-people"></i> Cereri Parteneri
+                    </a>
+                </li>
+            </ul>
+            <div class="mt-auto p-3 border-top">
+                <div class="d-flex align-items-center mb-3">
+                    <img id="userAvatar" src="" class="rounded-circle me-2" width="40" height="40">
+                    <div>
+                        <small class="fw-bold" id="userName"></small>
+                        <br><small class="text-muted">Admin</small>
+                    </div>
+                </div>
+                <button class="btn btn-outline-danger btn-sm w-100" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Deconectare
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="section-dashboard">
+                <h2 class="mb-4">Dashboard</h2>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="number" id="stat-cars">0</div>
+                                    <div class="label">Mașini Total</div>
+                                </div>
+                                <div class="icon bg-primary bg-opacity-10 text-primary">
+                                    <i class="bi bi-car-front"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="number" id="stat-bookings">0</div>
+                                    <div class="label">Rezervări Total</div>
+                                </div>
+                                <div class="icon bg-success bg-opacity-10 text-success">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="number" id="stat-pending">0</div>
+                                    <div class="label">În Așteptare</div>
+                                </div>
+                                <div class="icon bg-warning bg-opacity-10 text-warning">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="number" id="stat-partners">0</div>
+                                    <div class="label">Cereri Parteneri</div>
+                                </div>
+                                <div class="icon bg-info bg-opacity-10 text-info">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cars Section -->
+            <section id="section-cars" style="display:none;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Gestionare Mașini</h2>
+                    <button class="btn btn-primary" onclick="openCarModal()">
+                        <i class="bi bi-plus-lg"></i> Adaugă Mașină
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Imagine</th>
+                                        <th>Nume</th>
+                                        <th>Brand/Model</th>
+                                        <th>An</th>
+                                        <th>Preț/zi</th>
+                                        <th>Status</th>
+                                        <th>Acțiuni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cars-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bookings Section -->
+            <section id="section-bookings" style="display:none;">
+                <h2 class="mb-4">Rezervări</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Mașină</th>
+                                        <th>Perioada</th>
+                                        <th>Locație</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Acțiuni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Partners Section -->
+            <section id="section-partners" style="display:none;">
+                <h2 class="mb-4">Cereri Parteneri</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Nume</th>
+                                        <th>Email</th>
+                                        <th>Telefon</th>
+                                        <th>Companie</th>
+                                        <th>Status</th>
+                                        <th>Acțiuni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partners-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Car Modal -->
+    <div class="modal fade" id="carModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="carModalTitle">Adaugă Mașină</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="carForm">
+                        <input type="hidden" id="carId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nume</label>
+                                <input type="text" class="form-control" id="carName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Brand</label>
+                                <input type="text" class="form-control" id="carBrand" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Model</label>
+                                <input type="text" class="form-control" id="carModel" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">An</label>
+                                <input type="number" class="form-control" id="carYear" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Transmisie</label>
+                                <select class="form-select" id="carTransmission">
+                                    <option value="automatic">Automată</option>
+                                    <option value="manual">Manuală</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Combustibil</label>
+                                <select class="form-select" id="carFuel">
+                                    <option value="diesel">Diesel</option>
+                                    <option value="petrol">Benzină</option>
+                                    <option value="electric">Electric</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Locuri</label>
+                                <input type="number" class="form-control" id="carSeats" value="5" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">CASCO/zi (€)</label>
+                                <input type="number" class="form-control" id="carCasco" step="0.01" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Prețuri pe zile (€/zi)</label>
+                                <div class="row g-2">
+                                    <div class="col"><input type="number" class="form-control" id="price1" placeholder="1 zi" required></div>
+                                    <div class="col"><input type="number" class="form-control" id="price3" placeholder="3 zile" required></div>
+                                    <div class="col"><input type="number" class="form-control" id="price5" placeholder="5 zile" required></div>
+                                    <div class="col"><input type="number" class="form-control" id="price10" placeholder="10 zile" required></div>
+                                    <div class="col"><input type="number" class="form-control" id="price20" placeholder="20+ zile" required></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">URL Imagine (sau mai multe separate prin virgulă)</label>
+                                <input type="text" class="form-control" id="carImages" placeholder="https://...">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="carAvailable" checked>
+                                    <label class="form-check-label">Disponibilă</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCar()">Salvează</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partner Detail Modal -->
+    <div class="modal fade" id="partnerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalii Cerere Partener</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="partnerDetails"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Închide</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = '/api';
+        let currentUser = null;
+        let sessionToken = localStorage.getItem('admin_session_token');
+
+        // API Helper
+        async function apiCall(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            if (sessionToken) {
+                headers['Authorization'] = `Bearer ${sessionToken}`;
+            }
+            const response = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ detail: 'Error' }));
+                throw new Error(error.detail);
+            }
+            return response.json();
+        }
+
+        // Auth Functions
+        function login() {
+            const redirectUrl = window.location.origin + '/admin/';
+            window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+        }
+
+        async function processAuth() {
+            const hash = window.location.hash;
+            const sessionId = hash.match(/#session_id=([^&]+)/)?.[1] || 
+                              new URLSearchParams(window.location.search).get('session_id');
+            
+            if (sessionId) {
+                try {
+                    const result = await apiCall('/auth/session', {
+                        method: 'POST',
+                        body: JSON.stringify({ session_id: sessionId })
+                    });
+                    sessionToken = result.session_token;
+                    localStorage.setItem('admin_session_token', sessionToken);
+                    currentUser = result.user;
+                    window.history.replaceState(null, '', window.location.pathname);
+                    
+                    // Check if admin
+                    if (currentUser.role !== 'admin') {
+                        // Try to make admin
+                        try {
+                            await apiCall('/admin/make-admin', { method: 'POST' });
+                            currentUser.role = 'admin';
+                        } catch (e) {
+                            alert('Nu aveți acces de administrator. Contactați administratorul principal.');
+                            logout();
+                            return;
+                        }
+                    }
+                    
+                    showApp();
+                } catch (error) {
+                    console.error('Auth error:', error);
+                    alert('Eroare la autentificare: ' + error.message);
+                }
+            } else if (sessionToken) {
+                try {
+                    currentUser = await apiCall('/auth/me');
+                    if (currentUser.role !== 'admin') {
+                        alert('Nu aveți acces de administrator.');
+                        logout();
+                        return;
+                    }
+                    showApp();
+                } catch (error) {
+                    localStorage.removeItem('admin_session_token');
+                    sessionToken = null;
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('admin_session_token');
+            sessionToken = null;
+            currentUser = null;
+            document.getElementById('login').style.display = 'block';
+            document.getElementById('app').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userAvatar').src = currentUser.picture || 'https://via.placeholder.com/40';
+            loadDashboard();
+        }
+
+        // Navigation
+        function showSection(section) {
+            document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+            document.getElementById(`section-${section}`).style.display = 'block';
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (section === 'dashboard') loadDashboard();
+            if (section === 'cars') loadCars();
+            if (section === 'bookings') loadBookings();
+            if (section === 'partners') loadPartners();
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const stats = await apiCall('/admin/stats');
+                document.getElementById('stat-cars').textContent = stats.cars.total;
+                document.getElementById('stat-bookings').textContent = stats.bookings.total;
+                document.getElementById('stat-pending').textContent = stats.bookings.pending;
+                document.getElementById('stat-partners').textContent = stats.partner_requests.pending;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Cars
+        async function loadCars() {
+            try {
+                const cars = await apiCall('/cars?available_only=false');
+                const tbody = document.getElementById('cars-table');
+                tbody.innerHTML = cars.map(car => `
+                    <tr>
+                        <td><img src="${car.images[0] || 'https://via.placeholder.com/80x60'}" class="car-image"></td>
+                        <td><strong>${car.name}</strong></td>
+                        <td>${car.brand} ${car.model}</td>
+                        <td>${car.year}</td>
+                        <td>${car.pricing.day_1}€</td>
+                        <td><span class="badge ${car.available ? 'bg-success' : 'bg-secondary'}">${car.available ? 'Disponibilă' : 'Indisponibilă'}</span></td>
+                        <td>
+                            <button class="action-btn btn btn-sm btn-outline-primary" onclick="editCar('${car.car_id}')"><i class="bi bi-pencil"></i></button>
+                            <button class="action-btn btn btn-sm btn-outline-danger" onclick="deleteCar('${car.car_id}')"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading cars:', error);
+            }
+        }
+
+        function openCarModal(car = null) {
+            document.getElementById('carModalTitle').textContent = car ? 'Editează Mașină' : 'Adaugă Mașină';
+            document.getElementById('carForm').reset();
+            document.getElementById('carId').value = car?.car_id || '';
+            
+            if (car) {
+                document.getElementById('carName').value = car.name;
+                document.getElementById('carBrand').value = car.brand;
+                document.getElementById('carModel').value = car.model;
+                document.getElementById('carYear').value = car.year;
+                document.getElementById('carTransmission').value = car.transmission;
+                document.getElementById('carFuel').value = car.fuel;
+                document.getElementById('carSeats').value = car.seats;
+                document.getElementById('carCasco').value = car.casco_price;
+                document.getElementById('price1').value = car.pricing.day_1;
+                document.getElementById('price3').value = car.pricing.day_3;
+                document.getElementById('price5').value = car.pricing.day_5;
+                document.getElementById('price10').value = car.pricing.day_10;
+                document.getElementById('price20').value = car.pricing.day_20;
+                document.getElementById('carImages').value = car.images.join(', ');
+                document.getElementById('carAvailable').checked = car.available;
+            }
+            
+            new bootstrap.Modal(document.getElementById('carModal')).show();
+        }
+
+        async function editCar(carId) {
+            try {
+                const car = await apiCall(`/cars/${carId}`);
+                openCarModal(car);
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+
+        async function saveCar() {
+            const carId = document.getElementById('carId').value;
+            const data = {
+                name: document.getElementById('carName').value,
+                brand: document.getElementById('carBrand').value,
+                model: document.getElementById('carModel').value,
+                year: parseInt(document.getElementById('carYear').value),
+                transmission: document.getElementById('carTransmission').value,
+                fuel: document.getElementById('carFuel').value,
+                seats: parseInt(document.getElementById('carSeats').value),
+                casco_price: parseFloat(document.getElementById('carCasco').value),
+                pricing: {
+                    day_1: parseFloat(document.getElementById('price1').value),
+                    day_3: parseFloat(document.getElementById('price3').value),
+                    day_5: parseFloat(document.getElementById('price5').value),
+                    day_10: parseFloat(document.getElementById('price10').value),
+                    day_20: parseFloat(document.getElementById('price20').value)
+                },
+                images: document.getElementById('carImages').value.split(',').map(s => s.trim()).filter(s => s),
+                available: document.getElementById('carAvailable').checked
+            };
+
+            try {
+                if (carId) {
+                    await apiCall(`/admin/cars/${carId}`, { method: 'PUT', body: JSON.stringify(data) });
+                } else {
+                    await apiCall('/admin/cars', { method: 'POST', body: JSON.stringify(data) });
+                }
+                bootstrap.Modal.getInstance(document.getElementById('carModal')).hide();
+                loadCars();
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+
+        async function deleteCar(carId) {
+            if (!confirm('Sigur doriți să ștergeți această mașină?')) return;
+            try {
+                await apiCall(`/admin/cars/${carId}`, { method: 'DELETE' });
+                loadCars();
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+
+        // Bookings
+        async function loadBookings() {
+            try {
+                const bookings = await apiCall('/admin/bookings');
+                const tbody = document.getElementById('bookings-table');
+                tbody.innerHTML = bookings.map(b => `
+                    <tr>
+                        <td><small>${b.booking_id.slice(0, 12)}...</small></td>
+                        <td><strong>${b.car_name}</strong></td>
+                        <td>${b.start_date} - ${b.end_date}</td>
+                        <td>${getLocationLabel(b.location)}</td>
+                        <td><strong>${b.total_price}€</strong></td>
+                        <td><span class="badge-status badge-${b.status}">${getStatusLabel(b.status)}</span></td>
+                        <td>
+                            <select class="form-select form-select-sm" style="width:130px" onchange="updateBookingStatus('${b.booking_id}', this.value)">
+                                <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>În așteptare</option>
+                                <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Confirmată</option>
+                                <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Finalizată</option>
+                                <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Anulată</option>
+                            </select>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+            }
+        }
+
+        async function updateBookingStatus(bookingId, status) {
+            try {
+                await apiCall(`/admin/bookings/${bookingId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status })
+                });
+                loadBookings();
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+
+        // Partners
+        async function loadPartners() {
+            try {
+                const partners = await apiCall('/admin/partner-requests');
+                const tbody = document.getElementById('partners-table');
+                tbody.innerHTML = partners.map(p => `
+                    <tr>
+                        <td>${new Date(p.created_at).toLocaleDateString('ro-RO')}</td>
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.email}</td>
+                        <td>${p.phone}</td>
+                        <td>${p.company || '-'}</td>
+                        <td><span class="badge-status badge-${p.status}">${getPartnerStatusLabel(p.status)}</span></td>
+                        <td>
+                            <button class="action-btn btn btn-sm btn-outline-info" onclick="viewPartner('${p.request_id}')"><i class="bi bi-eye"></i></button>
+                            <select class="form-select form-select-sm d-inline-block" style="width:110px" onchange="updatePartnerStatus('${p.request_id}', this.value)">
+                                <option value="pending" ${p.status === 'pending' ? 'selected' : ''}>În așteptare</option>
+                                <option value="contacted" ${p.status === 'contacted' ? 'selected' : ''}>Contactat</option>
+                                <option value="approved" ${p.status === 'approved' ? 'selected' : ''}>Aprobat</option>
+                                <option value="rejected" ${p.status === 'rejected' ? 'selected' : ''}>Respins</option>
+                            </select>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading partners:', error);
+            }
+        }
+
+        async function viewPartner(requestId) {
+            try {
+                const partners = await apiCall('/admin/partner-requests');
+                const partner = partners.find(p => p.request_id === requestId);
+                if (partner) {
+                    document.getElementById('partnerDetails').innerHTML = `
+                        <p><strong>Nume:</strong> ${partner.name}</p>
+                        <p><strong>Email:</strong> ${partner.email}</p>
+                        <p><strong>Telefon:</strong> ${partner.phone}</p>
+                        <p><strong>Companie:</strong> ${partner.company || 'N/A'}</p>
+                        <p><strong>Mesaj:</strong></p>
+                        <div class="bg-light p-3 rounded">${partner.message}</div>
+                        <p class="mt-3"><strong>Data:</strong> ${new Date(partner.created_at).toLocaleString('ro-RO')}</p>
+                    `;
+                    new bootstrap.Modal(document.getElementById('partnerModal')).show();
+                }
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+
+        async function updatePartnerStatus(requestId, status) {
+            try {
+                await apiCall(`/admin/partner-requests/${requestId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status })
+                });
+                loadPartners();
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
+        }
+
+        // Helpers
+        function getLocationLabel(loc) {
+            const labels = { office: 'Oficiu', chisinau_airport: 'Aeroport Chișinău', iasi_airport: 'Aeroport Iași' };
+            return labels[loc] || loc;
+        }
+
+        function getStatusLabel(status) {
+            const labels = { pending: 'În așteptare', confirmed: 'Confirmată', completed: 'Finalizată', cancelled: 'Anulată' };
+            return labels[status] || status;
+        }
+
+        function getPartnerStatusLabel(status) {
+            const labels = { pending: 'În așteptare', contacted: 'Contactat', approved: 'Aprobat', rejected: 'Respins' };
+            return labels[status] || status;
+        }
+
+        // Init
+        processAuth();
+    </script>
+</body>
+</html>
