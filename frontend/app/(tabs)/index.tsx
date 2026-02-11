@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, RefreshControl, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, RefreshControl, TouchableOpacity, ActivityIndicator, Dimensions, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
@@ -11,30 +11,44 @@ import RentalFilters from '../../src/components/RentalFilters';
 
 const { width } = Dimensions.get('window');
 
-const BANNERS = [
+interface Banner {
+  banner_id: string;
+  title: string;
+  subtitle: string;
+  badge: string;
+  image: string;
+  order: number;
+  active: boolean;
+}
+
+// Default banners if no banners from admin
+const DEFAULT_BANNERS: Banner[] = [
   {
-    id: 1,
+    banner_id: 'default_1',
     image: 'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?w=800',
     title: 'Ofertă Specială!',
     subtitle: '-15% pentru închirieri de 7+ zile',
     badge: 'COD: DRIVE15',
-    bgColor: 'rgba(0,122,255,0.85)',
+    order: 0,
+    active: true,
   },
   {
-    id: 2,
+    banner_id: 'default_2',
     image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800',
     title: 'Mașini Premium',
     subtitle: 'BMW, Mercedes, Audi disponibile',
     badge: 'NOUĂ FLOTĂ',
-    bgColor: 'rgba(52,199,89,0.85)',
+    order: 1,
+    active: true,
   },
   {
-    id: 3,
+    banner_id: 'default_3',
     image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800',
     title: 'Aeroport Transfer',
     subtitle: 'Preluare gratuită Chișinău',
     badge: 'GRATUIT',
-    bgColor: 'rgba(255,149,0,0.85)',
+    order: 2,
+    active: true,
   },
 ];
 
@@ -42,26 +56,39 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const { filters } = useRental();
   const [cars, setCars] = useState<Car[]>([]);
+  const [banners, setBanners] = useState<Banner[]>(DEFAULT_BANNERS);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [currentBanner, setCurrentBanner] = useState(0);
-  const bannerScrollRef = useRef<ScrollView>(null);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const fetchCars = async () => {
+  const fetchData = async () => {
     try {
-      const data = await api.getCars();
-      setCars(data);
+      const [carsData, bannersData] = await Promise.all([
+        api.getCars(),
+        api.getBanners().catch(() => [])
+      ]);
+      
+      setCars(carsData);
+      
+      // Use admin banners if available, otherwise use defaults
+      if (bannersData && bannersData.length > 0) {
+        const activeBanners = bannersData.filter((b: Banner) => b.active);
+        if (activeBanners.length > 0) {
+          setBanners(activeBanners);
+        }
+      }
       
       // Auto-seed if no cars
-      if (data.length === 0 && !seeded) {
+      if (carsData.length === 0 && !seeded) {
         await api.seedData();
         setSeeded(true);
         const newData = await api.getCars();
         setCars(newData);
       }
     } catch (error) {
-      console.error('Failed to fetch cars:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -69,22 +96,37 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    fetchCars();
+    fetchData();
   }, []);
 
-  // Auto-scroll banners
+  // Auto-change banner with fade animation - only show one at a time
   useEffect(() => {
+    if (banners.length <= 1) return;
+    
     const interval = setInterval(() => {
-      const nextBanner = (currentBanner + 1) % BANNERS.length;
-      setCurrentBanner(nextBanner);
-      bannerScrollRef.current?.scrollTo({ x: nextBanner * (width - 32), animated: true });
-    }, 4000);
+      // Fade out
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        // Change banner
+        setCurrentBanner((prev) => (prev + 1) % banners.length);
+        // Fade in
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 5000);
+    
     return () => clearInterval(interval);
-  }, [currentBanner]);
+  }, [banners.length]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchCars();
+    fetchData();
   }, []);
 
   const getDaysCount = () => {
@@ -93,10 +135,7 @@ export default function HomeScreen() {
     return Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
   };
 
-  const handleBannerScroll = (event: any) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / (width - 32));
-    setCurrentBanner(slideIndex);
-  };
+  const currentBannerData = banners[currentBanner] || banners[0];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -117,49 +156,44 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Banner Slider */}
-        <View style={styles.bannerSection}>
-          <ScrollView
-            ref={bannerScrollRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={handleBannerScroll}
-            decelerationRate="fast"
-            snapToInterval={width - 32}
-            contentContainerStyle={styles.bannerScroll}
-          >
-            {BANNERS.map((banner, index) => (
-              <View key={banner.id} style={styles.bannerContainer}>
-                <Image
-                  source={{ uri: banner.image }}
-                  style={styles.bannerImage}
-                  resizeMode="cover"
-                />
-                <View style={[styles.bannerOverlay, { backgroundColor: banner.bgColor }]}>
-                  <Text style={styles.bannerTitle}>{banner.title}</Text>
-                  <Text style={styles.bannerText}>{banner.subtitle}</Text>
-                  <View style={styles.bannerBadge}>
-                    <Text style={styles.bannerBadgeText}>{banner.badge}</Text>
-                  </View>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-          
-          {/* Pagination dots */}
-          <View style={styles.pagination}>
-            {BANNERS.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.paginationDot,
-                  currentBanner === index && styles.paginationDotActive,
-                ]}
+        {/* Single Banner with Fade Animation */}
+        {currentBannerData && (
+          <View style={styles.bannerSection}>
+            <Animated.View style={[styles.bannerContainer, { opacity: fadeAnim }]}>
+              <Image
+                source={{ uri: currentBannerData.image }}
+                style={styles.bannerImage}
+                resizeMode="cover"
               />
-            ))}
+              <View style={styles.bannerOverlay}>
+                <Text style={styles.bannerTitle}>{currentBannerData.title}</Text>
+                {currentBannerData.subtitle && (
+                  <Text style={styles.bannerText}>{currentBannerData.subtitle}</Text>
+                )}
+                {currentBannerData.badge && (
+                  <View style={styles.bannerBadge}>
+                    <Text style={styles.bannerBadgeText}>{currentBannerData.badge}</Text>
+                  </View>
+                )}
+              </View>
+            </Animated.View>
+            
+            {/* Pagination dots */}
+            {banners.length > 1 && (
+              <View style={styles.pagination}>
+                {banners.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.paginationDot,
+                      currentBanner === index && styles.paginationDotActive,
+                    ]}
+                  />
+                ))}
+              </View>
+            )}
           </View>
-        </View>
+        )}
 
         {/* Rental Filters */}
         <RentalFilters />
