@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../src/context/AuthContext';
+import { Image } from 'react-native';
 
 export default function LoginScreen() {
   const { user, isLoading, isAuthenticated, loginWithGoogle, loginWithEmail } = useAuth();
@@ -64,8 +65,13 @@ export default function LoginScreen() {
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
-              <Ionicons name="car-sport" size={64} color="#A31621" />
-            </View>
+  <Image
+    source={{ uri: 'https://siteul-tau.com/logo.png' }}
+    style={styles.logo}
+    resizeMode="contain"
+  />
+</View>
+
             <Text style={styles.brandName}>DriveMate</Text>
             <Text style={styles.tagline}>Închirieri Auto Premium</Text>
           </View>
