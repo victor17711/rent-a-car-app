@@ -258,6 +258,9 @@ frontend:
       - working: NA
         agent: "main"
         comment: "Shows user's bookings with status badges"
+      - working: true
+        agent: "main"
+        comment: "Modified booking cards to have 1px red border (borderWidth: 1, borderColor: 'red')"
 
   - task: "Profile screen"
     implemented: true
