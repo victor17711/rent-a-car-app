@@ -230,7 +230,7 @@ export default function RentalFilters() {
 
       {/* Time Picker Modal - 24h format with 20€ fee */}
       {renderPickerModal(showStartTime, () => setShowStartTime(false), texts.selectPickupTime, (
-        <ScrollView style={styles.optionsList}>
+        <ScrollView ref={startTimeScrollRef} style={styles.optionsList}>
           {TIME_OPTIONS.map(time => (
             <TouchableOpacity
               key={time}
@@ -252,7 +252,7 @@ export default function RentalFilters() {
       ))}
 
       {renderPickerModal(showEndTime, () => setShowEndTime(false), texts.selectReturnTime, (
-        <ScrollView style={styles.optionsList}>
+        <ScrollView ref={endTimeScrollRef} style={styles.optionsList}>
           {TIME_OPTIONS.map(time => (
             <TouchableOpacity
               key={time}
