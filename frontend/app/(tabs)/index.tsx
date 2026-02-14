@@ -152,8 +152,8 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Bună, {user?.name?.split(' ')[0] || 'Vizitator'}!</Text>
-            <Text style={styles.subtitle}>Găsește mașina perfectă</Text>
+            <Text style={styles.greeting}>{t('greeting')}, {user?.name?.split(' ')[0] || t('guest')}!</Text>
+            <Text style={styles.subtitle}>{t('findPerfectCar')}</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} style={styles.profileButton}>
             {user?.picture ? (
