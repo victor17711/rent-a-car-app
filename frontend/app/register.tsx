@@ -10,6 +10,7 @@ export default function RegisterScreen() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +25,10 @@ export default function RegisterScreen() {
       Alert.alert('Eroare', 'Introduceți numărul de telefon');
       return;
     }
+    if (!email.trim() || !email.includes('@')) {
+      Alert.alert('Eroare', 'Introduceți o adresă de email validă');
+      return;
+    }
     if (password.length < 6) {
       Alert.alert('Eroare', 'Parola trebuie să aibă minim 6 caractere');
       return;
@@ -35,7 +40,7 @@ export default function RegisterScreen() {
 
     try {
       setSubmitting(true);
-      await register(phone, password, name);
+      await register(phone, email, password, name);
       router.replace('/(tabs)');
     } catch (error: any) {
       Alert.alert('Eroare', error.message || 'Înregistrarea a eșuat');
