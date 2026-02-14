@@ -1,6 +1,5 @@
 <analysis>
-1. Selectorul de data de preluare si data de returnare, vreau sa fie așa ca doar apeși pe Data de preluare sau Data de returnare si se deschide calendarul ,nu sa apară taburile alea suplimentare cu data si deja din ele se deschide calendar.
-2. Ce tine de ora, vreau sa fie selector de 24 ore, sa păstrezi logica aia ca pana la ora 08:00 e taxa de 20 euro si după 18:00 la fel este taxa de 20 euro.
-3. Fi-i atent ca Pagina detaliată a mașinii, cardurile mașinii, calculatorul de preț si titlurile încă nu se traduc in rusa.
-4. Când selectez limba Rusa sau Romana, notificarea de tip alert care apare ca s-a schimbat limba cu succes, trebuie sa fie doar in romana
+1. Simplific selectorul de dată - calendarul să se deschidă instant la click pe Data preluare sau Data returnare, fără tab-uri intermediare
+2. Adaug buton de ștergere rezervări în admin panel
+3. La selector de ora, trebuie sa fie by default ecranul de la ora 08:00
 </analysis>
