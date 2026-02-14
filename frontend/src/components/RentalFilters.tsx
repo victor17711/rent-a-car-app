@@ -509,4 +509,23 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 2,
   },
+  datePickerModalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 30,
+  },
+  datePickerDoneButton: {
+    backgroundColor: '#4754eb',
+    marginHorizontal: 16,
+    marginTop: 10,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  datePickerDoneText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
 });
