@@ -5,16 +5,18 @@ import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '../src/utils/api';
 import { useAuth } from '../src/context/AuthContext';
+import { useLanguage } from '../src/context/LanguageContext';
 
 export default function ChangeNameScreen() {
   const { user, refreshUser } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const [name, setName] = useState(user?.name || '');
   const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Eroare', 'Introduceți un nume valid');
+      Alert.alert(t('error'), t('enterNewName'));
       return;
     }
 
@@ -22,11 +24,11 @@ export default function ChangeNameScreen() {
       setLoading(true);
       await api.updateName(name);
       await refreshUser();
-      Alert.alert('Succes', 'Numele a fost actualizat!', [
+      Alert.alert(t('success'), t('nameUpdated'), [
         { text: 'OK', onPress: () => router.back() }
       ]);
     } catch (error: any) {
-      Alert.alert('Eroare', error.message || 'Nu s-a putut actualiza numele');
+      Alert.alert(t('error'), error.message || 'Nu s-a putut actualiza numele');
     } finally {
       setLoading(false);
     }
@@ -36,8 +38,9 @@ export default function ChangeNameScreen() {
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <Stack.Screen 
         options={{ 
-          title: 'Schimbă numele',
+          title: t('changeNameTitle'),
           headerShown: true,
+          headerBackTitle: t('back'),
         }} 
       />
       <KeyboardAvoidingView
