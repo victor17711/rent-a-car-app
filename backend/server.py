@@ -43,9 +43,11 @@ logger = logging.getLogger(__name__)
 class User(BaseModel):
     user_id: str
     phone: str
+    email: Optional[str] = None
     name: str
     picture: Optional[str] = None
     role: str = "user"  # user or admin
+    language: str = "ro"  # ro or ru
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserSession(BaseModel):
