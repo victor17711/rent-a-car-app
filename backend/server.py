@@ -193,12 +193,12 @@ class PartnerRequestCreate(BaseModel):
     message: str
 
 class UserRegister(BaseModel):
-    email: str
+    phone: str
     password: str
     name: str
 
 class UserLogin(BaseModel):
-    email: str
+    phone: str
     password: str
 
 class Banner(BaseModel):
