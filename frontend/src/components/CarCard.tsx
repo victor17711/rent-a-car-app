@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Car, PriceCalculation } from '../types';
 import { useRental } from '../context/RentalContext';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 
 interface CarCardProps {
@@ -13,12 +14,22 @@ interface CarCardProps {
 export default function CarCard({ car }: CarCardProps) {
   const router = useRouter();
   const { filters } = useRental();
+  const { user, isAuthenticated } = useAuth();
   const [price, setPrice] = useState<PriceCalculation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
 
   useEffect(() => {
     calculatePrice();
-  }, [filters, car.car_id]);
+    checkFavoriteStatus();
+  }, [filters, car.car_id, user]);
+
+  const checkFavoriteStatus = () => {
+    if (user && (user as any).favorites) {
+      setIsFavorite((user as any).favorites.includes(car.car_id));
+    }
+  };
 
   const calculatePrice = async () => {
     try {
@@ -37,6 +48,30 @@ export default function CarCard({ car }: CarCardProps) {
       console.error('Price calculation error:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFavoriteToggle = async (e: any) => {
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      router.push('/');
+      return;
+    }
+
+    try {
+      setFavLoading(true);
+      if (isFavorite) {
+        await api.removeFavorite(car.car_id);
+        setIsFavorite(false);
+      } else {
+        await api.addFavorite(car.car_id);
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Favorite toggle error:', error);
+    } finally {
+      setFavLoading(false);
     }
   };
 
@@ -68,6 +103,23 @@ export default function CarCard({ car }: CarCardProps) {
         style={styles.image}
         resizeMode="cover"
       />
+      
+      {/* Favorite Button */}
+      <TouchableOpacity
+        style={styles.favoriteButton}
+        onPress={handleFavoriteToggle}
+        disabled={favLoading}
+      >
+        {favLoading ? (
+          <ActivityIndicator size="small" color="#FF2D55" />
+        ) : (
+          <Ionicons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={24}
+            color={isFavorite ? '#FF2D55' : '#fff'}
+          />
+        )}
+      </TouchableOpacity>
       
       <View style={styles.content}>
         <Text style={styles.name}>{car.name}</Text>
