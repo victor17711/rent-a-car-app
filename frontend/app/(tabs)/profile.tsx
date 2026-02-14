@@ -122,7 +122,8 @@ export default function ProfileScreen() {
             </View>
           </TouchableOpacity>
           <Text style={styles.userName}>{user?.name}</Text>
-          <Text style={styles.userEmail}>{user?.email}</Text>
+          {user?.email && <Text style={styles.userEmail}>{user.email}</Text>}
+          {user?.phone && <Text style={styles.userPhone}>{user.phone}</Text>}
           <TouchableOpacity style={styles.changePhotoButton} onPress={handleChangeProfilePicture}>
             <Text style={styles.changePhotoText}>Schimbă poza</Text>
           </TouchableOpacity>
