@@ -152,7 +152,7 @@ export default function CarDetailScreen() {
       setCar(data);
     } catch (error) {
       console.error('Failed to fetch car:', error);
-      Alert.alert('Eroare', 'Nu s-au putut încărca detaliile mașinii.');
+      Alert.alert(texts.error, texts.couldNotLoad);
       router.back();
     } finally {
       setLoading(false);
@@ -181,11 +181,11 @@ export default function CarDetailScreen() {
   const handleReservePress = () => {
     if (!isAuthenticated) {
       Alert.alert(
-        'Autentificare necesară',
-        'Trebuie să fiți autentificat pentru a face o rezervare.',
+        texts.authRequired,
+        texts.authMessage,
         [
-          { text: 'Anulează', style: 'cancel' },
-          { text: 'Autentifică-te', onPress: () => router.push('/') },
+          { text: texts.cancel, style: 'cancel' },
+          { text: texts.authenticate, onPress: () => router.push('/') },
         ]
       );
       return;
@@ -195,15 +195,15 @@ export default function CarDetailScreen() {
 
   const handleBookingSubmit = async () => {
     if (!customerName.trim()) {
-      Alert.alert('Eroare', 'Introduceți numele complet');
+      Alert.alert(texts.error, texts.enterFullName);
       return;
     }
     if (!customerPhone.trim()) {
-      Alert.alert('Eroare', 'Introduceți numărul de telefon');
+      Alert.alert(texts.error, texts.enterPhone);
       return;
     }
     if (!customerAge.trim() || parseInt(customerAge) < 18 || parseInt(customerAge) > 99) {
-      Alert.alert('Eroare', 'Introduceți o vârstă validă (18-99)');
+      Alert.alert(texts.error, texts.enterValidAge);
       return;
     }
 
@@ -224,12 +224,12 @@ export default function CarDetailScreen() {
       
       setShowBookingModal(false);
       Alert.alert(
-        'Succes!',
-        'Rezervarea a fost creată cu succes. Veți fi contactat în curând pentru confirmare.',
-        [{ text: 'OK', onPress: () => router.push('/(tabs)/bookings') }]
+        texts.success,
+        texts.bookingCreated,
+        [{ text: texts.ok, onPress: () => router.push('/(tabs)/bookings') }]
       );
     } catch (error: any) {
-      Alert.alert('Eroare', error.message || 'Nu s-a putut crea rezervarea.');
+      Alert.alert(texts.error, error.message || texts.couldNotCreate);
     } finally {
       setBooking(false);
     }
