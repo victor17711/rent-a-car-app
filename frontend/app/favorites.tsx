@@ -5,6 +5,7 @@ import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '../src/utils/api';
 import { useAuth } from '../src/context/AuthContext';
+import { useLanguage } from '../src/context/LanguageContext';
 
 interface Car {
   car_id: string;
@@ -24,6 +25,7 @@ interface Car {
 export default function FavoritesScreen() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
