@@ -880,6 +880,111 @@
         function getStatusLabel(status) { return { pending: 'În așteptare', confirmed: 'Confirmată', completed: 'Finalizată', cancelled: 'Anulată' }[status] || status; }
         function getPartnerStatusLabel(status) { return { pending: 'Nou', contacted: 'Contactat', approved: 'Aprobat', rejected: 'Respins' }[status] || status; }
 
+        // FAQ Functions
+        function renderFaqs() {
+            const tbody = document.getElementById('faqs-table');
+            if (allFaqs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Niciun FAQ adăugat</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allFaqs.map(f => `
+                <tr>
+                    <td>${f.order || 0}</td>
+                    <td>${f.question_ro}</td>
+                    <td>${f.question_ru}</td>
+                    <td><span class="badge ${f.active ? 'bg-success' : 'bg-secondary'}">${f.active ? 'Activ' : 'Inactiv'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editFaq('${f.faq_id}')"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteFaq('${f.faq_id}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadFaqs() {
+            try {
+                allFaqs = await apiCall('/faqs?active_only=false');
+                renderFaqs();
+            } catch (error) { console.error(error); allFaqs = []; }
+        }
+
+        function openFaqModal(faq = null) {
+            document.getElementById('faqModalTitle').textContent = faq ? 'Editează FAQ' : 'Adaugă FAQ';
+            document.getElementById('faqForm').reset();
+            document.getElementById('faqId').value = faq?.faq_id || '';
+            
+            if (faq) {
+                document.getElementById('faqQuestionRo').value = faq.question_ro;
+                document.getElementById('faqQuestionRu').value = faq.question_ru;
+                document.getElementById('faqAnswerRo').value = faq.answer_ro;
+                document.getElementById('faqAnswerRu').value = faq.answer_ru;
+                document.getElementById('faqOrder').value = faq.order || 0;
+                document.getElementById('faqActive').checked = faq.active !== false;
+            }
+            
+            new bootstrap.Modal(document.getElementById('faqModal')).show();
+        }
+
+        function editFaq(faqId) {
+            const faq = allFaqs.find(f => f.faq_id === faqId);
+            if (faq) openFaqModal(faq);
+        }
+
+        async function saveFaq() {
+            const faqId = document.getElementById('faqId').value;
+            const data = {
+                question_ro: document.getElementById('faqQuestionRo').value,
+                question_ru: document.getElementById('faqQuestionRu').value,
+                answer_ro: document.getElementById('faqAnswerRo').value,
+                answer_ru: document.getElementById('faqAnswerRu').value,
+                order: parseInt(document.getElementById('faqOrder').value) || 0,
+                active: document.getElementById('faqActive').checked
+            };
+            
+            try {
+                if (faqId) await apiCall(`/admin/faqs/${faqId}`, { method: 'PUT', body: JSON.stringify(data) });
+                else await apiCall('/admin/faqs', { method: 'POST', body: JSON.stringify(data) });
+                bootstrap.Modal.getInstance(document.getElementById('faqModal')).hide();
+                await loadFaqs();
+            } catch (error) { alert('Eroare: ' + error.message); }
+        }
+
+        async function deleteFaq(faqId) {
+            if (!confirm('Sigur doriți să ștergeți acest FAQ?')) return;
+            try {
+                await apiCall(`/admin/faqs/${faqId}`, { method: 'DELETE' });
+                await loadFaqs();
+            } catch (error) { alert('Eroare: ' + error.message); }
+        }
+
+        // Legal Content Functions
+        function loadLegalContent() {
+            document.getElementById('termsContentRo').value = legalTerms.content_ro || '';
+            document.getElementById('termsContentRu').value = legalTerms.content_ru || '';
+            document.getElementById('privacyContentRo').value = legalPrivacy.content_ro || '';
+            document.getElementById('privacyContentRu').value = legalPrivacy.content_ru || '';
+        }
+
+        async function saveLegalContent(type) {
+            const contentRo = document.getElementById(`${type}ContentRo`).value;
+            const contentRu = document.getElementById(`${type}ContentRu`).value;
+            
+            try {
+                await apiCall(`/admin/legal/${type}`, { 
+                    method: 'PUT', 
+                    body: JSON.stringify({ content_ro: contentRo, content_ru: contentRu }) 
+                });
+                
+                if (type === 'terms') {
+                    legalTerms = { content_ro: contentRo, content_ru: contentRu };
+                } else {
+                    legalPrivacy = { content_ro: contentRo, content_ru: contentRu };
+                }
+                
+                alert(type === 'terms' ? 'Termenii și Condițiile au fost salvate!' : 'Politica de Confidențialitate a fost salvată!');
+            } catch (error) { alert('Eroare: ' + error.message); }
+        }
+
         processAuth();
     </script>
 </body>
