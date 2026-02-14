@@ -180,6 +180,18 @@ const styles = StyleSheet.create({
     height: 220,
     backgroundColor: '#f0f0f0',
   },
+  favoriteButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
   content: {
     padding: 16,
   },
