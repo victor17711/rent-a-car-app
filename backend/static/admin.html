@@ -318,15 +318,15 @@
             return response.json();
         }
 
-        function showLoginForm() { document.getElementById('emailLoginForm').style.display = 'block'; document.getElementById('registerForm').style.display = 'none'; }
-        function showRegisterForm() { document.getElementById('emailLoginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; }
+        function showLoginForm() { document.getElementById('phoneLoginForm').style.display = 'block'; document.getElementById('registerForm').style.display = 'none'; }
+        function showRegisterForm() { document.getElementById('phoneLoginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; }
 
-        async function loginWithEmail() {
-            const email = document.getElementById('loginEmail').value;
+        async function loginWithPhone() {
+            const phone = document.getElementById('loginPhone').value;
             const password = document.getElementById('loginPassword').value;
-            if (!email || !password) { alert('Completați toate câmpurile'); return; }
+            if (!phone || !password) { alert('Completați toate câmpurile'); return; }
             try {
-                const result = await apiCall('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+                const result = await apiCall('/auth/login', { method: 'POST', body: JSON.stringify({ phone, password }) });
                 sessionToken = result.session_token;
                 localStorage.setItem('admin_session_token', sessionToken);
                 currentUser = result.user;
@@ -337,12 +337,13 @@
 
         async function registerUser() {
             const name = document.getElementById('registerName').value;
+            const phone = document.getElementById('registerPhone').value;
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
-            if (!name || !email || !password) { alert('Completați toate câmpurile'); return; }
+            if (!name || !phone || !email || !password) { alert('Completați toate câmpurile'); return; }
             if (password.length < 6) { alert('Parola trebuie să aibă minim 6 caractere'); return; }
             try {
-                const result = await apiCall('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) });
+                const result = await apiCall('/auth/register', { method: 'POST', body: JSON.stringify({ name, phone, email, password }) });
                 sessionToken = result.session_token;
                 localStorage.setItem('admin_session_token', sessionToken);
                 currentUser = result.user;
