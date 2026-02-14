@@ -333,6 +333,31 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
+  languageContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 12,
+  },
+  languageButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+  },
+  languageButtonActive: {
+    backgroundColor: '#A31621',
+  },
+  languageText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666',
+  },
+  languageTextActive: {
+    color: '#fff',
+  },
   menuSection: {
     backgroundColor: '#fff',
     marginTop: 16,
