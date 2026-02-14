@@ -4,12 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import { api } from '../src/utils/api';
 import { useAuth } from '../src/context/AuthContext';
+import { useLanguage } from '../src/context/LanguageContext';
 
 export default function PrivacyScreen() {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
-  const language = user?.language || 'ro';
 
   useEffect(() => {
     loadContent();
@@ -30,7 +31,7 @@ export default function PrivacyScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: language === 'ro' ? 'Politică de Confidențialitate' : 'Политика конфиденциальности', headerShown: true }} />
+        <Stack.Screen options={{ title: t('privacyPolicy'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#A31621" />
         </View>
@@ -40,14 +41,14 @@ export default function PrivacyScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: language === 'ro' ? 'Politică de Confidențialitate' : 'Политика конфиденциальности', headerShown: true }} />
+      <Stack.Screen options={{ title: t('privacyPolicy'), headerShown: true, headerBackTitle: t('back') }} />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         <View style={styles.content}>
           {content ? (
             <Text style={styles.text}>{content}</Text>
           ) : (
             <Text style={styles.emptyText}>
-              {language === 'ro' ? 'Conținutul nu este disponibil momentan.' : 'Содержание недоступно в данный момент.'}
+              {t('contentNotAvailable')}
             </Text>
           )}
         </View>
