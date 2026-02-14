@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '../src/utils/api';
 import { useAuth } from '../src/context/AuthContext';
+import { useLanguage } from '../src/context/LanguageContext';
 
 interface FAQ {
   faq_id: string;
@@ -17,10 +18,10 @@ interface FAQ {
 
 export default function FAQScreen() {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const language = user?.language || 'ro';
 
   useEffect(() => {
     loadFaqs();
@@ -44,7 +45,7 @@ export default function FAQScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: 'Ajutor', headerShown: true }} />
+        <Stack.Screen options={{ title: t('help'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#A31621" />
         </View>
@@ -54,16 +55,14 @@ export default function FAQScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: language === 'ro' ? 'Ajutor' : 'Помощь', headerShown: true }} />
+      <Stack.Screen options={{ title: t('help'), headerShown: true, headerBackTitle: t('back') }} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.title}>
-            {language === 'ro' ? 'Întrebări Frecvente' : 'Часто Задаваемые Вопросы'}
+            {t('faqTitle')}
           </Text>
           <Text style={styles.subtitle}>
-            {language === 'ro' 
-              ? 'Găsește răspunsuri la întrebările tale'
-              : 'Найдите ответы на ваши вопросы'}
+            {t('findAnswers')}
           </Text>
         </View>
 
@@ -72,7 +71,7 @@ export default function FAQScreen() {
             <View style={styles.emptyContainer}>
               <Ionicons name="help-circle-outline" size={64} color="#ccc" />
               <Text style={styles.emptyText}>
-                {language === 'ro' ? 'Nu există întrebări disponibile momentan' : 'Нет доступных вопросов'}
+                {t('noFaqs')}
               </Text>
             </View>
           ) : (
