@@ -318,6 +318,11 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 14,
     color: '#666',
+    marginBottom: 4,
+  },
+  userPhone: {
+    fontSize: 14,
+    color: '#666',
     marginBottom: 12,
   },
   adminBadge: {
