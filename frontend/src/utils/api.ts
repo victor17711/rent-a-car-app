@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://rentalfleet-9.preview.emergentagent.com';
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://bugfix-rental.preview.emergentagent.com';
 
 export const getAuthToken = async (): Promise<string | null> => {
   return await AsyncStorage.getItem('session_token');

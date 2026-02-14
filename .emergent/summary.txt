@@ -1,177 +1,240 @@
 <analysis>
+<original_problem_statement>
+Initial user request was to download an application from a GitHub repository () and modify the booking cards to have a 1px red border.
 
-**original_problem_statement**: The user wants to build a mobile car rental application for both iOS and Android using React Native.
+This was followed by several feature requests:
+1.  **Authentication Rework:** Change login to use Phone Number and Password. Registration should include Phone Number.
+2.  **Profile Page Overhaul:**
+    *   Remove Notifications.
+    *   Add Change Name functionality.
+    *   Add a language selector for Romanian (RO) and Russian (RU).
+    *   The Help tab should navigate to a new FAQ page.
+3.  **Content Management:**
+    *   FAQs, Terms & Conditions, and Privacy Policy should be manageable from an admin panel.
+4.  **Registration & Profile Update:**
+    *   Add the Email field back to the registration process.
+    *   Display the user's email on their profile page.
+    *   Login should remain with the phone number.
+5.  **Favorites System:**
+    *   Add a heart icon to each car card to add/remove it from favorites.
+    *   Create a Favorites page to display the user's favorited cars.
+6.  **Bug Fixes (Latest Request):**
+    *   The language selector UI doesn't actually translate the app content.
+    *   The admin panel is missing the UI to manage FAQs and legal content.
+    *   The user's email is not appearing on the profile page.
+    *   Data from the admin panel (cars, banners) is not showing up in the mobile app.
 
-**PRODUCT REQUIREMENTS**:
--   **Authentication**: Login and Register functionality with a logo. User initially requested Google social login but later added a requirement for standard email/password authentication for both the mobile app and the admin panel.
--   **Home Screen**: Should feature a promotional banner (later updated to be a slider), and a car filtering system.
--   **Car Listings**: Each car should be displayed on a card with key characteristics, price, and a button to view more details.
--   **Car Detail Page**: A dedicated page for each car showing a larger image gallery and more comprehensive details.
--   **Price Calculator**: An automated price calculator on the home screen with selectors for date/time, location, and insurance. The price logic is complex, including:
-    -   Tiered pricing based on the number of rental days (1, 3, 5, 10, 20 days).
-    -   Optional CASCO insurance fee.
-    -   An extra fee of €25 for pickups/drop-offs before 09:00 or after 18:00.
-    -   Location-based fees: Office (Free), Chisinau Airport (Free), Iasi Airport (€150).
--   **Web Admin Panel**: A separate web interface for administrators to:
-    -   Add, edit, and delete cars, including setting prices, specifications, descriptions, and order.
-    -   Upload car images from the device.
-    -   View and manage bookings.
-    -   View contact requests from potential partners.
--   **Partner Feature**: The Become Administrator button in the app should be changed to Become Partner and lead to a contact form. Submissions should appear in the admin panel.
--   **Logout**: Logout should correctly redirect the user to the Login screen.
+PRODUCT REQUIREMENTS:
+- A full-stack mobile car rental application.
+- User authentication via phone number and password.
+- User profile with name change, language preference, and email display.
+- A favorites system for cars.
+- Dynamic content pages (FAQ, Terms, Privacy) manageable from a web-based admin panel.
+- Bilingual support (Romanian and Russian).
+</original_problem_statement>
 
-**User's preferred language**: Romanian. The next agent MUST respond in Romanian.
+**User's preferred language**: Romanian (ro)
 
 **what currently exists?**
-A full-stack car rental application has been developed.
--   **Frontend (React Native/Expo)**: The mobile app includes a complete authentication system (both Google and email/password), a home screen with a new banner slider and car listings, a car detail page with a description, a multi-step booking process (price calculation followed by a user info form), a profile page, and a Become Partner contact form. Most of the user's recent UI/UX requests have been implemented.
--   **Backend (FastAPI)**: The backend provides all necessary APIs for car management, user authentication (JWT and Google), booking creation and retrieval, partner request submissions, and admin statistics. It also serves the static HTML/JS for the web admin panel.
--   **Admin Panel**: A comprehensive, standalone web admin panel is available at the  endpoint. It supports email/password login and allows management of cars (with detailed specifications and image uploads), bookings, and partner requests.
+A full-stack rent-a-car application has been cloned from GitHub. The codebase consists of an Expo (React Native) frontend and a FastAPI backend with a MongoDB database.
+
+The agent has performed the following major modifications:
+1.  Changed the authentication system from email-based to phone number-based login.
+2.  Added an email field back to the registration form and user model.
+3.  Created backend endpoints and frontend UI stubs for a large set of new features: profile updates (name, language), a favorites system, and dynamic content pages (FAQ, Terms, Privacy).
+
+However, the implementation of these new features is incomplete and has introduced several critical bugs.
 
 **Last working item**:
--   Last item agent was working: The agent was about to start implementing the final three user requests from the last conversation turn:
-    1.  Adding a profile picture upload feature for users in the mobile app.
-    2.  Implementing language switching (RO/RU) in the mobile app.
-    3.  Adding a forgotten filter for car body type (Sedan, SUV, etc.) on the home screen.
--   Status: NOT STARTED
+-   Last item agent was working: The agent was about to start debugging the list of issues reported by the user. The last action was to view the admin panel's frontend code () to investigate why the new content management sections (for FAQs and Legal documents) are not visible. The agent correctly identified that the backend APIs were created, but the frontend UI was never updated to reflect these new capabilities.
+-   Status: IN PROGRESS
 -   Agent Testing Done: N
--   Which testing method agent to use? After implementing the backend changes for the new features, use the . For the frontend, use the  to verify the new UI elements (profile picture, language switcher, car type filter) and ask the user for verification.
+-   Which testing method agent to use? manual testing by curl. The issues are a mix of frontend UI, frontend logic (translation), and backend-frontend data synchronization. The next agent should start by debugging each reported issue manually.
+    1.  **Admin Panel:** Inspect  and add the necessary UI components to interact with the new admin endpoints.
+    2.  **Data Sync:** Use  to test the  and  endpoints to see if they return data. Check the frontend code in  to debug why this data isn't being rendered.
+    3.  **Profile Email:** Check the payload returned by the login/profile endpoints and inspect the  component to see why the email is not rendered.
+    4.  **Translation:** This requires implementing a translation library (like ) and wrapping all static strings in the app.
 -   User Testing Done: N
 
 **All Pending/In progress Issue list**:
-There are no pending bugs or issues. The work is focused on implementing new features requested by the user.
+-   Issue 1: Data from admin panel (cars, banners) is not displayed in the app (P0)
+-   Issue 2: Admin panel UI is missing management sections for FAQ and Legal Content (P1)
+-   Issue 3: User's email is not displayed on the profile page (P2)
+-   Issue 4: Language selector does not translate the application's content (P3)
+
+Issues Detail:
+-   **Issue 1: Data from admin panel (cars, banners) is not displayed in the app**
+    -   Attempted fixes: None. The issue was just reported by the user.
+    -   Next debug checklist:
+        1.  Verify the backend is running and the database contains car/banner data.
+        2.  Use  to manually query the  and  endpoints. Check if they return the expected data.
+        3.  Inspect the frontend code, likely in  or a related component, that is responsible for fetching and displaying this data.
+        4.  Check browser console logs and React Native logs for any network errors or failed API calls.
+    -   Why fix this issue and what will be achieved with the fix? This is a critical bug. Fixing it will restore the core functionality of the app, which is to display available cars to the user.
+    -   Status: NOT STARTED
+    -   Is recurring issue? N
+    -   Should Test frontend/backend/both after fix? Both
+    -   Blocked on other issue: None
+
+-   **Issue 2: Admin panel UI is missing management sections for FAQ and Legal Content**
+    -   Attempted fixes: None. The agent was about to start on this.
+    -   Next debug checklist:
+        1.  Analyze , which contains the React code for the admin panel.
+        2.  Implement new UI sections (forms, tables) within this file to allow creating, updating, and deleting FAQs and editing legal content.
+        3.  Connect these new UI components to the corresponding backend APIs that the previous agent created (e.g., , ).
+    -   Why fix this issue and what will be achieved with the fix? This will complete a key user requirement, allowing administrators to manage dynamic content without code changes.
+    -   Status: NOT STARTED
+    -   Is recurring issue? N
+    -   Should Test frontend/backend/both after fix? Frontend (the backend part is likely done)
+    -   Blocked on other issue: None
+
+-   **Issue 3: User's email is not displayed on the profile page**
+    -   Attempted fixes: The agent added code to  intending to display the email, but it failed.
+    -   Next debug checklist:
+        1.  Examine the  object available in . Does it contain the  field after login/registration?
+        2.  If not, modify the backend login/profile endpoints to ensure the  field is included in the user data payload sent to the frontend.
+        3.  Verify the rendering logic in  to ensure it correctly accesses and displays .
+    -   Why fix this issue and what will be achieved with the fix? Fulfills a direct user request and ensures data consistency between registration and profile view.
+    -   Status: NOT STARTED
+    -   Is recurring issue? N
+    -   Should Test frontend/backend/both after fix? Both
+    -   Blocked on other issue: None
+
+-   **Issue 4: Language selector does not translate the application's content**
+    -   Attempted fixes: The agent created the UI for the selector and the backend endpoint to save the user's preference, but no actual translation mechanism was implemented.
+    -   Next debug checklist:
+        1.  Choose and install a localization library (e.g.,  with ).
+        2.  Create translation files (e.g., , ) for all static strings in the application.
+        3.  Wrap all user-facing text components in a translation function (e.g., ).
+        4.  Connect the language selector in  to the i18n instance to dynamically change the app's language.
+    -   Why fix this issue and what will be achieved with the fix? This will implement a core feature request for a bilingual application, making it accessible to both Romanian and Russian speaking users.
+    -   Status: NOT STARTED
+    -   Is recurring issue? N
+    -   Should Test frontend/backend/both after fix? Frontend
+    -   Blocked on other issue: None
 
 **In progress Task List**:
-None. The previous batch of tasks was completed, and the next batch has not yet been started.
+The previous agent attempted a large, multi-feature implementation that is currently in a broken state. The primary task is to stabilize the application by addressing all the bugs listed above.
+
+-   **Task 1: Complete and Fix Feature Implementation**
+    -   Where to resume: Start with Issue 1 from the pending list (Data Syncing) as it is the most critical. Then proceed through the other issues.
+    -   What will be achieved with this? A stable, functional application that meets all the user's recent feature requests.
+    -   Status: IN PROGRESS
+    -   Should Test frontend/backend/both after fix? Both
+    -   Blocked on something: No
 
 **Upcoming and Future Tasks**
--   **P0: Implement User Profile Picture Upload**:
-    -   **Backend**: Update the  model to store a profile picture (as base64). Create a new API endpoint for uploading/updating the profile picture.
-    -   **Frontend**: On the  screen, add an image component to display the profile picture and a button to trigger the image picker (). Call the new API to upload the selected image.
--   **P0: Implement Language Switching (RO/RU)**:
-    -   **Strategy**: Use a library like  or .
-    -   **Implementation**: Create JSON translation files for Romanian (ro.json) and Russian (ru.json). Wrap the app in a localization context provider. Replace all static text strings with translation keys. Add a UI element (e.g., in the profile screen or a settings modal) to allow the user to switch the language. Store the selected language in  for persistence.
--   **P0: Implement Car Body Type Filter**:
-    -   **Backend**:
-        -   Modify the  model in  to include a  field (e.g., Sedan, SUV, Hatchback).
-        -   Update the data seeding script or add a migration to populate this new field for existing cars.
-        -   Modify the  endpoint to accept an optional  query parameter to filter the results.
-    -   **Frontend**:
-        -   On the  home screen, add a new filter component (e.g., a dropdown or a set of buttons) for body types.
-        -   Update the state and the API call in  and the home screen to include the selected  when fetching cars.
+There are no new upcoming tasks. The priority is to finish and stabilize the currently requested features.
 
 **Completed work in this session**
--   **Authentication**:
-    -   Implemented full JWT email/password registration (,  endpoint) and login flows.
-    -   Updated  () to handle both Google and JWT auth.
-    -   Removed Google login from the Admin Panel as requested.
--   **Admin Panel ()**:
-    -   Complete UI/UX overhaul.
-    -   Added detailed forms for car management, including fields for , , , , , , and boolean specs (AC, GPS, etc.).
-    -   Implemented a multi-file upload system for car images with a radio button to select the main image.
-    -   The booking list now shows comprehensive details for each reservation.
-    -   Fixed routing to be accessible via .
--   **Mobile App UI/UX**:
-    -   Home Screen (): Replaced static banner with a more dynamic, auto-scrolling banner slider.
-    -   Car Cards (): Increased image height for better visibility.
-    -   Car Detail Page ():
-        -   Added a booking modal form to collect Name, Age, and Phone after clicking Reserve.
-        -   Hid the CASCO/zi price from the pricing table.
-        -   Added a section to display the car's description.
-    -   Tabs (): Added bottom padding to the tab bar.
-    -   Profile (): Changed Become Admin to Become Partner and linked it to a new contact form screen ().
-    -   Logout: Fixed the logout functionality to correctly redirect to the login screen.
--   **Backend ()**:
-    -   Updated  and  Pydantic models to include new fields (description, order, client name/age/phone).
-    -   Updated the car creation/update endpoints to handle all new car specifications.
-    -   Updated the booking creation endpoint to accept and store customer details from the new form.
-    -   Added sorting by the  field to the  endpoint.
+-   Cloned the application from the user-provided GitHub repository.
+-   **UI Tweak (DONE):** Added a 1px red border to booking cards in .
+-   **Authentication Rework (Partially Done - Login Works):**
+    -   Migrated login to use phone number and password.
+    -   Updated user model and backend endpoints in .
+    -   Updated login and registration screens (, ).
+-   **New Feature Scaffolding (Incomplete):**
+    -   Created backend endpoints for name/language changes, favorites, FAQs, and legal content.
+    -   Created new, mostly empty frontend pages: , , , , .
+    -   Added a favorite button to the car card UI.
 
 **Earlier issues found/mentioned but not fixed**
--   The user mentioned the agent forgot to implement the car type filter. This has been noted and added to the .
+All known issues are listed in the **All Pending/In progress Issue list** section. No issues were missed by the agent.
 
 **Known issue recurrence from previous fork**
--   None observed. The admin panel routing issue was a new problem that was identified and resolved within the session.
+-   Issue recurrence in previous fork: None. This is the first fork with these issues.
+-   Recurrence count: 0
+-   Status: NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React Native, Expo, Expo Router (file-based routing), React Context for state management (, ),  for API calls.
--   **Backend**: FastAPI, Pydantic for data validation, Motor for async MongoDB access, Passlib & JWT for email/password authentication.
--   **Database**: MongoDB.
--   **Architecture**: Monorepo-like structure with separate  and  directories. The backend is a stateless API serving both the mobile app and a static web admin panel.
+-   **Frontend:** Expo (React Native), file-based routing with , React Context for state management.
+-   **Backend:** FastAPI (Python), Pydantic for data modeling.
+-   **Database:** MongoDB.
+-   **Authentication:** JWT (JSON Web Tokens) issued upon successful login.
+-   **Admin Panel:** A simple web interface built with React, served by the FastAPI backend, located at .
 
 **key DB schema**
--   : 
--   : 
--   : 
--   : 
+-   **users**: 
+-   **cars**: 
+-   **bookings**: 
+-   **faqs**: 
+-   **legal_contents**: 
 
 **changes in tech stack**
--    and  were added to the backend for password hashing and JWT management.
+None.
 
 **All files of reference**
--   : The core backend application logic. Has been heavily modified to add new models, endpoints for JWT auth, partner requests, and to update the car/booking logic.
--   : The admin panel. Completely rewritten to add extensive new features for car management and remove Google login.
--   : The home screen. Rewritten to include a banner slider and updated car list logic.
--   : The car detail page. Rewritten to include the new booking form modal and other UI changes.
--   : The login screen. Rewritten to support both Google and email/password login.
--   : New file for the user registration screen.
--   : Profile screen. Updated to change the Admin button to Partner and link to the new form.
--   : Auth state management. Rewritten to handle JWT tokens and new auth flows.
--   : API layer. Updated with new functions for registration, JWT login, and the modified booking creation.
+-   : Contains all backend logic. Has been heavily modified to add new models and endpoints.
+-   : The admin panel UI. **Needs significant updates** to manage new content.
+-   : The profile screen UI. Modified but buggy (email display, language switch).
+-   : Main screen displaying cars. Likely source of the data sync bug.
+-   : Manages user session and API calls for auth/profile.
+-   : Registration screen, updated to include email.
+-   Newly created files that need implementation/review: , , , .
 
 **Areas that need refactoring**:
--   The  file is a single large HTML file with embedded JavaScript and CSS. While functional, it could be refactored into a modern frontend framework (like React or Vue) in the future for better maintainability.
--   The agent created many new files and overwrote existing ones in large batches. The next agent should verify that all imports and connections between these files are correct.
+-   The entire implementation of the new features (language switching, admin content, favorites) needs to be reviewed and completed properly. The agent's approach of adding many incomplete features at once has led to a fragile state.
+-   The language translation system needs to be designed and implemented from scratch; currently, only a UI switch exists.
 
 **key api endpoints**
--   : User registration with email/password.
--   : User login with email/password.
--   : Get list of cars, supports sorting. (To be updated with filtering).
--   : Get details for a single car.
--   : Create a new booking (updated to include customer info).
--   : Get user's bookings.
--   : Submit a partner contact form.
--   : Serves the static admin panel.
--   : Get dashboard statistics.
--   : Get all bookings for admin view.
--   : Get all partner requests.
+-    (POST)
+-    (POST)
+-    (GET) - **Potentially Bugged**
+-    (GET) - **Potentially Bugged**
+-    (PUT)
+-    (POST/DELETE)
+-    (GET, POST, PUT, DELETE) - **Frontend UI Missing**
+-    (GET, PUT) - **Frontend UI Missing**
+-    (GET) - Serves the admin panel HTML.
 
 **Critical Info for New Agent**
--   The user is highly engaged and provides detailed, multi-point feedback. Address each point carefully.
--   The project has three clear, high-priority tasks remaining. Focus on implementing these next.
--   The admin panel is a static file served by FastAPI. All its dynamic functionality comes from JavaScript making API calls to the same backend. The correct URL is .
--   Remember to always respond to the user in **Romanian**.
+-   Your immediate priority is to fix the four critical bugs reported by the user. Do not add any new features until the app is stable.
+-   Tackle the bugs in order of priority, starting with the data sync issue ( and  not showing up), as this is a core application failure.
+-   The backend endpoints for most new features have already been created. The main problem lies in the frontend implementation and the connection between the frontend and backend.
+-   The language feature is just a UI switch. You will need to implement a full translation solution (e.g., ).
 
 **documents created in this job**
-- None.
+-    was created to track progress.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (Msg 153)**: Provided a long list of 13 detailed changes for the mobile app and admin panel, including UI tweaks, new features like car description/ordering, a booking form, and major admin panel enhancements (image upload, more fields, remove Google login). Also requested profile picture and language features. (Status: Most implemented, 2 pending).
-2.  **Agent (Msg 154-200)**: Acknowledged and worked through the long list of changes, implementing them in batches across the frontend and backend.
-3.  **Agent (Msg 201)**: Summarized in Romanian all the changes that were completed from the user's list and listed the two remaining items (Profile Picture, Language RO/RU). Asked the user for the next step.
-4.  **User (Msg 202)**: Approved the progress and asked the agent to implement the final 2 pending items. Also pointed out a forgotten feature: a filter for car body type (Sedan, SUV, etc.).
-5.  **Agent (Msg 203)**: Acknowledged all three new tasks (Profile Picture, Language, Body Type Filter) and confirmed he would start working on them. (Status: **This is the starting point for the next agent**).
+1.  **User (LATEST):** Reports 4 major bugs: 1) Language switcher doesn't translate, 2) Admin panel missing FAQ/Terms/Privacy controls, 3) Email not showing on profile, 4) Cars/Banners from admin not showing in-app. **(PENDING)**
+2.  **User:** I want to continue with whats left to be done." **(IN PROGRESS)**
+3.  **User:** Provides a large list of 6 new features/changes including profile page updates, admin-managed content (FAQ/Terms), adding email back to registration, and a favorites system. **(IN PROGRESS / BUGGY)**
+4.  **User:** Asks for login with phone number, phone number in registration, and the admin panel link. **(COMPLETED)**
+5.  **User:** "I cant connect to expo go, it says something is offline. **(Implicitly resolved when agent fixed ngrok issue)**
+6.  **User:** Provides the GitHub link and asks for the first modification (1px red border on booking cards). **(COMPLETED)**
 
 **Project Health Check:**
--   **Functional**: The application's core features are implemented and appear to be working. The user has verified previous stages, but the latest large batch of changes needs verification.
--   **Mocked**: No mocked data. The application uses a live MongoDB database seeded with data.
+-   **Broken:** The application is in a broken state. Core functionality (displaying cars) is non-operational, and newly added features are incomplete and buggy.
 
 **3rd Party Integrations**
--   Emergent-based Google social login (used in mobile app only).
+None explicitly mentioned or added beyond the initial project stack (Expo, FastAPI, MongoDB).
 
 **Testing status**
--   Testing agent used after significant changes: YES, the backend testing agent was used successfully to verify the initial API endpoints.
--   Troubleshoot agent used after agent stuck in loop: NO.
+-   Testing agent used after significant changes: NO
+-   Troubleshoot agent used after agent stuck in loop: NO
 -   Test files created: None.
--   Known regressions: None reported, but the latest large batch of changes has not been fully tested by the user.
+-   Known regressions:
+    -   Display of cars and banners is broken.
 
 **Credentials to test flow:**
--   A test user was created via API call:  / . This can be used to log into both the mobile app and the web admin panel.
+No specific credentials. The user can register a new account to test the flow. The admin panel can be accessed, but making a user an admin might require manual database intervention or using the  endpoint mentioned by the agent.
 
 **What agent forgot to execute**
--   The agent initially forgot to implement the filter for car body type (e.g., Sedan, SUV) as part of the initial plan. The user pointed this out, and it has now been added to the upcoming tasks.
+-   **Implement Translation:** The agent only built the UI for the language switcher but forgot to implement the entire underlying translation mechanism.
+-   **Update Admin Panel UI:** The agent created backend APIs for content management but forgot to add the corresponding forms and controls to the frontend admin panel ().
+-   **Thorough Testing:** The agent declared numerous complex features complete without any testing, leading to the current list of critical bugs. The connection between frontend and backend for new features was not verified.
 
 </analysis>
+<SYS_PROMPT_SEPARATOR>
+<workspace_dir>
+/app
+</workspace_dir>
+Perfect! Voi rezolva toate aceste probleme. Să încep:
+
+## Rezolvare Probleme
+
+### 1. Mai întâi să văd panoul de admin pentru a-l actualiza:
