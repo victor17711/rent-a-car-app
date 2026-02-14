@@ -405,6 +405,9 @@
         let allBookings = [];
         let allPartners = [];
         let allBanners = [];
+        let allFaqs = [];
+        let legalTerms = { content_ro: '', content_ru: '' };
+        let legalPrivacy = { content_ro: '', content_ru: '' };
 
         async function apiCall(endpoint, options = {}) {
             const headers = { 'Content-Type': 'application/json', ...options.headers };
