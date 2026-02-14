@@ -3,25 +3,29 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Platform, ScrollView }
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRental } from '../context/RentalContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const LOCATIONS = [
-  { id: 'office', label: 'Oficiu', sublabel: 'Gratuit', fee: 0 },
-  { id: 'chisinau_airport', label: 'Aeroport Chișinău', sublabel: 'Gratuit', fee: 0 },
-  { id: 'iasi_airport', label: 'Aeroport Iași', sublabel: '+150 €', fee: 150 },
+  { id: 'office', labelRo: 'Oficiu', labelRu: 'Офис', sublabelRo: 'Gratuit', sublabelRu: 'Бесплатно', fee: 0 },
+  { id: 'chisinau_airport', labelRo: 'Aeroport Chișinău', labelRu: 'Аэропорт Кишинёв', sublabelRo: 'Gratuit', sublabelRu: 'Бесплатно', fee: 0 },
+  { id: 'iasi_airport', labelRo: 'Aeroport Iași', labelRu: 'Аэропорт Яссы', sublabelRo: '+150 €', sublabelRu: '+150 €', fee: 150 },
 ];
 
 const INSURANCE_OPTIONS = [
-  { id: 'rca', label: 'RCA', sublabel: 'Inclus', price: 0 },
-  { id: 'casco', label: 'CASCO', sublabel: 'Extra', price: 'variabil' },
+  { id: 'rca', labelRo: 'RCA', labelRu: 'RCA', sublabelRo: 'Inclus', sublabelRu: 'Включено', price: 0 },
+  { id: 'casco', labelRo: 'CASCO', labelRu: 'КАСКО', sublabelRo: 'Extra', sublabelRu: 'Дополнительно', price: 'variabil' },
 ];
 
+// 24-hour time options
 const TIME_OPTIONS = [
-  '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
-  '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00',
+  '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
+  '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
+  '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00',
 ];
 
 export default function RentalFilters() {
   const { filters, setFilters } = useRental();
+  const { language, t } = useLanguage();
   const [showStartDate, setShowStartDate] = useState(false);
   const [showEndDate, setShowEndDate] = useState(false);
   const [showStartTime, setShowStartTime] = useState(false);
@@ -30,7 +34,7 @@ export default function RentalFilters() {
   const [showInsurance, setShowInsurance] = useState(false);
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ro-RO', {
+    return date.toLocaleDateString(language === 'ro' ? 'ro-RO' : 'ru-RU', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -38,16 +42,21 @@ export default function RentalFilters() {
   };
 
   const getLocationLabel = () => {
-    return LOCATIONS.find(l => l.id === filters.location)?.label || 'Selectează';
+    const loc = LOCATIONS.find(l => l.id === filters.location);
+    if (!loc) return language === 'ro' ? 'Selectează' : 'Выберите';
+    return language === 'ro' ? loc.labelRo : loc.labelRu;
   };
 
   const getInsuranceLabel = () => {
-    return INSURANCE_OPTIONS.find(i => i.id === filters.insurance)?.label || 'Selectează';
+    const ins = INSURANCE_OPTIONS.find(i => i.id === filters.insurance);
+    if (!ins) return language === 'ro' ? 'Selectează' : 'Выберите';
+    return language === 'ro' ? ins.labelRo : ins.labelRu;
   };
 
+  // Fee applies before 08:00 and after 18:00 (20€)
   const isOutsideHours = (time: string) => {
     const hour = parseInt(time.split(':')[0]);
-    return hour < 9 || hour >= 18;
+    return hour < 8 || hour >= 18;
   };
 
   const renderPickerModal = (
@@ -71,16 +80,37 @@ export default function RentalFilters() {
     </Modal>
   );
 
+  // Translations for UI texts
+  const texts = {
+    title: language === 'ro' ? 'Configurează închirierea' : 'Настроить аренду',
+    pickupDate: language === 'ro' ? 'Data preluare' : 'Дата получения',
+    returnDate: language === 'ro' ? 'Data returnare' : 'Дата возврата',
+    pickupTime: language === 'ro' ? 'Ora preluare' : 'Время получения',
+    returnTime: language === 'ro' ? 'Ora returnare' : 'Время возврата',
+    pickupLocation: language === 'ro' ? 'Locație preluare' : 'Место получения',
+    insurance: language === 'ro' ? 'Asigurare' : 'Страховка',
+    infoText: language === 'ro' 
+      ? 'Program: 08:00 - 18:00. În afara programului se aplică taxa de 20€.'
+      : 'Часы работы: 08:00 - 18:00. Вне рабочих часов применяется сбор 20€.',
+    selectPickupTime: language === 'ro' ? 'Selectează ora de preluare' : 'Выберите время получения',
+    selectReturnTime: language === 'ro' ? 'Selectează ora de returnare' : 'Выберите время возврата',
+    selectLocation: language === 'ro' ? 'Selectează locația' : 'Выберите место',
+    selectInsurance: language === 'ro' ? 'Selectează asigurarea' : 'Выберите страховку',
+    outsideHours: language === 'ro' ? 'în afara programului' : 'вне рабочих часов',
+    includedInPrice: language === 'ro' ? 'Inclus în preț' : 'Включено в стоимость',
+    pricePerDay: language === 'ro' ? 'Preț per zi - variază în funcție de mașină' : 'Цена за день - зависит от автомобиля',
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Configurează închirierea</Text>
+      <Text style={styles.title}>{texts.title}</Text>
       
-      {/* Date Selection */}
+      {/* Date Selection - Direct calendar open on click */}
       <View style={styles.row}>
         <TouchableOpacity style={styles.field} onPress={() => setShowStartDate(true)}>
           <Ionicons name="calendar-outline" size={20} color="#007AFF" />
           <View style={styles.fieldContent}>
-            <Text style={styles.fieldLabel}>Data preluare</Text>
+            <Text style={styles.fieldLabel}>{texts.pickupDate}</Text>
             <Text style={styles.fieldValue}>{formatDate(filters.startDate)}</Text>
           </View>
         </TouchableOpacity>
@@ -88,21 +118,21 @@ export default function RentalFilters() {
         <TouchableOpacity style={styles.field} onPress={() => setShowEndDate(true)}>
           <Ionicons name="calendar-outline" size={20} color="#007AFF" />
           <View style={styles.fieldContent}>
-            <Text style={styles.fieldLabel}>Data returnare</Text>
+            <Text style={styles.fieldLabel}>{texts.returnDate}</Text>
             <Text style={styles.fieldValue}>{formatDate(filters.endDate)}</Text>
           </View>
         </TouchableOpacity>
       </View>
 
-      {/* Time Selection */}
+      {/* Time Selection - 24h format with 20€ fee for outside hours */}
       <View style={styles.row}>
         <TouchableOpacity style={styles.field} onPress={() => setShowStartTime(true)}>
           <Ionicons name="time-outline" size={20} color="#007AFF" />
           <View style={styles.fieldContent}>
-            <Text style={styles.fieldLabel}>Ora preluare</Text>
+            <Text style={styles.fieldLabel}>{texts.pickupTime}</Text>
             <Text style={[styles.fieldValue, isOutsideHours(filters.startTime) && styles.warningText]}>
               {filters.startTime}
-              {isOutsideHours(filters.startTime) && ' (+25€)'}
+              {isOutsideHours(filters.startTime) && ' (+20€)'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -110,10 +140,10 @@ export default function RentalFilters() {
         <TouchableOpacity style={styles.field} onPress={() => setShowEndTime(true)}>
           <Ionicons name="time-outline" size={20} color="#007AFF" />
           <View style={styles.fieldContent}>
-            <Text style={styles.fieldLabel}>Ora returnare</Text>
+            <Text style={styles.fieldLabel}>{texts.returnTime}</Text>
             <Text style={[styles.fieldValue, isOutsideHours(filters.endTime) && styles.warningText]}>
               {filters.endTime}
-              {isOutsideHours(filters.endTime) && ' (+25€)'}
+              {isOutsideHours(filters.endTime) && ' (+20€)'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -124,7 +154,7 @@ export default function RentalFilters() {
         <TouchableOpacity style={styles.field} onPress={() => setShowLocation(true)}>
           <Ionicons name="location-outline" size={20} color="#007AFF" />
           <View style={styles.fieldContent}>
-            <Text style={styles.fieldLabel}>Locație preluare</Text>
+            <Text style={styles.fieldLabel}>{texts.pickupLocation}</Text>
             <Text style={styles.fieldValue}>{getLocationLabel()}</Text>
           </View>
         </TouchableOpacity>
@@ -132,17 +162,17 @@ export default function RentalFilters() {
         <TouchableOpacity style={styles.field} onPress={() => setShowInsurance(true)}>
           <Ionicons name="shield-checkmark-outline" size={20} color="#007AFF" />
           <View style={styles.fieldContent}>
-            <Text style={styles.fieldLabel}>Asigurare</Text>
+            <Text style={styles.fieldLabel}>{texts.insurance}</Text>
             <Text style={styles.fieldValue}>{getInsuranceLabel()}</Text>
           </View>
         </TouchableOpacity>
       </View>
 
-      {/* Info about outside hours */}
+      {/* Info about outside hours - Updated to 20€ */}
       <View style={styles.infoBox}>
         <Ionicons name="information-circle-outline" size={18} color="#666" />
         <Text style={styles.infoText}>
-          Program: 09:00 - 18:00. În afara programului se aplică taxa de 25€.
+          {texts.infoText}
         </Text>
       </View>
 
