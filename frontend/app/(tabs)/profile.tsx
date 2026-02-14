@@ -101,9 +101,9 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.container} edges={[]}>
         <View style={styles.emptyContainer}>
           <Ionicons name="person-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyTitle}>Nu ești autentificat</Text>
+          <Text style={styles.emptyTitle}>{t('notAuthenticated')}</Text>
           <Text style={styles.emptyText}>
-            Autentifică-te pentru a vedea profilul tău.
+            {t('loginToSeeProfile')}
           </Text>
         </View>
       </SafeAreaView>
