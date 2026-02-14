@@ -957,6 +957,17 @@ async def update_booking_status(booking_id: str, request: Request):
     
     return {"message": "Status updated successfully"}
 
+@api_router.delete("/admin/bookings/{booking_id}")
+async def delete_booking(booking_id: str, request: Request):
+    """Delete a booking (admin only)"""
+    await require_admin(request)
+    
+    result = await db.bookings.delete_one({"booking_id": booking_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    return {"message": "Booking deleted successfully"}
+
 @api_router.post("/admin/make-admin")
 async def make_admin(request: Request):
     """Make current user admin (for testing)"""
