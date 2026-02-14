@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 class User(BaseModel):
     user_id: str
-    email: str
+    phone: str
     name: str
     picture: Optional[str] = None
     role: str = "user"  # user or admin
