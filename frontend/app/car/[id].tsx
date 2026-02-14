@@ -378,53 +378,53 @@ export default function CarDetailScreen() {
             {car.specs.gps && (
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-                <Text style={styles.featureText}>GPS</Text>
+                <Text style={styles.featureText}>{texts.gps}</Text>
               </View>
             )}
             {car.specs.bluetooth && (
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-                <Text style={styles.featureText}>Bluetooth</Text>
+                <Text style={styles.featureText}>{texts.bluetooth}</Text>
               </View>
             )}
             {car.specs.leather_seats && (
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-                <Text style={styles.featureText}>Scaune piele</Text>
+                <Text style={styles.featureText}>{texts.leatherSeats}</Text>
               </View>
             )}
             {car.specs.cruise_control && (
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-                <Text style={styles.featureText}>Cruise Control</Text>
+                <Text style={styles.featureText}>{texts.cruiseControl}</Text>
               </View>
             )}
           </View>
         </View>
 
-        {/* Pricing Table - WITHOUT CASCO */}
+        {/* Pricing Table */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Prețuri</Text>
+          <Text style={styles.sectionTitle}>{texts.prices}</Text>
           <View style={styles.pricingTable}>
             <View style={styles.pricingRow}>
-              <Text style={styles.pricingLabel}>1 zi</Text>
-              <Text style={styles.pricingValue}>{car.pricing.day_1} €/zi</Text>
+              <Text style={styles.pricingLabel}>1 {texts.day}</Text>
+              <Text style={styles.pricingValue}>{car.pricing.day_1} €/{texts.day}</Text>
             </View>
             <View style={styles.pricingRow}>
-              <Text style={styles.pricingLabel}>3 zile</Text>
-              <Text style={styles.pricingValue}>{car.pricing.day_3} €/zi</Text>
+              <Text style={styles.pricingLabel}>3 {texts.days}</Text>
+              <Text style={styles.pricingValue}>{car.pricing.day_3} €/{texts.day}</Text>
             </View>
             <View style={styles.pricingRow}>
-              <Text style={styles.pricingLabel}>5 zile</Text>
-              <Text style={styles.pricingValue}>{car.pricing.day_5} €/zi</Text>
+              <Text style={styles.pricingLabel}>5 {texts.days}</Text>
+              <Text style={styles.pricingValue}>{car.pricing.day_5} €/{texts.day}</Text>
             </View>
             <View style={styles.pricingRow}>
-              <Text style={styles.pricingLabel}>10 zile</Text>
-              <Text style={styles.pricingValue}>{car.pricing.day_10} €/zi</Text>
+              <Text style={styles.pricingLabel}>10 {texts.days}</Text>
+              <Text style={styles.pricingValue}>{car.pricing.day_10} €/{texts.day}</Text>
             </View>
             <View style={styles.pricingRow}>
-              <Text style={styles.pricingLabel}>20+ zile</Text>
-              <Text style={styles.pricingValue}>{car.pricing.day_20} €/zi</Text>
+              <Text style={styles.pricingLabel}>20+ {texts.days}</Text>
+              <Text style={styles.pricingValue}>{car.pricing.day_20} €/{texts.day}</Text>
             </View>
           </View>
         </View>
@@ -432,31 +432,31 @@ export default function CarDetailScreen() {
         {/* Price Calculation */}
         {price && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Calculul Prețului</Text>
+            <Text style={styles.sectionTitle}>{texts.priceCalculation}</Text>
             <View style={styles.calculationCard}>
               <View style={styles.calculationRow}>
-                <Text style={styles.calculationLabel}>Perioadă</Text>
-                <Text style={styles.calculationValue}>{price.days} {price.days === 1 ? 'zi' : 'zile'}</Text>
+                <Text style={styles.calculationLabel}>{texts.period}</Text>
+                <Text style={styles.calculationValue}>{price.days} {getDaysLabel(price.days)}</Text>
               </View>
               <View style={styles.calculationRow}>
-                <Text style={styles.calculationLabel}>Tarif zilnic ({price.breakdown.daily_rate} €)</Text>
+                <Text style={styles.calculationLabel}>{texts.dailyRate} ({price.breakdown.daily_rate} €)</Text>
                 <Text style={styles.calculationValue}>{price.base_price} €</Text>
               </View>
               {price.casco_price > 0 && (
                 <View style={styles.calculationRow}>
-                  <Text style={styles.calculationLabel}>CASCO</Text>
+                  <Text style={styles.calculationLabel}>{texts.casco}</Text>
                   <Text style={styles.calculationValue}>+{price.casco_price} €</Text>
                 </View>
               )}
               {price.location_fee > 0 && (
                 <View style={styles.calculationRow}>
-                  <Text style={styles.calculationLabel}>Taxă {getLocationLabel(filters.location)}</Text>
+                  <Text style={styles.calculationLabel}>{texts.fee} {getLocationLabel(filters.location)}</Text>
                   <Text style={styles.calculationValue}>+{price.location_fee} €</Text>
                 </View>
               )}
               {price.outside_hours_fee > 0 && (
                 <View style={styles.calculationRow}>
-                  <Text style={styles.calculationLabel}>În afara programului</Text>
+                  <Text style={styles.calculationLabel}>{texts.outsideHours}</Text>
                   <Text style={styles.calculationValue}>+{price.outside_hours_fee} €</Text>
                 </View>
               )}
