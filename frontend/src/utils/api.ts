@@ -43,13 +43,13 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
 
 export const api = {
   // Auth
-  register: (data: { email: string; password: string; name: string }) =>
+  register: (data: { phone: string; email: string; password: string; name: string }) =>
     apiCall('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
   
-  login: (data: { email: string; password: string }) =>
+  login: (data: { phone: string; password: string }) =>
     apiCall('/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -113,6 +113,35 @@ export const api = {
   
   getMyBookings: () => apiCall('/bookings'),
   
+  // User Profile
+  updateProfilePicture: (picture: string) => apiCall('/users/profile-picture', { 
+    method: 'PUT', 
+    body: JSON.stringify({ picture }) 
+  }),
+  
+  updateName: (name: string) => apiCall('/users/name', {
+    method: 'PUT',
+    body: JSON.stringify({ name }),
+  }),
+  
+  updateLanguage: (language: string) => apiCall('/users/language', {
+    method: 'PUT',
+    body: JSON.stringify({ language }),
+  }),
+  
+  // Favorites
+  addFavorite: (carId: string) => apiCall(`/users/favorites/${carId}`, { method: 'POST' }),
+  
+  removeFavorite: (carId: string) => apiCall(`/users/favorites/${carId}`, { method: 'DELETE' }),
+  
+  getFavorites: () => apiCall('/users/favorites'),
+  
+  // FAQ
+  getFaqs: () => apiCall('/faqs'),
+  
+  // Legal Content
+  getLegalContent: (type: 'terms' | 'privacy') => apiCall(`/legal/${type}`),
+  
   // Admin
   createCar: (data: any) => apiCall('/admin/cars', {
     method: 'POST',
@@ -141,6 +170,36 @@ export const api = {
   
   makeAdmin: () => apiCall('/admin/make-admin', { method: 'POST' }),
   
+  // Admin FAQ
+  createFaq: (data: {
+    question_ro: string;
+    answer_ro: string;
+    question_ru: string;
+    answer_ru: string;
+    order?: number;
+  }) => apiCall('/admin/faqs', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  updateFaq: (faqId: string, data: any) => apiCall(`/admin/faqs/${faqId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  deleteFaq: (faqId: string) => apiCall(`/admin/faqs/${faqId}`, {
+    method: 'DELETE',
+  }),
+  
+  // Admin Legal Content
+  updateLegalContent: (type: 'terms' | 'privacy', data: {
+    content_ro: string;
+    content_ru: string;
+  }) => apiCall(`/admin/legal/${type}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
   // Partner Requests
   submitPartnerRequest: (data: {
     name: string;
@@ -168,12 +227,6 @@ export const api = {
   
   // Banners
   getBanners: () => apiCall('/banners'),
-  
-  // Profile
-  updateProfilePicture: (picture: string) => apiCall('/users/profile-picture', { 
-    method: 'PUT', 
-    body: JSON.stringify({ picture }) 
-  }),
   
   // Seed
   seedData: () => apiCall('/seed', { method: 'POST' }),
