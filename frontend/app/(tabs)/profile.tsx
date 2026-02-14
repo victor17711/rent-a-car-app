@@ -45,11 +45,12 @@ export default function ProfileScreen() {
       setLanguage(newLang);
       await api.updateLanguage(newLang);
       await refreshUser();
-      Alert.alert(t('success'), `${t('languageChanged')} ${newLang === 'ro' ? 'Română' : 'Русский'}`);
+      // Always show language change notification in Romanian
+      Alert.alert('Succes', `Limba a fost schimbată în ${newLang === 'ro' ? 'Română' : 'Русский'}`);
     } catch (error: any) {
       setLocalLanguage(user?.language || 'ro');
       setLanguage(user?.language as 'ro' | 'ru' || 'ro');
-      Alert.alert(t('error'), error.message || 'Nu s-a putut schimba limba');
+      Alert.alert('Eroare', error.message || 'Nu s-a putut schimba limba');
     }
   };
 
