@@ -7,10 +7,10 @@ import { useAuth } from '../src/context/AuthContext';
 import { Image } from 'react-native';
 
 export default function LoginScreen() {
-  const { user, isLoading, isAuthenticated, loginWithGoogle, loginWithEmail } = useAuth();
+  const { user, isLoading, isAuthenticated, loginWithGoogle, loginWithPhone } = useAuth();
   const router = useRouter();
-  const [mode, setMode] = useState<'options' | 'email'>('options');
-  const [email, setEmail] = useState('');
+  const [mode, setMode] = useState<'options' | 'phone'>('options');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -21,9 +21,9 @@ export default function LoginScreen() {
     }
   }, [isAuthenticated, isLoading]);
 
-  const handleEmailLogin = async () => {
-    if (!email.trim()) {
-      Alert.alert('Eroare', 'Introduceți adresa de email');
+  const handlePhoneLogin = async () => {
+    if (!phone.trim()) {
+      Alert.alert('Eroare', 'Introduceți numărul de telefon');
       return;
     }
     if (!password.trim()) {
@@ -33,7 +33,7 @@ export default function LoginScreen() {
 
     try {
       setSubmitting(true);
-      await loginWithEmail(email, password);
+      await loginWithPhone(phone, password);
     } catch (error: any) {
       Alert.alert('Eroare', error.message || 'Autentificare eșuată');
     } finally {
