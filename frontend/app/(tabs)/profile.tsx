@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -6,21 +6,29 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../src/context/AuthContext';
 import { api } from '../../src/utils/api';
+import { useLanguage } from '../../src/context/LanguageContext';
 
 export default function ProfileScreen() {
   const { user, isAuthenticated, logout, updateUser, refreshUser } = useAuth();
   const router = useRouter();
+  const { t, language, setLanguage } = useLanguage();
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [language, setLanguage] = useState(user?.language || 'ro');
+  const [localLanguage, setLocalLanguage] = useState(user?.language || 'ro');
+
+  useEffect(() => {
+    if (user?.language) {
+      setLocalLanguage(user.language);
+    }
+  }, [user?.language]);
 
   const handleLogout = () => {
     Alert.alert(
-      'Deconectare',
-      'Sigur dorești să te deconectezi?',
+      t('logout'),
+      t('logoutConfirm'),
       [
-        { text: 'Anulează', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         { 
-          text: 'Deconectează-mă', 
+          text: t('logoutButton'), 
           style: 'destructive', 
           onPress: async () => {
             await logout();
@@ -31,15 +39,17 @@ export default function ProfileScreen() {
     );
   };
 
-  const handleLanguageChange = async (newLang: string) => {
+  const handleLanguageChange = async (newLang: 'ro' | 'ru') => {
     try {
+      setLocalLanguage(newLang);
       setLanguage(newLang);
       await api.updateLanguage(newLang);
       await refreshUser();
-      Alert.alert('Succes', `Limba a fost schimbată în ${newLang === 'ro' ? 'Română' : 'Русский'}`);
+      Alert.alert(t('success'), `${t('languageChanged')} ${newLang === 'ro' ? 'Română' : 'Русский'}`);
     } catch (error: any) {
-      setLanguage(user?.language || 'ro');
-      Alert.alert('Eroare', error.message || 'Nu s-a putut schimba limba');
+      setLocalLanguage(user?.language || 'ro');
+      setLanguage(user?.language as 'ro' | 'ru' || 'ro');
+      Alert.alert(t('error'), error.message || 'Nu s-a putut schimba limba');
     }
   };
 
