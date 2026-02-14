@@ -8,9 +8,10 @@ import { useAuth } from '../../src/context/AuthContext';
 import { api } from '../../src/utils/api';
 
 export default function ProfileScreen() {
-  const { user, isAuthenticated, logout, updateUser } = useAuth();
+  const { user, isAuthenticated, logout, updateUser, refreshUser } = useAuth();
   const router = useRouter();
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [language, setLanguage] = useState(user?.language || 'ro');
 
   const handleLogout = () => {
     Alert.alert(
@@ -28,6 +29,18 @@ export default function ProfileScreen() {
         },
       ]
     );
+  };
+
+  const handleLanguageChange = async (newLang: string) => {
+    try {
+      setLanguage(newLang);
+      await api.updateLanguage(newLang);
+      await refreshUser();
+      Alert.alert('Succes', `Limba a fost schimbată în ${newLang === 'ro' ? 'Română' : 'Русский'}`);
+    } catch (error: any) {
+      setLanguage(user?.language || 'ro');
+      Alert.alert('Eroare', error.message || 'Nu s-a putut schimba limba');
+    }
   };
 
   const handleBecomePartner = () => {
