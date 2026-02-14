@@ -51,20 +51,27 @@ export default function BookingsScreen() {
   };
 
   const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
+    const labelsRo: Record<string, string> = {
       pending: 'În așteptare',
       confirmed: 'Confirmată',
       completed: 'Finalizată',
       cancelled: 'Anulată',
     };
+    const labelsRu: Record<string, string> = {
+      pending: 'В ожидании',
+      confirmed: 'Подтверждено',
+      completed: 'Завершено',
+      cancelled: 'Отменено',
+    };
+    const labels = t('pending') === 'В ожидании' ? labelsRu : labelsRo;
     return labels[status] || status;
   };
 
   const getLocationLabel = (loc: string) => {
     const labels: Record<string, string> = {
-      office: 'Oficiu',
-      chisinau_airport: 'Aeroport Chișinău',
-      iasi_airport: 'Aeroport Iași',
+      office: t('office'),
+      chisinau_airport: t('chisinauAirport'),
+      iasi_airport: t('iasiAirport'),
     };
     return labels[loc] || loc;
   };
