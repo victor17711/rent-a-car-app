@@ -143,10 +143,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginWithEmail = async (email: string, password: string) => {
+  const loginWithPhone = async (phone: string, password: string) => {
     try {
       setIsLoading(true);
-      const result = await api.login({ email, password });
+      const result = await api.login({ phone, password });
       if (result.session_token) {
         await setAuthToken(result.session_token);
       }
@@ -160,10 +160,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (phone: string, password: string, name: string) => {
     try {
       setIsLoading(true);
-      const result = await api.register({ email, password, name });
+      const result = await api.register({ phone, password, name });
       if (result.session_token) {
         await setAuthToken(result.session_token);
       }
