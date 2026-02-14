@@ -59,6 +59,28 @@ export default function RentalFilters() {
     return hour < 8 || hour >= 18;
   };
 
+  // Refs for time picker scroll
+  const startTimeScrollRef = useRef<ScrollView>(null);
+  const endTimeScrollRef = useRef<ScrollView>(null);
+
+  // Scroll to 08:00 when time picker opens
+  useEffect(() => {
+    if (showStartTime && startTimeScrollRef.current) {
+      // 08:00 is at index 8, each item is ~56px height
+      setTimeout(() => {
+        startTimeScrollRef.current?.scrollTo({ y: 8 * 56, animated: false });
+      }, 100);
+    }
+  }, [showStartTime]);
+
+  useEffect(() => {
+    if (showEndTime && endTimeScrollRef.current) {
+      setTimeout(() => {
+        endTimeScrollRef.current?.scrollTo({ y: 8 * 56, animated: false });
+      }, 100);
+    }
+  }, [showEndTime]);
+
   const renderPickerModal = (
     visible: boolean,
     onClose: () => void,
