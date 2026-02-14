@@ -9,7 +9,7 @@ export default function RegisterScreen() {
   const { register, loginWithGoogle } = useAuth();
   const router = useRouter();
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,8 +20,8 @@ export default function RegisterScreen() {
       Alert.alert('Eroare', 'Introduceți numele');
       return;
     }
-    if (!email.trim() || !email.includes('@')) {
-      Alert.alert('Eroare', 'Introduceți o adresă de email validă');
+    if (!phone.trim()) {
+      Alert.alert('Eroare', 'Introduceți numărul de telefon');
       return;
     }
     if (password.length < 6) {
@@ -35,7 +35,7 @@ export default function RegisterScreen() {
 
     try {
       setSubmitting(true);
-      await register(email, password, name);
+      await register(phone, password, name);
       router.replace('/(tabs)');
     } catch (error: any) {
       Alert.alert('Eroare', error.message || 'Înregistrarea a eșuat');
