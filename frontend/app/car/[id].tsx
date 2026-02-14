@@ -461,7 +461,7 @@ export default function CarDetailScreen() {
                 </View>
               )}
               <View style={[styles.calculationRow, styles.calculationTotal]}>
-                <Text style={styles.totalLabel}>TOTAL</Text>
+                <Text style={styles.totalLabel}>{texts.total}</Text>
                 <Text style={styles.totalValue}>{price.total_price} €</Text>
               </View>
             </View>
@@ -474,7 +474,7 @@ export default function CarDetailScreen() {
       {/* Booking Footer */}
       <View style={styles.footer}>
         <View style={styles.footerPrice}>
-          <Text style={styles.footerPriceLabel}>Total</Text>
+          <Text style={styles.footerPriceLabel}>{texts.total}</Text>
           <Text style={styles.footerPriceValue}>{price?.total_price || '...'} €</Text>
         </View>
         <TouchableOpacity
@@ -482,7 +482,7 @@ export default function CarDetailScreen() {
           onPress={handleReservePress}
         >
           <Ionicons name="calendar-outline" size={20} color="#fff" />
-          <Text style={styles.bookButtonText}>Rezervă Acum</Text>
+          <Text style={styles.bookButtonText}>{texts.bookNow}</Text>
         </TouchableOpacity>
       </View>
 
@@ -494,17 +494,17 @@ export default function CarDetailScreen() {
         >
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Date Contact</Text>
+              <Text style={styles.modalTitle}>{texts.contactData}</Text>
               <TouchableOpacity onPress={() => setShowBookingModal(false)}>
                 <Ionicons name="close" size={24} color="#333" />
               </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.modalBody}>
-              <Text style={styles.modalSubtitle}>Completați datele pentru rezervare</Text>
+              <Text style={styles.modalSubtitle}>{texts.fillData}</Text>
               
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Nume complet *</Text>
+                <Text style={styles.inputLabel}>{texts.fullName}</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Ex: Ion Popescu"
@@ -515,7 +515,7 @@ export default function CarDetailScreen() {
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Telefon *</Text>
+                <Text style={styles.inputLabel}>{texts.phone}</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Ex: +373 69 123 456"
@@ -527,7 +527,7 @@ export default function CarDetailScreen() {
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Vârsta *</Text>
+                <Text style={styles.inputLabel}>{texts.age}</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Ex: 25"
