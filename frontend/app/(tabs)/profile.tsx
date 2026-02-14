@@ -231,7 +231,7 @@ export default function ProfileScreen() {
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/privacy')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="lock-closed-outline" size={22} color="#666" />
-              <Text style={styles.menuItemText}>Politică de Confidențialitate</Text>
+              <Text style={styles.menuItemText}>{t('privacyPolicy')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
@@ -240,10 +240,10 @@ export default function ProfileScreen() {
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={22} color="#FF3B30" />
-          <Text style={styles.logoutText}>Deconectează-te</Text>
+          <Text style={styles.logoutText}>{t('logout')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>DriveMate v1.0.0</Text>
+        <Text style={styles.versionText}>RentMoldova v1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
