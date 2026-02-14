@@ -79,7 +79,7 @@ export default function PartnerScreen() {
             <View style={styles.iconContainer}>
               <Ionicons name="people-outline" size={48} color="#007AFF" />
             </View>
-            <Text style={styles.headerTitle}>Devino Partener DriveMate</Text>
+            <Text style={styles.headerTitle}>Devino Partener RentMoldova</Text>
             <Text style={styles.headerText}>
               Ai o flotă de mașini și vrei să colaborezi cu noi? Completează formularul de mai jos și echipa noastră te va contacta în cel mai scurt timp.
             </Text>
