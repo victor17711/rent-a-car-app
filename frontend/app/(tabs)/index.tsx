@@ -57,6 +57,7 @@ const DEFAULT_BANNERS: Banner[] = [
 export default function HomeScreen() {
   const { user } = useAuth();
   const { filters } = useRental();
+  const { t } = useLanguage();
   const router = useRouter();
   const [cars, setCars] = useState<Car[]>([]);
   const [banners, setBanners] = useState<Banner[]>(DEFAULT_BANNERS);
