@@ -198,34 +198,99 @@ export default function RentalFilters() {
         </Text>
       </View>
 
-      {/* Date Pickers */}
+      {/* Date Pickers - iOS uses modal display, Android uses inline */}
       {showStartDate && (
-        <DateTimePicker
-          value={filters.startDate}
-          mode="date"
-          minimumDate={new Date()}
-          onChange={(event, date) => {
-            setShowStartDate(Platform.OS === 'ios');
-            if (date) {
-              setFilters({ startDate: date });
-              if (date > filters.endDate) {
-                setFilters({ endDate: new Date(date.getTime() + 24 * 60 * 60 * 1000) });
+        Platform.OS === 'ios' ? (
+          <Modal visible={showStartDate} transparent animationType="slide">
+            <View style={styles.modalOverlay}>
+              <View style={styles.datePickerModalContent}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>{texts.pickupDate}</Text>
+                  <TouchableOpacity onPress={() => setShowStartDate(false)}>
+                    <Ionicons name="close" size={24} color="#333" />
+                  </TouchableOpacity>
+                </View>
+                <DateTimePicker
+                  value={filters.startDate}
+                  mode="date"
+                  display="spinner"
+                  minimumDate={new Date()}
+                  onChange={(event, date) => {
+                    if (date) {
+                      setFilters({ startDate: date });
+                      if (date > filters.endDate) {
+                        setFilters({ endDate: new Date(date.getTime() + 24 * 60 * 60 * 1000) });
+                      }
+                    }
+                  }}
+                />
+                <TouchableOpacity 
+                  style={styles.datePickerDoneButton}
+                  onPress={() => setShowStartDate(false)}
+                >
+                  <Text style={styles.datePickerDoneText}>Selectează</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        ) : (
+          <DateTimePicker
+            value={filters.startDate}
+            mode="date"
+            minimumDate={new Date()}
+            onChange={(event, date) => {
+              setShowStartDate(false);
+              if (date) {
+                setFilters({ startDate: date });
+                if (date > filters.endDate) {
+                  setFilters({ endDate: new Date(date.getTime() + 24 * 60 * 60 * 1000) });
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+        )
       )}
 
       {showEndDate && (
-        <DateTimePicker
-          value={filters.endDate}
-          mode="date"
-          minimumDate={filters.startDate}
-          onChange={(event, date) => {
-            setShowEndDate(Platform.OS === 'ios');
-            if (date) setFilters({ endDate: date });
-          }}
-        />
+        Platform.OS === 'ios' ? (
+          <Modal visible={showEndDate} transparent animationType="slide">
+            <View style={styles.modalOverlay}>
+              <View style={styles.datePickerModalContent}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>{texts.returnDate}</Text>
+                  <TouchableOpacity onPress={() => setShowEndDate(false)}>
+                    <Ionicons name="close" size={24} color="#333" />
+                  </TouchableOpacity>
+                </View>
+                <DateTimePicker
+                  value={filters.endDate}
+                  mode="date"
+                  display="spinner"
+                  minimumDate={filters.startDate}
+                  onChange={(event, date) => {
+                    if (date) setFilters({ endDate: date });
+                  }}
+                />
+                <TouchableOpacity 
+                  style={styles.datePickerDoneButton}
+                  onPress={() => setShowEndDate(false)}
+                >
+                  <Text style={styles.datePickerDoneText}>Selectează</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        ) : (
+          <DateTimePicker
+            value={filters.endDate}
+            mode="date"
+            minimumDate={filters.startDate}
+            onChange={(event, date) => {
+              setShowEndDate(false);
+              if (date) setFilters({ endDate: date });
+            }}
+          />
+        )
       )}
 
       {/* Time Picker Modal - 24h format with 20€ fee */}
