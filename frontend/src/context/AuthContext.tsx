@@ -160,10 +160,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (phone: string, password: string, name: string) => {
+  const register = async (phone: string, email: string, password: string, name: string) => {
     try {
       setIsLoading(true);
-      const result = await api.register({ phone, password, name });
+      const result = await api.register({ phone, email, password, name });
       if (result.session_token) {
         await setAuthToken(result.session_token);
       }
