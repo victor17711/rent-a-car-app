@@ -293,11 +293,11 @@ async def require_admin(request: Request) -> User:
 
 @api_router.post("/auth/register")
 async def register(data: UserRegister, response: Response):
-    """Register a new user with email/password"""
-    # Check if email already exists
-    existing_user = await db.users.find_one({"email": data.email})
+    """Register a new user with phone/password"""
+    # Check if phone already exists
+    existing_user = await db.users.find_one({"phone": data.phone})
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email-ul este deja înregistrat")
+        raise HTTPException(status_code=400, detail="Numărul de telefon este deja înregistrat")
     
     # Hash password
     hashed_password = pwd_context.hash(data.password)
@@ -306,12 +306,12 @@ async def register(data: UserRegister, response: Response):
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     new_user = {
         "user_id": user_id,
-        "email": data.email,
+        "phone": data.phone,
         "name": data.name,
         "password": hashed_password,
         "picture": None,
         "role": "user",
-        "auth_type": "email",
+        "auth_type": "phone",
         "created_at": datetime.now(timezone.utc)
     }
     await db.users.insert_one(new_user)
@@ -345,11 +345,11 @@ async def register(data: UserRegister, response: Response):
 
 @api_router.post("/auth/login")
 async def login(data: UserLogin, response: Response):
-    """Login with email/password"""
+    """Login with phone/password"""
     # Find user
-    user = await db.users.find_one({"email": data.email})
+    user = await db.users.find_one({"phone": data.phone})
     if not user:
-        raise HTTPException(status_code=401, detail="Email sau parolă incorectă")
+        raise HTTPException(status_code=401, detail="Număr de telefon sau parolă incorectă")
     
     # Check if user has password (not Google-only user)
     if "password" not in user or not user["password"]:
@@ -357,7 +357,7 @@ async def login(data: UserLogin, response: Response):
     
     # Verify password
     if not pwd_context.verify(data.password, user["password"]):
-        raise HTTPException(status_code=401, detail="Email sau parolă incorectă")
+        raise HTTPException(status_code=401, detail="Număr de telefon sau parolă incorectă")
     
     # Create session
     session_token = f"sess_{uuid.uuid4().hex}"
