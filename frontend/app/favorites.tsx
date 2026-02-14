@@ -96,11 +96,11 @@ export default function FavoritesScreen() {
   if (!isAuthenticated) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: 'Favorite', headerShown: true }} />
+        <Stack.Screen options={{ title: t('favoritesTitle'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.emptyContainer}>
           <Ionicons name="lock-closed-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyTitle}>Autentificare necesară</Text>
-          <Text style={styles.emptyText}>Trebuie să fiți autentificat pentru a vedea favoritele.</Text>
+          <Text style={styles.emptyTitle}>{t('notAuthenticated')}</Text>
+          <Text style={styles.emptyText}>{t('loginToSeeProfile')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -109,7 +109,7 @@ export default function FavoritesScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: 'Favorite', headerShown: true }} />
+        <Stack.Screen options={{ title: t('favoritesTitle'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#A31621" />
         </View>
@@ -119,7 +119,7 @@ export default function FavoritesScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: 'Favorite', headerShown: true }} />
+      <Stack.Screen options={{ title: t('favoritesTitle'), headerShown: true, headerBackTitle: t('back') }} />
       <FlatList
         data={cars}
         renderItem={renderCarCard}
@@ -131,8 +131,8 @@ export default function FavoritesScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="heart-outline" size={64} color="#ccc" />
-            <Text style={styles.emptyTitle}>Nicio mașină favorită</Text>
-            <Text style={styles.emptyText}>Mașinile tale favorite vor apărea aici.</Text>
+            <Text style={styles.emptyTitle}>{t('noFavorites')}</Text>
+            <Text style={styles.emptyText}>{t('addFavoritesHint')}</Text>
           </View>
         }
       />
