@@ -339,11 +339,17 @@ async def require_admin(request: Request) -> User:
 
 @api_router.post("/auth/register")
 async def register(data: UserRegister, response: Response):
-    """Register a new user with phone/password"""
+    """Register a new user with phone/email/password"""
     # Check if phone already exists
     existing_user = await db.users.find_one({"phone": data.phone})
     if existing_user:
         raise HTTPException(status_code=400, detail="Numărul de telefon este deja înregistrat")
+    
+    # Check if email already exists
+    if data.email:
+        existing_email = await db.users.find_one({"email": data.email})
+        if existing_email:
+            raise HTTPException(status_code=400, detail="Email-ul este deja înregistrat")
     
     # Hash password
     hashed_password = pwd_context.hash(data.password)
@@ -353,10 +359,12 @@ async def register(data: UserRegister, response: Response):
     new_user = {
         "user_id": user_id,
         "phone": data.phone,
+        "email": data.email,
         "name": data.name,
         "password": hashed_password,
         "picture": None,
         "role": "user",
+        "language": "ro",
         "auth_type": "phone",
         "created_at": datetime.now(timezone.utc)
     }
