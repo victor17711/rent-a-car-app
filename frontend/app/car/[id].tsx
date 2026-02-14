@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { useRental } from '../../src/context/RentalContext';
+import { useLanguage } from '../../src/context/LanguageContext';
 import { api } from '../../src/utils/api';
 import { Car, PriceCalculation } from '../../src/types';
 
@@ -15,6 +16,7 @@ export default function CarDetailScreen() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const { filters } = useRental();
+  const { language } = useLanguage();
   
   const [car, setCar] = useState<Car | null>(null);
   const [price, setPrice] = useState<PriceCalculation | null>(null);
@@ -27,6 +29,112 @@ export default function CarDetailScreen() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAge, setCustomerAge] = useState('');
+
+  // Translations
+  const texts = {
+    loading: language === 'ro' ? 'Se încarcă...' : 'Загрузка...',
+    loadingDetails: language === 'ro' ? 'Se încarcă detaliile...' : 'Загрузка деталей...',
+    error: language === 'ro' ? 'Eroare' : 'Ошибка',
+    carNotFound: language === 'ro' ? 'Mașina nu a fost găsită' : 'Автомобиль не найден',
+    couldNotLoad: language === 'ro' ? 'Nu s-au putut încărca detaliile mașinii.' : 'Не удалось загрузить данные автомобиля.',
+    noImage: language === 'ro' ? 'Fără imagine' : 'Нет изображения',
+    description: language === 'ro' ? 'Descriere' : 'Описание',
+    specifications: language === 'ro' ? 'Specificații' : 'Характеристики',
+    engine: language === 'ro' ? 'Motor' : 'Двигатель',
+    power: language === 'ro' ? 'Putere' : 'Мощность',
+    consumption: language === 'ro' ? 'Consum' : 'Расход',
+    trunk: language === 'ro' ? 'Portbagaj' : 'Багажник',
+    ac: language === 'ro' ? 'Aer Condiționat' : 'Кондиционер',
+    gps: 'GPS',
+    bluetooth: 'Bluetooth',
+    leatherSeats: language === 'ro' ? 'Scaune piele' : 'Кожаные сиденья',
+    cruiseControl: language === 'ro' ? 'Cruise Control' : 'Круиз-контроль',
+    prices: language === 'ro' ? 'Prețuri' : 'Цены',
+    day: language === 'ro' ? 'zi' : 'день',
+    days: language === 'ro' ? 'zile' : 'дней',
+    priceCalculation: language === 'ro' ? 'Calculul Prețului' : 'Расчёт цены',
+    period: language === 'ro' ? 'Perioadă' : 'Период',
+    dailyRate: language === 'ro' ? 'Tarif zilnic' : 'Дневной тариф',
+    casco: 'КАСКО',
+    fee: language === 'ro' ? 'Taxă' : 'Сбор',
+    outsideHours: language === 'ro' ? 'În afara programului' : 'Вне рабочих часов',
+    total: language === 'ro' ? 'TOTAL' : 'ИТОГО',
+    bookNow: language === 'ro' ? 'Rezervă Acum' : 'Забронировать',
+    authRequired: language === 'ro' ? 'Autentificare necesară' : 'Требуется авторизация',
+    authMessage: language === 'ro' ? 'Trebuie să fiți autentificat pentru a face o rezervare.' : 'Для бронирования необходимо авторизоваться.',
+    cancel: language === 'ro' ? 'Anulează' : 'Отмена',
+    authenticate: language === 'ro' ? 'Autentifică-te' : 'Войти',
+    contactData: language === 'ro' ? 'Date Contact' : 'Контактные данные',
+    fillData: language === 'ro' ? 'Completați datele pentru rezervare' : 'Заполните данные для бронирования',
+    fullName: language === 'ro' ? 'Nume complet *' : 'Полное имя *',
+    phone: language === 'ro' ? 'Telefon *' : 'Телефон *',
+    age: language === 'ro' ? 'Vârsta *' : 'Возраст *',
+    sendBooking: language === 'ro' ? 'Trimite Rezervarea' : 'Отправить бронирование',
+    success: language === 'ro' ? 'Succes!' : 'Успешно!',
+    bookingCreated: language === 'ro' ? 'Rezervarea a fost creată cu succes. Veți fi contactat în curând pentru confirmare.' : 'Бронирование успешно создано. Мы свяжемся с вами в ближайшее время.',
+    ok: 'OK',
+    enterFullName: language === 'ro' ? 'Introduceți numele complet' : 'Введите полное имя',
+    enterPhone: language === 'ro' ? 'Introduceți numărul de telefon' : 'Введите номер телефона',
+    enterValidAge: language === 'ro' ? 'Introduceți o vârstă validă (18-99)' : 'Введите корректный возраст (18-99)',
+    couldNotCreate: language === 'ro' ? 'Nu s-a putut crea rezervarea.' : 'Не удалось создать бронирование.',
+  };
+
+  const getTransmissionLabel = (t: string) => {
+    if (language === 'ru') {
+      return t === 'automatic' ? 'Автомат' : 'Механика';
+    }
+    return t === 'automatic' ? 'Automat' : 'Manual';
+  };
+
+  const getFuelLabel = (f: string) => {
+    if (language === 'ru') {
+      const labels: Record<string, string> = {
+        diesel: 'Дизель',
+        petrol: 'Бензин',
+        electric: 'Электро',
+        hybrid: 'Гибрид',
+      };
+      return labels[f] || f;
+    }
+    const labels: Record<string, string> = {
+      diesel: 'Diesel',
+      petrol: 'Benzină',
+      electric: 'Electric',
+      hybrid: 'Hybrid',
+    };
+    return labels[f] || f;
+  };
+
+  const getSeatsLabel = (seats: number) => {
+    if (language === 'ru') {
+      return `${seats} мест`;
+    }
+    return `${seats} locuri`;
+  };
+
+  const getDaysLabel = (d: number) => {
+    if (language === 'ru') {
+      return d === 1 ? 'день' : 'дней';
+    }
+    return d === 1 ? 'zi' : 'zile';
+  };
+
+  const getLocationLabel = (loc: string) => {
+    if (language === 'ru') {
+      const labels: Record<string, string> = {
+        office: 'Офис',
+        chisinau_airport: 'Аэропорт Кишинёв',
+        iasi_airport: 'Аэропорт Яссы',
+      };
+      return labels[loc] || loc;
+    }
+    const labels: Record<string, string> = {
+      office: 'Oficiu',
+      chisinau_airport: 'Aeroport Chișinău',
+      iasi_airport: 'Aeroport Iași',
+    };
+    return labels[loc] || loc;
+  };
 
   useEffect(() => {
     fetchCarDetails();
