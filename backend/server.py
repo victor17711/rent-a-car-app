@@ -545,6 +545,154 @@ async def update_profile_picture(data: ProfilePictureUpdate, request: Request):
     
     return {"message": "Poza de profil a fost actualizată"}
 
+@api_router.put("/users/name")
+async def update_name(data: NameUpdate, request: Request):
+    """Update user's name"""
+    user = await require_auth(request)
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"name": data.name}}
+    )
+    
+    return {"message": "Numele a fost actualizat"}
+
+@api_router.put("/users/language")
+async def update_language(data: LanguageUpdate, request: Request):
+    """Update user's language preference"""
+    user = await require_auth(request)
+    
+    if data.language not in ["ro", "ru"]:
+        raise HTTPException(status_code=400, detail="Limbă invalidă")
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"language": data.language}}
+    )
+    
+    return {"message": "Limba a fost actualizată"}
+
+@api_router.post("/users/favorites/{car_id}")
+async def add_favorite(car_id: str, request: Request):
+    """Add car to favorites"""
+    user = await require_auth(request)
+    
+    # Check if car exists
+    car = await db.cars.find_one({"car_id": car_id})
+    if not car:
+        raise HTTPException(status_code=404, detail="Mașina nu a fost găsită")
+    
+    # Add to favorites (use set to avoid duplicates)
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$addToSet": {"favorites": car_id}}
+    )
+    
+    return {"message": "Mașina a fost adăugată la favorite"}
+
+@api_router.delete("/users/favorites/{car_id}")
+async def remove_favorite(car_id: str, request: Request):
+    """Remove car from favorites"""
+    user = await require_auth(request)
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$pull": {"favorites": car_id}}
+    )
+    
+    return {"message": "Mașina a fost ștearsă din favorite"}
+
+@api_router.get("/users/favorites")
+async def get_favorites(request: Request):
+    """Get user's favorite cars"""
+    user = await require_auth(request)
+    
+    user_doc = await db.users.find_one({"user_id": user.user_id}, {"favorites": 1})
+    favorite_ids = user_doc.get("favorites", []) if user_doc else []
+    
+    if not favorite_ids:
+        return []
+    
+    # Get full car details
+    cars = await db.cars.find({"car_id": {"$in": favorite_ids}}, {"_id": 0}).to_list(100)
+    return cars
+
+# ==================== FAQ ENDPOINTS ====================
+
+@api_router.get("/faqs")
+async def get_faqs(active_only: bool = True):
+    """Get all FAQs"""
+    query = {"active": True} if active_only else {}
+    faqs = await db.faqs.find(query, {"_id": 0}).sort("order", 1).to_list(100)
+    return faqs
+
+@api_router.post("/admin/faqs")
+async def create_faq(data: FAQCreate, request: Request):
+    """Create a new FAQ (admin only)"""
+    await require_admin(request)
+    faq = FAQ(**data.model_dump())
+    await db.faqs.insert_one(faq.model_dump())
+    return faq.model_dump()
+
+@api_router.put("/admin/faqs/{faq_id}")
+async def update_faq(faq_id: str, data: FAQUpdate, request: Request):
+    """Update a FAQ (admin only)"""
+    await require_admin(request)
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    result = await db.faqs.update_one({"faq_id": faq_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="FAQ not found")
+    faq = await db.faqs.find_one({"faq_id": faq_id}, {"_id": 0})
+    return faq
+
+@api_router.delete("/admin/faqs/{faq_id}")
+async def delete_faq(faq_id: str, request: Request):
+    """Delete a FAQ (admin only)"""
+    await require_admin(request)
+    result = await db.faqs.delete_one({"faq_id": faq_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="FAQ not found")
+    return {"message": "FAQ deleted successfully"}
+
+# ==================== LEGAL CONTENT ENDPOINTS ====================
+
+@api_router.get("/legal/{content_type}")
+async def get_legal_content(content_type: str):
+    """Get legal content (terms or privacy)"""
+    if content_type not in ["terms", "privacy"]:
+        raise HTTPException(status_code=400, detail="Invalid content type")
+    
+    content = await db.legal_content.find_one({"type": content_type}, {"_id": 0})
+    if not content:
+        return {"type": content_type, "content_ro": "", "content_ru": ""}
+    return content
+
+@api_router.put("/admin/legal/{content_type}")
+async def update_legal_content(content_type: str, data: LegalContentUpdate, request: Request):
+    """Update legal content (admin only)"""
+    await require_admin(request)
+    
+    if content_type not in ["terms", "privacy"]:
+        raise HTTPException(status_code=400, detail="Invalid content type")
+    
+    # Upsert legal content
+    content = {
+        "type": content_type,
+        "content_ro": data.content_ro,
+        "content_ru": data.content_ru,
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    result = await db.legal_content.update_one(
+        {"type": content_type},
+        {"$set": content},
+        upsert=True
+    )
+    
+    return {"message": "Legal content updated successfully"}
+
 # ==================== CAR ENDPOINTS ====================
 
 @api_router.get("/cars")
