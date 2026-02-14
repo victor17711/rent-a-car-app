@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Car, PriceCalculation } from '../types';
 import { useRental } from '../context/RentalContext';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { api } from '../utils/api';
 
 interface CarCardProps {
@@ -15,6 +16,7 @@ export default function CarCard({ car }: CarCardProps) {
   const router = useRouter();
   const { filters } = useRental();
   const { user, isAuthenticated } = useAuth();
+  const { language } = useLanguage();
   const [price, setPrice] = useState<PriceCalculation | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -79,8 +81,23 @@ export default function CarCard({ car }: CarCardProps) {
     router.push(`/car/${car.car_id}`);
   };
 
-  const getTransmissionLabel = (t: string) => t === 'automatic' ? 'Automat' : 'Manual';
+  const getTransmissionLabel = (t: string) => {
+    if (language === 'ru') {
+      return t === 'automatic' ? 'Автомат' : 'Механика';
+    }
+    return t === 'automatic' ? 'Automat' : 'Manual';
+  };
+  
   const getFuelLabel = (f: string) => {
+    if (language === 'ru') {
+      const labels: Record<string, string> = {
+        diesel: 'Дизель',
+        petrol: 'Бензин',
+        electric: 'Электро',
+        hybrid: 'Гибрид',
+      };
+      return labels[f] || f;
+    }
     const labels: Record<string, string> = {
       diesel: 'Diesel',
       petrol: 'Benzină',
@@ -88,6 +105,25 @@ export default function CarCard({ car }: CarCardProps) {
       hybrid: 'Hybrid',
     };
     return labels[f] || f;
+  };
+
+  const getSeatsLabel = (seats: number) => {
+    if (language === 'ru') {
+      return `${seats} мест`;
+    }
+    return `${seats} locuri`;
+  };
+
+  const getDaysLabel = (days: number) => {
+    if (language === 'ru') {
+      return days === 1 ? 'день' : 'дней';
+    }
+    return days === 1 ? 'zi' : 'zile';
+  };
+
+  const texts = {
+    details: language === 'ro' ? 'Detalii' : 'Детали',
+    from: language === 'ro' ? 'de la' : 'от',
   };
 
   // Get main image
@@ -136,7 +172,7 @@ export default function CarCard({ car }: CarCardProps) {
           </View>
           <View style={styles.spec}>
             <Ionicons name="people-outline" size={16} color="#666" />
-            <Text style={styles.specText}>{car.seats} locuri</Text>
+            <Text style={styles.specText}>{getSeatsLabel(car.seats)}</Text>
           </View>
         </View>
         
@@ -146,14 +182,14 @@ export default function CarCard({ car }: CarCardProps) {
           ) : price ? (
             <View style={styles.priceContainer}>
               <Text style={styles.price}>{price.total_price} €</Text>
-              <Text style={styles.priceLabel}>/ {price.days} {price.days === 1 ? 'zi' : 'zile'}</Text>
+              <Text style={styles.priceLabel}>/ {price.days} {getDaysLabel(price.days)}</Text>
             </View>
           ) : (
-            <Text style={styles.price}>de la {car.pricing.day_1} €/zi</Text>
+            <Text style={styles.price}>{texts.from} {car.pricing.day_1} €/{language === 'ro' ? 'zi' : 'день'}</Text>
           )}
           
           <TouchableOpacity style={styles.button} onPress={handlePress}>
-            <Text style={styles.buttonText}>Detalii</Text>
+            <Text style={styles.buttonText}>{texts.details}</Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>
         </View>
