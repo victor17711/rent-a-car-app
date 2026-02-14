@@ -542,7 +542,7 @@ export default function CarDetailScreen() {
               <View style={styles.bookingSummary}>
                 <Text style={styles.summaryTitle}>{car?.name}</Text>
                 <Text style={styles.summaryText}>
-                  {filters.startDate.toLocaleDateString('ro-RO')} - {filters.endDate.toLocaleDateString('ro-RO')}
+                  {filters.startDate.toLocaleDateString(language === 'ro' ? 'ro-RO' : 'ru-RU')} - {filters.endDate.toLocaleDateString(language === 'ro' ? 'ro-RO' : 'ru-RU')}
                 </Text>
                 <Text style={styles.summaryText}>
                   {filters.startTime} - {filters.endTime}
@@ -550,7 +550,7 @@ export default function CarDetailScreen() {
                 <Text style={styles.summaryText}>
                   {getLocationLabel(filters.location)} • {filters.insurance.toUpperCase()}
                 </Text>
-                <Text style={styles.summaryPrice}>Total: {price?.total_price} €</Text>
+                <Text style={styles.summaryPrice}>{texts.total}: {price?.total_price} €</Text>
               </View>
             </ScrollView>
 
@@ -563,7 +563,7 @@ export default function CarDetailScreen() {
                 {booking ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.submitButtonText}>Trimite Rezervarea</Text>
+                  <Text style={styles.submitButtonText}>{texts.sendBooking}</Text>
                 )}
               </TouchableOpacity>
             </View>
