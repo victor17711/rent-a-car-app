@@ -209,17 +209,17 @@ export default function HomeScreen() {
 
         {/* Cars List */}
         <View style={styles.carsSection}>
-          <Text style={styles.sectionTitle}>Mașini Disponibile</Text>
+          <Text style={styles.sectionTitle}>{t('availableCars')}</Text>
           
           {loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#A31621" />
-              <Text style={styles.loadingText}>Se încarcă mașinile...</Text>
+              <Text style={styles.loadingText}>{t('loadingCars')}</Text>
             </View>
           ) : cars.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Ionicons name="car-outline" size={64} color="#ccc" />
-              <Text style={styles.emptyText}>Nicio mașină disponibilă</Text>
+              <Text style={styles.emptyText}>{t('noCarsAvailable')}</Text>
             </View>
           ) : (
             cars.map(car => <CarCard key={car.car_id} car={car} />)
