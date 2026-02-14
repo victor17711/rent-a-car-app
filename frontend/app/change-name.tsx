@@ -52,12 +52,12 @@ export default function ChangeNameScreen() {
             <Ionicons name="person-outline" size={64} color="#A31621" />
           </View>
 
-          <Text style={styles.label}>Numele tău</Text>
+          <Text style={styles.label}>{t('currentName')}</Text>
           <View style={styles.inputContainer}>
             <Ionicons name="person" size={20} color="#666" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Introdu numele complet"
+              placeholder={t('enterNewName')}
               placeholderTextColor="#999"
               value={name}
               onChangeText={setName}
@@ -72,7 +72,7 @@ export default function ChangeNameScreen() {
             disabled={loading}
           >
             <Text style={styles.saveButtonText}>
-              {loading ? 'Se salvează...' : 'Salvează'}
+              {loading ? t('saving') : t('save')}
             </Text>
           </TouchableOpacity>
         </View>
