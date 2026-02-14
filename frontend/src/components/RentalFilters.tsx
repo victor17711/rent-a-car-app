@@ -206,8 +206,8 @@ export default function RentalFilters() {
         />
       )}
 
-      {/* Time Picker Modal */}
-      {renderPickerModal(showStartTime, () => setShowStartTime(false), 'Selectează ora de preluare', (
+      {/* Time Picker Modal - 24h format with 20€ fee */}
+      {renderPickerModal(showStartTime, () => setShowStartTime(false), texts.selectPickupTime, (
         <ScrollView style={styles.optionsList}>
           {TIME_OPTIONS.map(time => (
             <TouchableOpacity
@@ -222,14 +222,14 @@ export default function RentalFilters() {
                 {time}
               </Text>
               {isOutsideHours(time) && (
-                <Text style={styles.optionFee}>+25€ (în afara programului)</Text>
+                <Text style={styles.optionFee}>+20€ ({texts.outsideHours})</Text>
               )}
             </TouchableOpacity>
           ))}
         </ScrollView>
       ))}
 
-      {renderPickerModal(showEndTime, () => setShowEndTime(false), 'Selectează ora de returnare', (
+      {renderPickerModal(showEndTime, () => setShowEndTime(false), texts.selectReturnTime, (
         <ScrollView style={styles.optionsList}>
           {TIME_OPTIONS.map(time => (
             <TouchableOpacity
@@ -244,7 +244,7 @@ export default function RentalFilters() {
                 {time}
               </Text>
               {isOutsideHours(time) && (
-                <Text style={styles.optionFee}>+25€ (în afara programului)</Text>
+                <Text style={styles.optionFee}>+20€ ({texts.outsideHours})</Text>
               )}
             </TouchableOpacity>
           ))}
@@ -252,7 +252,7 @@ export default function RentalFilters() {
       ))}
 
       {/* Location Picker Modal */}
-      {renderPickerModal(showLocation, () => setShowLocation(false), 'Selectează locația', (
+      {renderPickerModal(showLocation, () => setShowLocation(false), texts.selectLocation, (
         <View style={styles.optionsList}>
           {LOCATIONS.map(loc => (
             <TouchableOpacity
@@ -265,9 +265,9 @@ export default function RentalFilters() {
             >
               <View>
                 <Text style={[styles.optionText, filters.location === loc.id && styles.optionTextSelected]}>
-                  {loc.label}
+                  {language === 'ro' ? loc.labelRo : loc.labelRu}
                 </Text>
-                <Text style={styles.optionFee}>{loc.sublabel}</Text>
+                <Text style={styles.optionFee}>{language === 'ro' ? loc.sublabelRo : loc.sublabelRu}</Text>
               </View>
               {filters.location === loc.id && (
                 <Ionicons name="checkmark-circle" size={24} color="#4754eb" />
@@ -278,7 +278,7 @@ export default function RentalFilters() {
       ))}
 
       {/* Insurance Picker Modal */}
-      {renderPickerModal(showInsurance, () => setShowInsurance(false), 'Selectează asigurarea', (
+      {renderPickerModal(showInsurance, () => setShowInsurance(false), texts.selectInsurance, (
         <View style={styles.optionsList}>
           {INSURANCE_OPTIONS.map(ins => (
             <TouchableOpacity
@@ -291,10 +291,10 @@ export default function RentalFilters() {
             >
               <View>
                 <Text style={[styles.optionText, filters.insurance === ins.id && styles.optionTextSelected]}>
-                  {ins.label}
+                  {language === 'ro' ? ins.labelRo : ins.labelRu}
                 </Text>
                 <Text style={styles.optionFee}>
-                  {ins.id === 'rca' ? 'Inclus în preț' : 'Preț per zi - variază în funcție de mașină'}
+                  {ins.id === 'rca' ? texts.includedInPrice : texts.pricePerDay}
                 </Text>
               </View>
               {filters.insurance === ins.id && (
