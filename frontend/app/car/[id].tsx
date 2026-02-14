@@ -324,7 +324,7 @@ export default function CarDetailScreen() {
             </View>
             <View style={styles.quickSpec}>
               <Ionicons name="people-outline" size={24} color="#4754eb" />
-              <Text style={styles.quickSpecText}>{car.seats} locuri</Text>
+              <Text style={styles.quickSpecText}>{getSeatsLabel(car.seats)}</Text>
             </View>
           </View>
         </View>
@@ -332,36 +332,36 @@ export default function CarDetailScreen() {
         {/* Description */}
         {car.description && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Descriere</Text>
+            <Text style={styles.sectionTitle}>{texts.description}</Text>
             <Text style={styles.descriptionText}>{car.description}</Text>
           </View>
         )}
 
         {/* Detailed Specs */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Specificații</Text>
+          <Text style={styles.sectionTitle}>{texts.specifications}</Text>
           <View style={styles.specsGrid}>
             {car.specs.engine && (
               <View style={styles.specItem}>
-                <Text style={styles.specLabel}>Motor</Text>
+                <Text style={styles.specLabel}>{texts.engine}</Text>
                 <Text style={styles.specValue}>{car.specs.engine}</Text>
               </View>
             )}
             {car.specs.power && (
               <View style={styles.specItem}>
-                <Text style={styles.specLabel}>Putere</Text>
+                <Text style={styles.specLabel}>{texts.power}</Text>
                 <Text style={styles.specValue}>{car.specs.power}</Text>
               </View>
             )}
             {car.specs.consumption && (
               <View style={styles.specItem}>
-                <Text style={styles.specLabel}>Consum</Text>
+                <Text style={styles.specLabel}>{texts.consumption}</Text>
                 <Text style={styles.specValue}>{car.specs.consumption}</Text>
               </View>
             )}
             {car.specs.trunk && (
               <View style={styles.specItem}>
-                <Text style={styles.specLabel}>Portbagaj</Text>
+                <Text style={styles.specLabel}>{texts.trunk}</Text>
                 <Text style={styles.specValue}>{car.specs.trunk}</Text>
               </View>
             )}
@@ -372,7 +372,7 @@ export default function CarDetailScreen() {
             {car.specs.ac && (
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-                <Text style={styles.featureText}>Aer Condiționat</Text>
+                <Text style={styles.featureText}>{texts.ac}</Text>
               </View>
             )}
             {car.specs.gps && (
