@@ -80,9 +80,9 @@ export default function LoginScreen() {
             <>
               {/* Login Options */}
               <View style={styles.loginSection}>
-                <TouchableOpacity style={styles.emailButton} onPress={() => setMode('email')}>
-                  <Ionicons name="mail-outline" size={24} color="#fff" />
-                  <Text style={styles.emailButtonText}>Continuă cu Email</Text>
+                <TouchableOpacity style={styles.emailButton} onPress={() => setMode('phone')}>
+                  <Ionicons name="call-outline" size={24} color="#fff" />
+                  <Text style={styles.emailButtonText}>Continuă cu Telefon</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.googleButton} onPress={loginWithGoogle}>
@@ -100,7 +100,7 @@ export default function LoginScreen() {
             </>
           ) : (
             <>
-              {/* Email Login Form */}
+              {/* Phone Login Form */}
               <View style={styles.formSection}>
                 <TouchableOpacity style={styles.backButton} onPress={() => setMode('options')}>
                   <Ionicons name="arrow-back" size={24} color="#007AFF" />
@@ -108,16 +108,16 @@ export default function LoginScreen() {
                 </TouchableOpacity>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Email</Text>
+                  <Text style={styles.label}>Număr de telefon</Text>
                   <View style={styles.inputContainer}>
-                    <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+                    <Ionicons name="call-outline" size={20} color="#666" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
-                      placeholder="email@exemplu.com"
+                      placeholder="+373 69 123 456"
                       placeholderTextColor="#999"
-                      value={email}
-                      onChangeText={setEmail}
-                      keyboardType="email-address"
+                      value={phone}
+                      onChangeText={setPhone}
+                      keyboardType="phone-pad"
                       autoCapitalize="none"
                       autoCorrect={false}
                     />
@@ -144,7 +144,7 @@ export default function LoginScreen() {
 
                 <TouchableOpacity 
                   style={[styles.submitButton, submitting && styles.submitButtonDisabled]} 
-                  onPress={handleEmailLogin}
+                  onPress={handlePhoneLogin}
                   disabled={submitting}
                 >
                   {submitting ? (
