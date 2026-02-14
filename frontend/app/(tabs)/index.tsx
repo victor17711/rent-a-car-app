@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/context/AuthContext';
 import { useRental } from '../../src/context/RentalContext';
+import { useLanguage } from '../../src/context/LanguageContext';
 import { api } from '../../src/utils/api';
 import { Car } from '../../src/types';
 import CarCard from '../../src/components/CarCard';
