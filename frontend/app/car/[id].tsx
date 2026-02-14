@@ -235,33 +235,13 @@ export default function CarDetailScreen() {
     }
   };
 
-  const getTransmissionLabel = (t: string) => t === 'automatic' ? 'Automat' : 'Manual';
-  const getFuelLabel = (f: string) => {
-    const labels: Record<string, string> = {
-      diesel: 'Diesel',
-      petrol: 'Benzină',
-      electric: 'Electric',
-      hybrid: 'Hybrid',
-    };
-    return labels[f] || f;
-  };
-
-  const getLocationLabel = (loc: string) => {
-    const labels: Record<string, string> = {
-      office: 'Oficiu',
-      chisinau_airport: 'Aeroport Chișinău',
-      iasi_airport: 'Aeroport Iași',
-    };
-    return labels[loc] || loc;
-  };
-
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: 'Se încarcă...' }} />
+        <Stack.Screen options={{ title: texts.loading }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Se încarcă detaliile...</Text>
+          <Text style={styles.loadingText}>{texts.loadingDetails}</Text>
         </View>
       </SafeAreaView>
     );
@@ -270,10 +250,10 @@ export default function CarDetailScreen() {
   if (!car) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: 'Eroare' }} />
+        <Stack.Screen options={{ title: texts.error }} />
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={64} color="#FF3B30" />
-          <Text style={styles.errorText}>Mașina nu a fost găsită</Text>
+          <Text style={styles.errorText}>{texts.carNotFound}</Text>
         </View>
       </SafeAreaView>
     );
@@ -307,7 +287,7 @@ export default function CarDetailScreen() {
             ) : (
               <View style={[styles.galleryImage, styles.noImage]}>
                 <Ionicons name="car-outline" size={64} color="#ccc" />
-                <Text style={styles.noImageText}>Fără imagine</Text>
+                <Text style={styles.noImageText}>{texts.noImage}</Text>
               </View>
             )}
           </ScrollView>
