@@ -122,9 +122,9 @@ export default function BookingsScreen() {
         {bookings.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="calendar-outline" size={64} color="#ccc" />
-            <Text style={styles.emptyTitle}>Nicio rezervare</Text>
+            <Text style={styles.emptyTitle}>{t('noBookings')}</Text>
             <Text style={styles.emptyText}>
-              Nu aveți încă nicio rezervare. Explorați mașinile disponibile!
+              {t('makeFirstBooking')}
             </Text>
           </View>
         ) : (
