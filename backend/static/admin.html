@@ -179,6 +179,54 @@
                 </div>
                 <div class="card"><div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>#</th><th>Imagine</th><th>Titlu</th><th>Subtitlu</th><th>Badge</th><th>Activ</th><th>Acțiuni</th></tr></thead><tbody id="banners-table"></tbody></table></div></div></div>
             </section>
+
+            <!-- FAQs -->
+            <section id="section-faqs" style="display:none;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Întrebări Frecvente (FAQ)</h2>
+                    <button class="btn btn-primary" onclick="openFaqModal()"><i class="bi bi-plus-lg"></i> Adaugă FAQ</button>
+                </div>
+                <div class="card"><div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>#</th><th>Întrebare (RO)</th><th>Întrebare (RU)</th><th>Activ</th><th>Acțiuni</th></tr></thead><tbody id="faqs-table"></tbody></table></div></div></div>
+            </section>
+
+            <!-- Legal Content -->
+            <section id="section-legal" style="display:none;">
+                <h2 class="mb-4">Conținut Legal</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header"><h5 class="mb-0"><i class="bi bi-file-text me-2"></i>Termeni și Condiții</h5></div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Conținut Română</label>
+                                    <textarea class="form-control" id="termsContentRo" rows="8" placeholder="Introduceți termenii și condițiile în română..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Conținut Rusă</label>
+                                    <textarea class="form-control" id="termsContentRu" rows="8" placeholder="Введите условия и положения на русском языке..."></textarea>
+                                </div>
+                                <button class="btn btn-primary" onclick="saveLegalContent('terms')"><i class="bi bi-save me-2"></i>Salvează Termeni</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header"><h5 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Politică de Confidențialitate</h5></div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Conținut Română</label>
+                                    <textarea class="form-control" id="privacyContentRo" rows="8" placeholder="Introduceți politica de confidențialitate în română..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Conținut Rusă</label>
+                                    <textarea class="form-control" id="privacyContentRu" rows="8" placeholder="Введите политику конфиденциальности на русском языке..."></textarea>
+                                </div>
+                                <button class="btn btn-primary" onclick="saveLegalContent('privacy')"><i class="bi bi-save me-2"></i>Salvează Politica</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
