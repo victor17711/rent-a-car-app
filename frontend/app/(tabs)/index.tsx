@@ -200,9 +200,9 @@ export default function HomeScreen() {
         {/* Summary */}
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryText}>
-            {getDaysCount()} {getDaysCount() === 1 ? 'zi' : 'zile'} • {' '}
-            {filters.location === 'office' ? 'Oficiu' : 
-             filters.location === 'chisinau_airport' ? 'Aeroport Chișinău' : 'Aeroport Iași'} • {' '}
+            {getDaysCount()} {getDaysCount() === 1 ? t('day') : t('days')} • {' '}
+            {filters.location === 'office' ? t('office') : 
+             filters.location === 'chisinau_airport' ? t('chisinauAirport') : t('iasiAirport')} • {' '}
             {filters.insurance.toUpperCase()}
           </Text>
         </View>
