@@ -1,6 +1,6 @@
 // App color scheme - Dark Red theme
 export const COLORS = {
-  primary: '#A31621',      // Dark red - main color
+  primary: '#4754eb',      // Dark red - main color
   primaryLight: '#C41E3A', // Lighter red for highlights
   primaryDark: '#8B0000',  // Darker red
   primaryBg: '#fef2f2',    // Light red background

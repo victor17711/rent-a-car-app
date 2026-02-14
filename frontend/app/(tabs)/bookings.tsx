@@ -44,7 +44,7 @@ export default function BookingsScreen() {
     const colors: Record<string, string> = {
       pending: '#FF9500',
       confirmed: '#34C759',
-      completed: '#A31621',
+      completed: '#4754eb',
       cancelled: '#FF3B30',
     };
     return colors[status] || '#666';
@@ -103,7 +103,7 @@ export default function BookingsScreen() {
     return (
       <SafeAreaView style={styles.container} edges={[]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#A31621" />
+          <ActivityIndicator size="large" color="#4754eb" />
           <Text style={styles.loadingText}>{t('loading')}</Text>
         </View>
       </SafeAreaView>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: 'red',
+    borderColor: #4754eb,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -280,6 +280,6 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#A31621',
+    color: '#4754eb',
   },
 });

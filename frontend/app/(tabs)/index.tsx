@@ -213,7 +213,7 @@ export default function HomeScreen() {
           
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#A31621" />
+              <ActivityIndicator size="large" color="#4754eb" />
               <Text style={styles.loadingText}>{t('loadingCars')}</Text>
             </View>
           ) : cars.length === 0 ? (
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   paginationDotActive: {
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     width: 24,
   },
   summaryContainer: {

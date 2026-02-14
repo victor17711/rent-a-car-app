@@ -33,7 +33,7 @@ export default function TermsScreen() {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ title: t('termsAndConditions'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#A31621" />
+          <ActivityIndicator size="large" color="#4754eb" />
         </View>
       </SafeAreaView>
     );

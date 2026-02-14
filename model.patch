@@ -7,7 +7,7 @@ index a526339..705a80d 100644
                <View style={styles.features}>
                  <View style={styles.feature}>
 -                  <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-+                  <Ionicons name="checkmark-circle" size={24} color="#A31621" />
++                  <Ionicons name="checkmark-circle" size={24} color="#4754eb" />
                    <Text style={styles.featureText}>Mașini premium verificate</Text>
                  </View>
                  <View style={styles.feature}>
@@ -25,7 +25,7 @@ index 5330a6d..e69de29 100644
 -           <View style={styles.logoSection}>
 -             <View style={styles.logoContainer}>
 --              <Ionicons name="car-sport" size={64} color="#007AFF" />
--+              <Ionicons name="car-sport" size={64} color="#A31621" />
+-+              <Ionicons name="car-sport" size={64} color="#4754eb" />
 -             </View>
 -             <Text style={styles.brandName}>DriveMate</Text>
 -             <Text style={styles.tagline}>Închirieri Auto Premium</Text>

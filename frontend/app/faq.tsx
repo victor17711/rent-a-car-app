@@ -47,7 +47,7 @@ export default function FAQScreen() {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ title: t('help'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#A31621" />
+          <ActivityIndicator size="large" color="#4754eb" />
         </View>
       </SafeAreaView>
     );

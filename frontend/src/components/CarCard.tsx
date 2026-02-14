@@ -142,7 +142,7 @@ export default function CarCard({ car }: CarCardProps) {
         
         <View style={styles.priceRow}>
           {loading ? (
-            <ActivityIndicator size="small" color="#A31621" />
+            <ActivityIndicator size="small" color="#4754eb" />
           ) : price ? (
             <View style={styles.priceContainer}>
               <Text style={styles.price}>{price.total_price} €</Text>
@@ -233,14 +233,14 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#A31621',
+    color: '#4754eb',
   },
   priceLabel: {
     fontSize: 14,
     color: '#666',
   },
   button: {
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,

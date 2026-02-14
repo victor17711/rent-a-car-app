@@ -49,7 +49,7 @@ export default function ChangeNameScreen() {
       >
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="person-outline" size={64} color="#A31621" />
+            <Ionicons name="person-outline" size={64} color="#4754eb" />
           </View>
 
           <Text style={styles.label}>{t('currentName')}</Text>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   saveButton: {
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',

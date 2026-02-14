@@ -159,7 +159,7 @@ export default function ProfileScreen() {
 
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/bookings')}>
             <View style={styles.menuItemLeft}>
-              <Ionicons name="calendar-outline" size={22} color="#A31621" />
+              <Ionicons name="calendar-outline" size={22} color="#4754eb" />
               <Text style={styles.menuItemText}>{t('myBookings')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     right: 0,
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   changePhotoText: {
-    color: '#A31621',
+    color: '#4754eb',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   languageButtonActive: {
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
   },
   languageText: {
     fontSize: 16,

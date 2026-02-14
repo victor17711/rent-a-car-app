@@ -227,15 +227,15 @@ export default function CarDetailScreen() {
           {/* Quick Specs */}
           <View style={styles.quickSpecs}>
             <View style={styles.quickSpec}>
-              <Ionicons name="cog-outline" size={24} color="#A31621" />
+              <Ionicons name="cog-outline" size={24} color="#4754eb" />
               <Text style={styles.quickSpecText}>{getTransmissionLabel(car.transmission)}</Text>
             </View>
             <View style={styles.quickSpec}>
-              <Ionicons name="water-outline" size={24} color="#A31621" />
+              <Ionicons name="water-outline" size={24} color="#4754eb" />
               <Text style={styles.quickSpecText}>{getFuelLabel(car.fuel)}</Text>
             </View>
             <View style={styles.quickSpec}>
-              <Ionicons name="people-outline" size={24} color="#A31621" />
+              <Ionicons name="people-outline" size={24} color="#4754eb" />
               <Text style={styles.quickSpecText}>{car.seats} locuri</Text>
             </View>
           </View>
@@ -678,7 +678,7 @@ const styles = StyleSheet.create({
   totalValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#A31621',
+    color: '#4754eb',
   },
   footer: {
     position: 'absolute',
@@ -708,13 +708,13 @@ const styles = StyleSheet.create({
   footerPriceValue: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#A31621',
+    color: '#4754eb',
   },
   bookButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 12,
@@ -782,7 +782,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#A31621',
+    color: '#4754eb',
     marginBottom: 8,
   },
   summaryText: {
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   summaryPrice: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#A31621',
+    color: '#4754eb',
     marginTop: 8,
   },
   modalFooter: {
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#eee',
   },
   submitButton: {
-    backgroundColor: '#A31621',
+    backgroundColor: '#4754eb',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',

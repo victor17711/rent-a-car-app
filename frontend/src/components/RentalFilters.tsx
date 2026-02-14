@@ -240,7 +240,7 @@ export default function RentalFilters() {
                 <Text style={styles.optionFee}>{loc.sublabel}</Text>
               </View>
               {filters.location === loc.id && (
-                <Ionicons name="checkmark-circle" size={24} color="#A31621" />
+                <Ionicons name="checkmark-circle" size={24} color="#4754eb" />
               )}
             </TouchableOpacity>
           ))}
@@ -268,7 +268,7 @@ export default function RentalFilters() {
                 </Text>
               </View>
               {filters.insurance === ins.id && (
-                <Ionicons name="checkmark-circle" size={24} color="#A31621" />
+                <Ionicons name="checkmark-circle" size={24} color="#4754eb" />
               )}
             </TouchableOpacity>
           ))}

@@ -111,7 +111,7 @@ export default function FavoritesScreen() {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ title: t('favoritesTitle'), headerShown: true, headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#A31621" />
+          <ActivityIndicator size="large" color="#4754eb" />
         </View>
       </SafeAreaView>
     );
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#A31621',
+    color: '#4754eb',
   },
   favoriteButton: {
     padding: 8,
