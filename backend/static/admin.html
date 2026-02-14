@@ -474,16 +474,22 @@
 
         async function loadAllData() {
             try {
-                const [cars, bookings, partners, banners] = await Promise.all([
+                const [cars, bookings, partners, banners, faqs, terms, privacy] = await Promise.all([
                     apiCall('/cars?available_only=false'),
                     apiCall('/admin/bookings'),
                     apiCall('/admin/partner-requests'),
-                    apiCall('/banners').catch(() => [])
+                    apiCall('/banners').catch(() => []),
+                    apiCall('/faqs?active_only=false').catch(() => []),
+                    apiCall('/legal/terms').catch(() => ({ content_ro: '', content_ru: '' })),
+                    apiCall('/legal/privacy').catch(() => ({ content_ro: '', content_ru: '' }))
                 ]);
                 allCars = cars;
                 allBookings = bookings;
                 allPartners = partners;
                 allBanners = banners;
+                allFaqs = faqs;
+                legalTerms = terms;
+                legalPrivacy = privacy;
             } catch (error) { console.error('Failed to load data:', error); }
         }
 
@@ -498,6 +504,9 @@
             if (section === 'cars') renderCars();
             if (section === 'bookings') renderBookings();
             if (section === 'partners') renderPartners();
+            if (section === 'banners') renderBanners();
+            if (section === 'faqs') renderFaqs();
+            if (section === 'legal') loadLegalContent();
             if (section === 'banners') renderBanners();
         }
 
