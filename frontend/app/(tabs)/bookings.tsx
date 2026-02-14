@@ -90,9 +90,9 @@ export default function BookingsScreen() {
       <SafeAreaView style={styles.container} edges={[]}>
         <View style={styles.emptyContainer}>
           <Ionicons name="lock-closed-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyTitle}>Autentificare necesară</Text>
+          <Text style={styles.emptyTitle}>{t('notAuthenticated')}</Text>
           <Text style={styles.emptyText}>
-            Trebuie să fiți autentificat pentru a vedea rezervările.
+            {t('loginToSeeProfile')}
           </Text>
         </View>
       </SafeAreaView>
@@ -104,7 +104,7 @@ export default function BookingsScreen() {
       <SafeAreaView style={styles.container} edges={[]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#A31621" />
-          <Text style={styles.loadingText}>Se încarcă rezervările...</Text>
+          <Text style={styles.loadingText}>{t('loading')}</Text>
         </View>
       </SafeAreaView>
     );
