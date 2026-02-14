@@ -10,8 +10,8 @@ interface RentalContextType {
 const defaultFilters: RentalFilters = {
   startDate: new Date(),
   endDate: new Date(), // Same day = 1 day rental
-  startTime: '10:00',
-  endTime: '10:00',
+  startTime: '08:00',
+  endTime: '08:00',
   location: 'office',
   insurance: 'rca',
 };
