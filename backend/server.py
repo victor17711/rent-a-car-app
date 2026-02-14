@@ -196,12 +196,56 @@ class PartnerRequestCreate(BaseModel):
 
 class UserRegister(BaseModel):
     phone: str
+    email: str
     password: str
     name: str
 
 class UserLogin(BaseModel):
     phone: str
     password: str
+
+class NameUpdate(BaseModel):
+    name: str
+
+class LanguageUpdate(BaseModel):
+    language: str  # ro or ru
+
+class FAQ(BaseModel):
+    faq_id: str = Field(default_factory=lambda: f"faq_{uuid.uuid4().hex[:12]}")
+    question_ro: str
+    answer_ro: str
+    question_ru: str
+    answer_ru: str
+    order: int = 0
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FAQCreate(BaseModel):
+    question_ro: str
+    answer_ro: str
+    question_ru: str
+    answer_ru: str
+    order: int = 0
+    active: bool = True
+
+class FAQUpdate(BaseModel):
+    question_ro: Optional[str] = None
+    answer_ro: Optional[str] = None
+    question_ru: Optional[str] = None
+    answer_ru: Optional[str] = None
+    order: Optional[int] = None
+    active: Optional[bool] = None
+
+class LegalContent(BaseModel):
+    content_id: str = Field(default_factory=lambda: f"legal_{uuid.uuid4().hex[:12]}")
+    type: str  # "terms" or "privacy"
+    content_ro: str
+    content_ru: str
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class LegalContentUpdate(BaseModel):
+    content_ro: str
+    content_ru: str
 
 class Banner(BaseModel):
     banner_id: str = Field(default_factory=lambda: f"banner_{uuid.uuid4().hex[:12]}")
