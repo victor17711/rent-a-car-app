@@ -138,6 +138,14 @@ export default function ProfileScreen() {
         <View style={styles.menuSection}>
           <Text style={styles.menuTitle}>Cont</Text>
           
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/change-name')}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="create-outline" size={22} color="#007AFF" />
+              <Text style={styles.menuItemText}>Schimbă numele</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/bookings')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="calendar-outline" size={22} color="#A31621" />
@@ -146,21 +154,36 @@ export default function ProfileScreen() {
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/favorites')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="heart-outline" size={22} color="#FF2D55" />
               <Text style={styles.menuItemText}>Favorite</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
+        </View>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="notifications-outline" size={22} color="#FF9500" />
-              <Text style={styles.menuItemText}>Notificări</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+        {/* Language Section */}
+        <View style={styles.menuSection}>
+          <Text style={styles.menuTitle}>Limbă / Язык</Text>
+          <View style={styles.languageContainer}>
+            <TouchableOpacity
+              style={[styles.languageButton, language === 'ro' && styles.languageButtonActive]}
+              onPress={() => handleLanguageChange('ro')}
+            >
+              <Text style={[styles.languageText, language === 'ro' && styles.languageTextActive]}>
+                Română
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.languageButton, language === 'ru' && styles.languageButtonActive]}
+              onPress={() => handleLanguageChange('ru')}
+            >
+              <Text style={[styles.languageText, language === 'ru' && styles.languageTextActive]}>
+                Русский
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Partner Section */}
@@ -178,7 +201,7 @@ export default function ProfileScreen() {
         <View style={styles.menuSection}>
           <Text style={styles.menuTitle}>Suport</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/faq')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="help-circle-outline" size={22} color="#5856D6" />
               <Text style={styles.menuItemText}>Ajutor</Text>
@@ -186,7 +209,7 @@ export default function ProfileScreen() {
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/terms')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="document-text-outline" size={22} color="#666" />
               <Text style={styles.menuItemText}>Termeni și Condiții</Text>
@@ -194,7 +217,7 @@ export default function ProfileScreen() {
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/privacy')}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="lock-closed-outline" size={22} color="#666" />
               <Text style={styles.menuItemText}>Politică de Confidențialitate</Text>
