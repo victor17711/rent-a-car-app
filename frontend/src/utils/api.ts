@@ -3,6 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://auto-dotari.preview.emergentagent.com';
 
+export { API_URL };
+
 export const getAuthToken = async (): Promise<string | null> => {
   return await AsyncStorage.getItem('session_token');
 };
