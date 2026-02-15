@@ -16,6 +16,7 @@ RentMoldova is a car rental platform for Moldova with a mobile-first Expo/React 
 - Multi-language support (Romanian/Russian)
 - FAQ section
 - Legal content (Terms & Privacy)
+- **Contacts page** - Phone, Email, Address, Map link, WhatsApp, Viber, Telegram
 
 ### Admin Panel (Web)
 - Dashboard with statistics
@@ -26,6 +27,13 @@ RentMoldova is a car rental platform for Moldova with a mobile-first Expo/React 
 - Banner management
 - FAQ management
 - Legal content management
+- **Contacts management** - Configure phone, email, address, map link, WhatsApp, Viber, Telegram links
+
+## Navigation Tabs (Mobile App)
+1. Acasă (Home) - Car listing with filters
+2. Programări (Bookings) - User's bookings
+3. **Contacte (Contacts)** - Company contact info + messenger buttons
+4. Profil (Profile) - User settings
 
 ## Dotări Standard (13 opțiuni fixe)
 1. Aer Condiționat (ac)
@@ -49,39 +57,33 @@ RentMoldova is a car rental platform for Moldova with a mobile-first Expo/React 
 - Admin: HTML/Bootstrap/JavaScript
 
 ## API Endpoints
-- `/api/cars` - Get cars with filters (brand, transmission, fuel, body_type, seats)
+- `/api/cars` - Get cars with filters
 - `/api/cars/{car_id}` - Get single car
 - `/api/calculate-price` - Calculate rental price
 - `/api/bookings` - Create/get bookings
+- `/api/contacts` - Get contact info (public)
 - `/api/admin/cars` - CRUD for cars
 - `/api/admin/bookings` - Manage all bookings
+- `/api/admin/contacts` - Update contact info
 - `/api/admin/banners` - Banner management
 - `/api/admin/faqs` - FAQ management
 - `/api/legal/{type}` - Legal content
 
 ## Recent Updates (2026-02-15)
-- Removed custom features functionality (Adaugă Dotare Nouă)
-- Added 8 new standard features to Dotări Standard section:
-  - Keyless Entry
-  - Cameră Spate
-  - Senzori Parcare
-  - Faruri LED
-  - Trapă Panoramică
-  - Volan Încălzit
-  - Scaune Încălzite
-  - Lane Assist
-- Updated frontend to display all 13 standard features
-- Updated TypeScript types for CarSpecs
+- Added Contacts tab in mobile app navigation (between Programări and Profil)
+- Created Contacts page with:
+  - Map section with address and "Open in Maps" button
+  - Phone contact card
+  - Email contact card
+  - Messenger buttons (WhatsApp, Viber, Telegram)
+- Added Contacts section in Admin Panel for managing contact info
+- Added `/api/contacts` endpoint (public GET)
+- Added `/api/admin/contacts` endpoint (admin PUT)
 
-## Body Types Available
-1. Sedan
-2. SUV
-3. Hatchback
-4. Minivan
-5. Coupe
-6. Universal
-
-## Files Modified
-- `/app/backend/static/admin.html` - Updated Dotări Standard with 13 options, removed custom features
-- `/app/frontend/app/car/[id].tsx` - Added display for all 13 features
-- `/app/frontend/src/types/index.ts` - Updated CarSpecs interface
+## Files Modified/Created
+- `/app/frontend/app/(tabs)/contacts.tsx` - New contacts page
+- `/app/frontend/app/(tabs)/_layout.tsx` - Added Contacts tab
+- `/app/frontend/src/context/LanguageContext.tsx` - Added contact translations
+- `/app/frontend/src/utils/api.ts` - Exported API_URL
+- `/app/backend/server.py` - Added contacts endpoints
+- `/app/backend/static/admin.html` - Added Contacts section
