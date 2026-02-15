@@ -29,6 +29,7 @@ export interface CarSpecs {
   leather_seats?: boolean;
   cruise_control?: boolean;
   eco_mode?: boolean;
+  custom_features?: string[];
   [key: string]: any;
 }
 
