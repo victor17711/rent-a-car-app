@@ -220,18 +220,24 @@ export default function HomeScreen() {
         <View style={styles.carsSection}>
           <Text style={styles.sectionTitle}>{t('availableCars')}</Text>
           
+          {/* Body Type Filter */}
+          <BodyTypeFilter 
+            selectedType={selectedBodyType} 
+            onSelectType={setSelectedBodyType} 
+          />
+          
           {loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#4754eb" />
               <Text style={styles.loadingText}>{t('loadingCars')}</Text>
             </View>
-          ) : cars.length === 0 ? (
+          ) : filteredCars.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Ionicons name="car-outline" size={64} color="#ccc" />
               <Text style={styles.emptyText}>{t('noCarsAvailable')}</Text>
             </View>
           ) : (
-            cars.map(car => <CarCard key={car.car_id} car={car} />)
+            filteredCars.map(car => <CarCard key={car.car_id} car={car} />)
           )}
         </View>
 
