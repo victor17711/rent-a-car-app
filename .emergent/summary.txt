@@ -1,5 +1,3 @@
 <analysis>
-1. Simplific selectorul de dată - calendarul să se deschidă instant la click pe Data preluare sau Data returnare, fără tab-uri intermediare
-2. Adaug buton de ștergere rezervări în admin panel
-3. La selector de ora, trebuie sa fie by default ecranul de la ora 08:00
+Trebuie sa rezolvi doar filtrarea in aplicatia si sa verifici sa fie totul in regula cand adauga masinile din panoul de administrare
 </analysis>
