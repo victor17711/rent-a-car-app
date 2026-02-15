@@ -221,6 +221,14 @@ const translations = {
     // Terms & Privacy
     contentNotAvailable: 'Содержание недоступно в данный момент.',
     
+    // Contacts
+    contacts: 'Контакты',
+    contactUs: 'Свяжитесь с нами',
+    ourLocation: 'Наше расположение',
+    callUs: 'Позвоните нам',
+    emailUs: 'Напишите нам',
+    messageUs: 'Отправить сообщение',
+    
     // Login Screen
     premiumRentals: 'Премиум Аренда Авто',
     continueWithPhone: 'Войти по телефону',
