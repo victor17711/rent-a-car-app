@@ -1,3 +1,3 @@
 <analysis>
-Trebuie sa rezolvi doar filtrarea in aplicatia si sa verifici sa fie totul in regula cand adauga masinile din panoul de administrare
+In panoul de administrare sunt DOTARI STANDARD, apoi mai jos ai făcut DOTĂRI PERSONALIZATE, ideea trebuie sa fie in felul următor: Eu când adaug ceva la Dotări Personalizate, ele automat trebuie sa plece la Dotări Standard si la fel sa aibă check (bifa) si sa se afișeze in aplicație ca si Dotările Standard
 </analysis>
