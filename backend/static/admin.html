@@ -611,6 +611,18 @@
             // This function can be used for additional logic if needed
         }
 
+        function getCheckedCustomFeatures() {
+            // Return only the custom features that are checked
+            const checkedFeatures = [];
+            customFeatures.forEach((feature, index) => {
+                const checkbox = document.getElementById(`customFeature_${index}`);
+                if (checkbox && checkbox.checked) {
+                    checkedFeatures.push(feature);
+                }
+            });
+            return checkedFeatures;
+        }
+
         function renderCustomFeatures() {
             // Render custom features in the Standard Features section with checkboxes
             const container = document.getElementById('customFeaturesInStandard');
