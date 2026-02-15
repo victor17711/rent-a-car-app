@@ -671,9 +671,16 @@
                 document.getElementById('specBluetooth').checked = car.specs?.bluetooth || false;
                 document.getElementById('specLeather').checked = car.specs?.leather_seats || false;
                 document.getElementById('specCruise').checked = car.specs?.cruise_control || false;
+                document.getElementById('specKeyless').checked = car.specs?.keyless_entry || false;
+                document.getElementById('specCameraSpate').checked = car.specs?.camera_spate || false;
+                document.getElementById('specSenzoriParcare').checked = car.specs?.senzori_parcare || false;
+                document.getElementById('specFaruriLed').checked = car.specs?.faruri_led || false;
+                document.getElementById('specTrapa').checked = car.specs?.trapa_panoramica || false;
+                document.getElementById('specVolanIncalzit').checked = car.specs?.volan_incalzit || false;
+                document.getElementById('specScauneIncalzite').checked = car.specs?.scaune_incalzite || false;
+                document.getElementById('specLaneAssist').checked = car.specs?.lane_assist || false;
             }
             renderImagePreviews();
-            renderCustomFeatures();
             new bootstrap.Modal(document.getElementById('carModal')).show();
         }
 
