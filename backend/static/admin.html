@@ -479,6 +479,7 @@
         let allFaqs = [];
         let legalTerms = { content_ro: '', content_ru: '' };
         let legalPrivacy = { content_ro: '', content_ru: '' };
+        let contactInfo = { phone: '', email: '', address: '', map_embed_url: '', whatsapp_link: '', viber_link: '', telegram_link: '' };
 
         async function apiCall(endpoint, options = {}) {
             const headers = { 'Content-Type': 'application/json', ...options.headers };
