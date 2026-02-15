@@ -1059,6 +1059,38 @@
             } catch (error) { alert('Eroare: ' + error.message); }
         }
 
+        // Contact Functions
+        function loadContactsForm() {
+            document.getElementById('contactPhone').value = contactInfo.phone || '';
+            document.getElementById('contactEmail').value = contactInfo.email || '';
+            document.getElementById('contactAddress').value = contactInfo.address || '';
+            document.getElementById('contactMapUrl').value = contactInfo.map_embed_url || '';
+            document.getElementById('contactWhatsapp').value = contactInfo.whatsapp_link || '';
+            document.getElementById('contactViber').value = contactInfo.viber_link || '';
+            document.getElementById('contactTelegram').value = contactInfo.telegram_link || '';
+        }
+
+        async function saveContacts() {
+            const data = {
+                phone: document.getElementById('contactPhone').value,
+                email: document.getElementById('contactEmail').value,
+                address: document.getElementById('contactAddress').value,
+                map_embed_url: document.getElementById('contactMapUrl').value,
+                whatsapp_link: document.getElementById('contactWhatsapp').value,
+                viber_link: document.getElementById('contactViber').value,
+                telegram_link: document.getElementById('contactTelegram').value
+            };
+            
+            try {
+                const result = await apiCall('/admin/contacts', { 
+                    method: 'PUT', 
+                    body: JSON.stringify(data) 
+                });
+                contactInfo = result;
+                alert('Informațiile de contact au fost salvate!');
+            } catch (error) { alert('Eroare: ' + error.message); }
+        }
+
         processAuth();
     </script>
 </body>
