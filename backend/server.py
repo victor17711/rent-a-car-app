@@ -734,7 +734,7 @@ async def get_contacts():
 async def update_contacts(data: ContactInfoUpdate, request: Request):
     """Update contact information (admin only)"""
     user = await get_current_user(request)
-    if not user or user.get("role") != "admin":
+    if not user or user.role != "admin":
         raise HTTPException(status_code=401, detail="Admin access required")
     
     update_data = {k: v for k, v in data.model_dump().items() if v is not None}
