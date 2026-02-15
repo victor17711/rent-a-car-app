@@ -145,6 +145,11 @@ export default function HomeScreen() {
 
   const currentBannerData = banners[currentBanner] || banners[0];
 
+  // Filter cars by body type
+  const filteredCars = selectedBodyType === 'all' 
+    ? cars 
+    : cars.filter(car => car.body_type === selectedBodyType);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
