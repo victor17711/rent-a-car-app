@@ -20,12 +20,27 @@ RentMoldova is a car rental platform for Moldova with a mobile-first Expo/React 
 ### Admin Panel (Web)
 - Dashboard with statistics
 - Car management (CRUD with images, specs, pricing)
-- Body type selection (sedan, suv, hatchback, minivan, coupe, universals)
+- Body type selection (sedan, suv, hatchback, minivan, coupe, universal)
 - Booking management
 - Partner request management
 - Banner management
 - FAQ management
 - Legal content management
+
+## Dotări Standard (13 opțiuni fixe)
+1. Aer Condiționat (ac)
+2. GPS (gps)
+3. Bluetooth (bluetooth)
+4. Scaune Piele (leather_seats)
+5. Cruise Control (cruise_control)
+6. Keyless Entry (keyless_entry)
+7. Cameră Spate (camera_spate)
+8. Senzori Parcare (senzori_parcare)
+9. Faruri LED (faruri_led)
+10. Trapă Panoramică (trapa_panoramica)
+11. Volan Încălzit (volan_incalzit)
+12. Scaune Încălzite (scaune_incalzite)
+13. Lane Assist (lane_assist)
 
 ## Technical Stack
 - Frontend: Expo/React Native (TypeScript)
@@ -45,11 +60,18 @@ RentMoldova is a car rental platform for Moldova with a mobile-first Expo/React 
 - `/api/legal/{type}` - Legal content
 
 ## Recent Updates (2026-02-15)
-- Added `body_type` filter to backend `/api/cars` endpoint
-- Added `universal` body type option to frontend BodyTypeFilter component
-- Fixed admin panel to save `body_type` when creating/editing cars
-- Fixed admin panel to load `body_type` when editing existing cars
-- Synchronized body types between frontend, backend, and admin panel
+- Removed custom features functionality (Adaugă Dotare Nouă)
+- Added 8 new standard features to Dotări Standard section:
+  - Keyless Entry
+  - Cameră Spate
+  - Senzori Parcare
+  - Faruri LED
+  - Trapă Panoramică
+  - Volan Încălzit
+  - Scaune Încălzite
+  - Lane Assist
+- Updated frontend to display all 13 standard features
+- Updated TypeScript types for CarSpecs
 
 ## Body Types Available
 1. Sedan
@@ -60,7 +82,6 @@ RentMoldova is a car rental platform for Moldova with a mobile-first Expo/React 
 6. Universal
 
 ## Files Modified
-- `/app/backend/server.py` - Added body_type filter to GET /api/cars
-- `/app/frontend/src/components/BodyTypeFilter.tsx` - Added universal type
-- `/app/frontend/app/(tabs)/index.tsx` - Updated BodyType type definition
-- `/app/backend/static/admin.html` - Fixed body_type save/load in car form
+- `/app/backend/static/admin.html` - Updated Dotări Standard with 13 options, removed custom features
+- `/app/frontend/app/car/[id].tsx` - Added display for all 13 features
+- `/app/frontend/src/types/index.ts` - Updated CarSpecs interface
