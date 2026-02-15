@@ -407,13 +407,54 @@ export default function CarDetailScreen() {
                 <Text style={styles.featureText}>{texts.cruiseControl}</Text>
               </View>
             )}
-            {/* Custom Features / Dotări Personalizate */}
-            {car.specs.custom_features && car.specs.custom_features.map((feature: string, index: number) => (
-              <View key={`custom-${index}`} style={styles.featureItem}>
+            {car.specs.keyless_entry && (
+              <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-                <Text style={styles.featureText}>{feature}</Text>
+                <Text style={styles.featureText}>{texts.keylessEntry}</Text>
               </View>
-            ))}
+            )}
+            {car.specs.camera_spate && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.cameraSpate}</Text>
+              </View>
+            )}
+            {car.specs.senzori_parcare && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.senzoriParcare}</Text>
+              </View>
+            )}
+            {car.specs.faruri_led && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.faruriLed}</Text>
+              </View>
+            )}
+            {car.specs.trapa_panoramica && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.trapaPanoramica}</Text>
+              </View>
+            )}
+            {car.specs.volan_incalzit && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.volanIncalzit}</Text>
+              </View>
+            )}
+            {car.specs.scaune_incalzite && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.scauneIncalzite}</Text>
+              </View>
+            )}
+            {car.specs.lane_assist && (
+              <View style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{texts.laneAssist}</Text>
+              </View>
+            )}
           </View>
         </View>
 
