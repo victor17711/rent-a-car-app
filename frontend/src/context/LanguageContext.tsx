@@ -87,6 +87,14 @@ const translations = {
     // Terms & Privacy
     contentNotAvailable: 'Conținutul nu este disponibil momentan.',
     
+    // Contacts
+    contacts: 'Contacte',
+    contactUs: 'Contactează-ne',
+    ourLocation: 'Locația noastră',
+    callUs: 'Sună-ne',
+    emailUs: 'Scrie-ne',
+    messageUs: 'Trimite mesaj',
+    
     // Login Screen
     premiumRentals: 'Închirieri Auto Premium',
     continueWithPhone: 'Continuă cu Telefon',
