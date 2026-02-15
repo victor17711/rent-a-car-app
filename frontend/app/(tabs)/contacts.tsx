@@ -34,7 +34,7 @@ export default function ContactsScreen() {
 
   const fetchContacts = async () => {
     try {
-      const response = await fetch(`${API_URL}/contacts`);
+      const response = await fetch(`${API_URL}/api/contacts`);
       const data = await response.json();
       setContacts(data);
     } catch (error) {
