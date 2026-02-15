@@ -712,6 +712,43 @@ async def update_legal_content(content_type: str, data: LegalContentUpdate, requ
     
     return {"message": "Legal content updated successfully"}
 
+# ==================== CONTACT ENDPOINTS ====================
+
+@api_router.get("/contacts")
+async def get_contacts():
+    """Get contact information (public endpoint)"""
+    contact = await db.contacts.find_one({}, {"_id": 0})
+    if not contact:
+        return {
+            "phone": "",
+            "email": "",
+            "address": "",
+            "map_embed_url": "",
+            "whatsapp_link": "",
+            "viber_link": "",
+            "telegram_link": ""
+        }
+    return contact
+
+@api_router.put("/admin/contacts")
+async def update_contacts(data: ContactInfoUpdate, request: Request):
+    """Update contact information (admin only)"""
+    user = await get_current_user(request)
+    if not user or user.get("role") != "admin":
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    result = await db.contacts.update_one(
+        {},
+        {"$set": update_data},
+        upsert=True
+    )
+    
+    contact = await db.contacts.find_one({}, {"_id": 0})
+    return contact
+
 # ==================== CAR ENDPOINTS ====================
 
 @api_router.get("/cars")
