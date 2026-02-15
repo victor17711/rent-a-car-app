@@ -378,6 +378,17 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
   },
+  filterSection: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  filterTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
   carsSection: {
     paddingTop: 8,
   },
