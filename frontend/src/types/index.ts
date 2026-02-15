@@ -29,7 +29,14 @@ export interface CarSpecs {
   leather_seats?: boolean;
   cruise_control?: boolean;
   eco_mode?: boolean;
-  custom_features?: string[];
+  keyless_entry?: boolean;
+  camera_spate?: boolean;
+  senzori_parcare?: boolean;
+  faruri_led?: boolean;
+  trapa_panoramica?: boolean;
+  volan_incalzit?: boolean;
+  scaune_incalzite?: boolean;
+  lane_assist?: boolean;
   [key: string]: any;
 }
 
