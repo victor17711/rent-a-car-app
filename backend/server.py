@@ -76,7 +76,7 @@ class Car(BaseModel):
     brand: str
     model: str
     year: int
-    body_type: str = "sedan"  # sedan, suv, hatchback, minivan, coupe, wagon
+    body_type: str = "sedan"  # sedan, suv, hatchback, minivan, coupe, universal
     transmission: str  # manual or automatic
     fuel: str  # diesel, petrol, electric, hybrid
     seats: int

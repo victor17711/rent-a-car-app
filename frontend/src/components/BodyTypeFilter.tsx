@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useLanguage } from '../context/LanguageContext';
 
-type BodyType = 'all' | 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe' | 'wagon';
+type BodyType = 'all' | 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe' | 'universal';
 
 interface BodyTypeFilterProps {
   selectedType: BodyType;
@@ -16,26 +16,26 @@ const BODY_TYPES: { type: BodyType; image: string }[] = [
   },
   {
     type: 'sedan',
-    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/image.psd-5.png',
   },
   {
     type: 'suv',
-    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/image.psd-3.png',
   },
   {
     type: 'hatchback',
-    image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/image.psd-4.png',
   },
   {
     type: 'minivan',
-    image: 'https://images.unsplash.com/photo-1570294646112-27ce4f174e8a?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/2018-bmw-x3-car-2011-bmw-3-series-bmw-328-side-view-e7281b7611a1bcd5087ae98d0df9b6e0-1.png',
   },
   {
     type: 'coupe',
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/image.psd.png',
   },
   {
-    type: 'wagon',
+    type: 'universal',
     image: 'https://images.unsplash.com/photo-1568844293986-8c8e8f5a3b8a?w=200&h=120&fit=crop',
   },
 ];
@@ -47,7 +47,7 @@ const LABELS: Record<BodyType, { ro: string; ru: string }> = {
   hatchback: { ro: 'Hatchback', ru: 'Хэтчбек' },
   minivan: { ro: 'Minivan', ru: 'Минивэн' },
   coupe: { ro: 'Coupe', ru: 'Купе' },
-  wagon: { ro: 'Wagon', ru: 'Универсал' },
+  universal: { ro: 'Universal', ru: 'Универсал' },
 };
 
 export default function BodyTypeFilter({ selectedType, onSelectType }: BodyTypeFilterProps) {

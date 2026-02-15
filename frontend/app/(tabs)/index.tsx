@@ -12,7 +12,7 @@ import CarCard from '../../src/components/CarCard';
 import RentalFilters from '../../src/components/RentalFilters';
 import BodyTypeFilter from '../../src/components/BodyTypeFilter';
 
-type BodyType = 'all' | 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe' | 'wagon';
+type BodyType = 'all' | 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe' | 'universal';
 
 const { width } = Dimensions.get('window');
 
