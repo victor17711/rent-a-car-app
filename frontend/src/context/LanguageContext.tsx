@@ -149,6 +149,7 @@ const translations = {
     greeting: 'Привет',
     guest: 'Гость',
     findPerfectCar: 'Найди идеальный автомобиль',
+    filterCars: 'Фильтровать автомобили',
     availableCars: 'Доступные Автомобили',
     loadingCars: 'Загрузка автомобилей...',
     noCarsAvailable: 'Нет доступных автомобилей',
