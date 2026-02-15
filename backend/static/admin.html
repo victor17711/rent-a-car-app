@@ -204,6 +204,62 @@
                 <div class="card"><div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>#</th><th>Întrebare (RO)</th><th>Întrebare (RU)</th><th>Activ</th><th>Acțiuni</th></tr></thead><tbody id="faqs-table"></tbody></table></div></div></div>
             </section>
 
+            <!-- Contacts Section -->
+            <section id="section-contacts" style="display:none;">
+                <h2 class="mb-4">Informații de Contact</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header"><h5 class="mb-0"><i class="bi bi-building me-2"></i>Date Companie</h5></div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Telefon</label>
+                                    <input type="text" class="form-control" id="contactPhone" placeholder="+373 XX XXX XXX">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="contactEmail" placeholder="contact@rentmoldova.md">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Adresă</label>
+                                    <textarea class="form-control" id="contactAddress" rows="2" placeholder="str. Exemplu 123, Chișinău"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Link Google Maps</label>
+                                    <input type="text" class="form-control" id="contactMapUrl" placeholder="https://maps.google.com/...">
+                                    <small class="text-muted">Link-ul spre locația pe Google Maps</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header"><h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Linkuri Mesagerie</h5></div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-whatsapp text-success me-1"></i> WhatsApp</label>
+                                    <input type="text" class="form-control" id="contactWhatsapp" placeholder="https://wa.me/373XXXXXXXX">
+                                    <small class="text-muted">Format: https://wa.me/373XXXXXXXX</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-chat-fill text-primary me-1" style="color: #7360F2 !important;"></i> Viber</label>
+                                    <input type="text" class="form-control" id="contactViber" placeholder="viber://chat?number=373XXXXXXXX">
+                                    <small class="text-muted">Format: viber://chat?number=373XXXXXXXX</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-telegram text-info me-1"></i> Telegram</label>
+                                    <input type="text" class="form-control" id="contactTelegram" placeholder="https://t.me/username">
+                                    <small class="text-muted">Format: https://t.me/username</small>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-lg w-100" onclick="saveContacts()">
+                            <i class="bi bi-save me-2"></i>Salvează Contacte
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- Legal Content -->
             <section id="section-legal" style="display:none;">
                 <h2 class="mb-4">Conținut Legal</h2>
