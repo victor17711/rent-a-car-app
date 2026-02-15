@@ -276,6 +276,25 @@ class BannerUpdate(BaseModel):
 class ProfilePictureUpdate(BaseModel):
     picture: str  # base64 image
 
+class ContactInfo(BaseModel):
+    phone: str = ""
+    email: str = ""
+    address: str = ""
+    map_embed_url: str = ""  # Google Maps embed URL
+    whatsapp_link: str = ""
+    viber_link: str = ""
+    telegram_link: str = ""
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactInfoUpdate(BaseModel):
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    address: Optional[str] = None
+    map_embed_url: Optional[str] = None
+    whatsapp_link: Optional[str] = None
+    viber_link: Optional[str] = None
+    telegram_link: Optional[str] = None
+
 # ==================== AUTH HELPERS ====================
 
 async def get_session_token(request: Request) -> Optional[str]:
