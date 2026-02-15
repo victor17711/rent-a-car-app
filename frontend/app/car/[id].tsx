@@ -399,6 +399,13 @@ export default function CarDetailScreen() {
                 <Text style={styles.featureText}>{texts.cruiseControl}</Text>
               </View>
             )}
+            {/* Custom Features / Dotări Personalizate */}
+            {car.specs.custom_features && car.specs.custom_features.map((feature: string, index: number) => (
+              <View key={`custom-${index}`} style={styles.featureItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.featureText}>{feature}</Text>
+              </View>
+            ))}
           </View>
         </View>
 
