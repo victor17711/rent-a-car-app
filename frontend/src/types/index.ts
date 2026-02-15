@@ -41,6 +41,7 @@ export interface Car {
   transmission: string;
   fuel: string;
   seats: number;
+  body_type: 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe';
   images: string[];
   main_image_index: number;
   pricing: CarPricing;
