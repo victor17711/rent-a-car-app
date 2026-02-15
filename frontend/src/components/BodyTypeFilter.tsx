@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useLanguage } from '../context/LanguageContext';
 
-type BodyType = 'all' | 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe';
+type BodyType = 'all' | 'sedan' | 'suv' | 'hatchback' | 'minivan' | 'coupe' | 'wagon';
 
 interface BodyTypeFilterProps {
   selectedType: BodyType;
@@ -34,6 +34,10 @@ const BODY_TYPES: { type: BodyType; image: string }[] = [
     type: 'coupe',
     image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200&h=120&fit=crop',
   },
+  {
+    type: 'wagon',
+    image: 'https://images.unsplash.com/photo-1568844293986-8c8e8f5a3b8a?w=200&h=120&fit=crop',
+  },
 ];
 
 const LABELS: Record<BodyType, { ro: string; ru: string }> = {
@@ -43,6 +47,7 @@ const LABELS: Record<BodyType, { ro: string; ru: string }> = {
   hatchback: { ro: 'Hatchback', ru: 'Хэтчбек' },
   minivan: { ro: 'Minivan', ru: 'Минивэн' },
   coupe: { ro: 'Coupe', ru: 'Купе' },
+  wagon: { ro: 'Wagon', ru: 'Универсал' },
 };
 
 export default function BodyTypeFilter({ selectedType, onSelectType }: BodyTypeFilterProps) {
