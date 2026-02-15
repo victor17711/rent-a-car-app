@@ -589,53 +589,6 @@
         function setMainImage(index) { document.getElementById('carMainImageIndex').value = index; renderImagePreviews(); }
         function removeImage(index) { uploadedImages.splice(index, 1); const mainIndex = parseInt(document.getElementById('carMainImageIndex').value); if (index <= mainIndex && mainIndex > 0) document.getElementById('carMainImageIndex').value = mainIndex - 1; renderImagePreviews(); }
 
-        // Custom Features - Dotări Personalizate integrate în Dotări Standard
-        function addCustomFeature() {
-            const input = document.getElementById('customFeatureInput');
-            const feature = input.value.trim();
-            if (feature && !customFeatures.includes(feature)) {
-                customFeatures.push(feature);
-                renderCustomFeatures();
-                input.value = '';
-            }
-        }
-
-        function removeCustomFeature(index) {
-            customFeatures.splice(index, 1);
-            renderCustomFeatures();
-        }
-
-        function toggleCustomFeature(index) {
-            // Toggle checked state is handled automatically by checkbox
-            // This function can be used for additional logic if needed
-        }
-
-        function getCheckedCustomFeatures() {
-            // Return only the custom features that are checked
-            const checkedFeatures = [];
-            customFeatures.forEach((feature, index) => {
-                const checkbox = document.getElementById(`customFeature_${index}`);
-                if (checkbox && checkbox.checked) {
-                    checkedFeatures.push(feature);
-                }
-            });
-            return checkedFeatures;
-        }
-
-        function renderCustomFeatures() {
-            // Render custom features in the Standard Features section with checkboxes
-            const container = document.getElementById('customFeaturesInStandard');
-            container.innerHTML = customFeatures.map((f, i) => `
-                <div class="col-md-4">
-                    <div class="form-check d-flex align-items-center">
-                        <input class="form-check-input custom-feature-checkbox" type="checkbox" id="customFeature_${i}" checked data-feature-index="${i}">
-                        <label class="form-check-label flex-grow-1" for="customFeature_${i}">${f}</label>
-                        <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1" onclick="removeCustomFeature(${i})" title="Șterge dotarea"><i class="bi bi-x-circle"></i></button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
         function openCarModal(car = null) {
             document.getElementById('carModalTitle').textContent = car ? 'Editează Mașină' : 'Adaugă Mașină';
             document.getElementById('carForm').reset();
