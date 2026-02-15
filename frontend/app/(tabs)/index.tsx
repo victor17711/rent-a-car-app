@@ -216,15 +216,18 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        {/* Cars List */}
-        <View style={styles.carsSection}>
-          <Text style={styles.sectionTitle}>{t('availableCars')}</Text>
-          
-          {/* Body Type Filter */}
+        {/* Body Type Filter - Outside cars section */}
+        <View style={styles.filterSection}>
+          <Text style={styles.filterTitle}>{t('filterCars')}</Text>
           <BodyTypeFilter 
             selectedType={selectedBodyType} 
             onSelectType={setSelectedBodyType} 
           />
+        </View>
+
+        {/* Cars List */}
+        <View style={styles.carsSection}>
+          <Text style={styles.sectionTitle}>{t('availableCars')}</Text>
           
           {loading ? (
             <View style={styles.loadingContainer}>
