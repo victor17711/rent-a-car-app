@@ -12,31 +12,31 @@ interface BodyTypeFilterProps {
 const BODY_TYPES: { type: BodyType; image: string }[] = [
   {
     type: 'all',
-    image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/all-cars.png',
   },
   {
     type: 'sedan',
-    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/image.psd-5.png',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/sedan.png',
   },
   {
     type: 'suv',
-    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/image.psd-3.png',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/suv.png',
   },
   {
     type: 'hatchback',
-    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/image.psd-4.png',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/hatchback.png',
   },
   {
     type: 'minivan',
-    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/2018-bmw-x3-car-2011-bmw-3-series-bmw-328-side-view-e7281b7611a1bcd5087ae98d0df9b6e0-1.png',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/minivan.png',
   },
   {
     type: 'coupe',
-    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/image.psd.png',
+    image: 'https://blacklineauto.md/wp-content/uploads/2026/02/coupe.png',
   },
   {
     type: 'universal',
-    image: 'https://images.unsplash.com/photo-1568844293986-8c8e8f5a3b8a?w=200&h=120&fit=crop',
+    image: 'https://blacklineauto.md/wp-content/uploads/2025/11/2018-bmw-x3-car-2011-bmw-3-series-bmw-328-side-view-e7281b7611a1bcd5087ae98d0df9b6e0-1.png',
   },
 ];
 
@@ -74,11 +74,13 @@ export default function BodyTypeFilter({ selectedType, onSelectType }: BodyTypeF
             onPress={() => onSelectType(item.type)}
             activeOpacity={0.7}
           >
+          <View style={{ padding: 2 }}>
             <Image
               source={{ uri: item.image }}
               style={styles.typeImage}
               resizeMode="cover"
             />
+            </View>
             <View style={[
               styles.labelContainer,
               selectedType === item.type && styles.labelContainerSelected,
@@ -121,8 +123,10 @@ const styles = StyleSheet.create({
     borderColor: '#4754eb',
   },
   typeImage: {
-    width: '100%',
-    height: 60,
+    width: 100,
+  height: 50,
+  resizeMode: 'contain',
+  alignSelf: 'center',
   },
   labelContainer: {
     paddingVertical: 8,

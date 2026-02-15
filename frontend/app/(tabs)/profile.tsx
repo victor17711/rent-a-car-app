@@ -175,29 +175,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Language Section */}
-        <View style={styles.menuSection}>
-          <Text style={styles.menuTitle}>{t('language')}</Text>
-          <View style={styles.languageContainer}>
-            <TouchableOpacity
-              style={[styles.languageButton, localLanguage === 'ro' && styles.languageButtonActive]}
-              onPress={() => handleLanguageChange('ro')}
-            >
-              <Text style={[styles.languageText, localLanguage === 'ro' && styles.languageTextActive]}>
-                Română
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.languageButton, localLanguage === 'ru' && styles.languageButtonActive]}
-              onPress={() => handleLanguageChange('ru')}
-            >
-              <Text style={[styles.languageText, localLanguage === 'ru' && styles.languageTextActive]}>
-                Русский
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         {/* Partner Section */}
         <View style={styles.menuSection}>
           <Text style={styles.menuTitle}>{t('collaboration')}</Text>
@@ -236,6 +213,29 @@ export default function ProfileScreen() {
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
+        </View>
+
+        {/* Language Section */}
+        <View style={styles.menuSection}>
+          <Text style={styles.menuTitle}>{t('language')}</Text>
+          <View style={styles.languageContainer}>
+            <TouchableOpacity
+              style={[styles.languageButton, localLanguage === 'ro' && styles.languageButtonActive]}
+              onPress={() => handleLanguageChange('ro')}
+            >
+              <Text style={[styles.languageText, localLanguage === 'ro' && styles.languageTextActive]}>
+                Română
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.languageButton, localLanguage === 'ru' && styles.languageButtonActive]}
+              onPress={() => handleLanguageChange('ru')}
+            >
+              <Text style={[styles.languageText, localLanguage === 'ru' && styles.languageTextActive]}>
+                Русский
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Logout Button */}

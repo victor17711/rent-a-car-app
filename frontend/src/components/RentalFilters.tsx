@@ -215,6 +215,7 @@ export default function RentalFilters() {
                   mode="date"
                   display="spinner"
                   minimumDate={new Date()}
+                  themeVariant="light"
                   onChange={(event, date) => {
                     if (date) {
                       setFilters({ startDate: date });
@@ -238,6 +239,7 @@ export default function RentalFilters() {
             value={filters.startDate}
             mode="date"
             minimumDate={new Date()}
+            themeVariant="light"
             onChange={(event, date) => {
               setShowStartDate(false);
               if (date) {
