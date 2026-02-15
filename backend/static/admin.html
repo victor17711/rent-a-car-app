@@ -593,7 +593,6 @@
             document.getElementById('carForm').reset();
             document.getElementById('carId').value = car?.car_id || '';
             uploadedImages = car?.images || [];
-            customFeatures = car?.specs?.custom_features || [];
             document.getElementById('carMainImageIndex').value = car?.main_image_index || 0;
             
             if (car) {
