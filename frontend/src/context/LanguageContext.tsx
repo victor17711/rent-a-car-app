@@ -23,6 +23,7 @@ const translations = {
     greeting: 'Bună',
     guest: 'Vizitator',
     findPerfectCar: 'Găsește mașina perfectă',
+    filterCars: 'Filtrează mașinile',
     availableCars: 'Mașini Disponibile',
     loadingCars: 'Se încarcă mașinile...',
     noCarsAvailable: 'Nicio mașină disponibilă',
