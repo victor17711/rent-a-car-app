@@ -290,21 +290,22 @@
                                 </div>
                                 <div class="spec-section">
                                     <h6>Dotări Standard</h6>
-                                    <div class="row">
-                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specAc"><label class="form-check-label">Aer Condiționat</label></div></div>
-                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specGps"><label class="form-check-label">GPS</label></div></div>
-                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specBluetooth"><label class="form-check-label">Bluetooth</label></div></div>
-                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specLeather"><label class="form-check-label">Scaune Piele</label></div></div>
-                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="specCruise"><label class="form-check-label">Cruise Control</label></div></div>
+                                    <div class="row" id="standardFeaturesContainer">
+                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input standard-feature-checkbox" type="checkbox" id="specAc" data-feature-key="ac"><label class="form-check-label">Aer Condiționat</label></div></div>
+                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input standard-feature-checkbox" type="checkbox" id="specGps" data-feature-key="gps"><label class="form-check-label">GPS</label></div></div>
+                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input standard-feature-checkbox" type="checkbox" id="specBluetooth" data-feature-key="bluetooth"><label class="form-check-label">Bluetooth</label></div></div>
+                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input standard-feature-checkbox" type="checkbox" id="specLeather" data-feature-key="leather_seats"><label class="form-check-label">Scaune Piele</label></div></div>
+                                        <div class="col-md-4"><div class="form-check"><input class="form-check-input standard-feature-checkbox" type="checkbox" id="specCruise" data-feature-key="cruise_control"><label class="form-check-label">Cruise Control</label></div></div>
                                     </div>
+                                    <div class="row mt-2" id="customFeaturesInStandard"></div>
                                 </div>
                                 <div class="spec-section">
-                                    <h6>Dotări Personalizate</h6>
+                                    <h6>Adaugă Dotare Nouă</h6>
                                     <div class="d-flex gap-2 mb-2">
                                         <input type="text" class="form-control form-control-sm" id="customFeatureInput" placeholder="Introduceți o dotare (ex: Cameră marsarier)">
                                         <button type="button" class="btn btn-sm btn-outline-primary" onclick="addCustomFeature()"><i class="bi bi-plus"></i> Adaugă</button>
                                     </div>
-                                    <div id="customFeaturesContainer"></div>
+                                    <small class="text-muted">Dotările adăugate vor apărea automat în secțiunea "Dotări Standard" cu bifă</small>
                                 </div>
                             </div>
                             
