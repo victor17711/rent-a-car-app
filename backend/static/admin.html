@@ -553,7 +553,8 @@
                     apiCall('/banners').catch(() => []),
                     apiCall('/faqs?active_only=false').catch(() => []),
                     apiCall('/legal/terms').catch(() => ({ content_ro: '', content_ru: '' })),
-                    apiCall('/legal/privacy').catch(() => ({ content_ro: '', content_ru: '' }))
+                    apiCall('/legal/privacy').catch(() => ({ content_ro: '', content_ru: '' })),
+                    apiCall('/contacts').catch(() => ({ phone: '', email: '', address: '', map_embed_url: '', whatsapp_link: '', viber_link: '', telegram_link: '' }))
                 ]);
                 allCars = cars;
                 allBookings = bookings;
@@ -562,6 +563,7 @@
                 allFaqs = faqs;
                 legalTerms = terms;
                 legalPrivacy = privacy;
+                contactInfo = contacts;
             } catch (error) { console.error('Failed to load data:', error); }
         }
 
@@ -578,6 +580,7 @@
             if (section === 'partners') renderPartners();
             if (section === 'banners') renderBanners();
             if (section === 'faqs') renderFaqs();
+            if (section === 'contacts') loadContactsForm();
             if (section === 'legal') loadLegalContent();
         }
 
