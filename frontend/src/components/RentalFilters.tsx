@@ -210,21 +210,25 @@ export default function RentalFilters() {
                     <Ionicons name="close" size={24} color="#333" />
                   </TouchableOpacity>
                 </View>
-                <DateTimePicker
-                  value={filters.startDate}
-                  mode="date"
-                  display="spinner"
-                  minimumDate={new Date()}
-                  themeVariant="light"
-                  onChange={(event, date) => {
-                    if (date) {
-                      setFilters({ startDate: date });
-                      if (date > filters.endDate) {
-                        setFilters({ endDate: new Date(date.getTime() + 24 * 60 * 60 * 1000) });
+                <View style={styles.datePickerContainer}>
+                  <DateTimePicker
+                    value={filters.startDate}
+                    mode="date"
+                    display="spinner"
+                    minimumDate={new Date()}
+                    themeVariant="light"
+                    textColor="#000000"
+                    style={styles.datePicker}
+                    onChange={(event, date) => {
+                      if (date) {
+                        setFilters({ startDate: date });
+                        if (date > filters.endDate) {
+                          setFilters({ endDate: new Date(date.getTime() + 24 * 60 * 60 * 1000) });
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                </View>
                 <TouchableOpacity 
                   style={styles.datePickerDoneButton}
                   onPress={() => setShowStartDate(false)}
