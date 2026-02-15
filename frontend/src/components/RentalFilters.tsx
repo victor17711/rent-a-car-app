@@ -526,6 +526,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingBottom: 30,
   },
+  datePickerContainer: {
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  datePicker: {
+    height: 200,
+    width: '100%',
+  },
   datePickerDoneButton: {
     backgroundColor: '#4754eb',
     marginHorizontal: 16,
