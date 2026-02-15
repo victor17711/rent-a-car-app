@@ -700,6 +700,7 @@ async def get_cars(
     brand: Optional[str] = None,
     transmission: Optional[str] = None,
     fuel: Optional[str] = None,
+    body_type: Optional[str] = None,
     min_seats: Optional[int] = None,
     available_only: bool = True
 ):
@@ -712,6 +713,8 @@ async def get_cars(
         query["transmission"] = transmission
     if fuel:
         query["fuel"] = fuel
+    if body_type:
+        query["body_type"] = body_type
     if min_seats:
         query["seats"] = {"$gte": min_seats}
     if available_only:
