@@ -68,6 +68,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [currentBanner, setCurrentBanner] = useState(0);
+  const [selectedBodyType, setSelectedBodyType] = useState<BodyType>('all');
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const fetchData = async () => {
