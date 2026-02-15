@@ -244,7 +244,11 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>{t('logout')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>RentMoldova v1.0.0</Text>
+        <Text style={styles.versionText}>
+  RentMoldova v1.0.0{"\n"}
+  © 2026 Creat de Nextify
+</Text>
+
       </ScrollView>
     </SafeAreaView>
   );
