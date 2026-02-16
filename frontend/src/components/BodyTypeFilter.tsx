@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   height: 50,
   resizeMode: 'contain',
   alignSelf: 'center',
+  paddingHorizontal: 5,
   },
   labelContainer: {
     paddingVertical: 8,

@@ -110,7 +110,7 @@ export default function LoginScreen() {
                     <Ionicons name="call-outline" size={20} color="#666" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
-                      placeholder="+373 69 123 456"
+                      placeholder="069 123 456"
                       placeholderTextColor="#999"
                       value={phone}
                       onChangeText={setPhone}

@@ -8,6 +8,7 @@ import { useAuth } from '../../src/context/AuthContext';
 import { api } from '../../src/utils/api';
 import { useLanguage } from '../../src/context/LanguageContext';
 
+
 export default function ProfileScreen() {
   const { user, isAuthenticated, logout, updateUser, refreshUser } = useAuth();
   const router = useRouter();
@@ -224,7 +225,7 @@ export default function ProfileScreen() {
               onPress={() => handleLanguageChange('ro')}
             >
               <Text style={[styles.languageText, localLanguage === 'ro' && styles.languageTextActive]}>
-                Română
+                🇷🇴 Română
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -232,7 +233,7 @@ export default function ProfileScreen() {
               onPress={() => handleLanguageChange('ru')}
             >
               <Text style={[styles.languageText, localLanguage === 'ru' && styles.languageTextActive]}>
-                Русский
+                🇷🇺 Русский
               </Text>
             </TouchableOpacity>
           </View>
