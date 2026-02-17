@@ -11,6 +11,33 @@ import { Car, PriceCalculation } from '../../src/types';
 
 const { width } = Dimensions.get('window');
 
+// Custom back button component
+const BackButton = ({ onPress, label }: { onPress: () => void; label: string }) => (
+  <TouchableOpacity 
+    onPress={onPress}
+    style={backStyles.button}
+    hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+  >
+    <Ionicons name="chevron-back" size={28} color="#4754eb" />
+    <Text style={backStyles.label}>{label}</Text>
+  </TouchableOpacity>
+);
+
+const backStyles = StyleSheet.create({
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: Platform.OS === 'ios' ? -8 : 0,
+    paddingVertical: 8,
+    paddingRight: 16,
+  },
+  label: {
+    fontSize: 17,
+    color: '#4754eb',
+    marginLeft: -4,
+  },
+});
+
 export default function CarDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
