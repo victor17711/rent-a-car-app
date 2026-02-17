@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { api } from '../src/utils/api';
 import { useAuth } from '../src/context/AuthContext';
 import { useLanguage } from '../src/context/LanguageContext';
@@ -9,8 +10,28 @@ import { useLanguage } from '../src/context/LanguageContext';
 export default function PrivacyScreen() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
+  const router = useRouter();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)/profile');
+    }
+  };
+
+  const BackButton = () => (
+    <TouchableOpacity 
+      onPress={handleGoBack}
+      style={backStyles.button}
+      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+    >
+      <Ionicons name="chevron-back" size={28} color="#4754eb" />
+      <Text style={backStyles.label}>{t('back')}</Text>
+    </TouchableOpacity>
+  );
 
   useEffect(() => {
     loadContent();
@@ -31,7 +52,14 @@ export default function PrivacyScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: t('privacyPolicy'), headerShown: true, headerBackTitle: t('back') }} />
+        <Stack.Screen 
+          options={{ 
+            title: t('privacyPolicy'), 
+            headerShown: true, 
+            headerBackTitle: t('back'),
+            headerLeft: () => <BackButton />,
+          }} 
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4754eb" />
         </View>
@@ -41,7 +69,14 @@ export default function PrivacyScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: t('privacyPolicy'), headerShown: true, headerBackTitle: t('back') }} />
+      <Stack.Screen 
+        options={{ 
+          title: t('privacyPolicy'), 
+          headerShown: true, 
+          headerBackTitle: t('back'),
+          headerLeft: () => <BackButton />,
+        }} 
+      />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         <View style={styles.content}>
           {content ? (
@@ -56,6 +91,21 @@ export default function PrivacyScreen() {
     </SafeAreaView>
   );
 }
+
+const backStyles = StyleSheet.create({
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: Platform.OS === 'ios' ? -8 : 0,
+    paddingVertical: 8,
+    paddingRight: 16,
+  },
+  label: {
+    fontSize: 17,
+    color: '#4754eb',
+    marginLeft: -4,
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
