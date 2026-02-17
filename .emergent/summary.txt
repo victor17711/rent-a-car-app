@@ -1,3 +1,3 @@
 <analysis>
-In panoul de administrare sunt DOTARI STANDARD, apoi mai jos ai făcut DOTĂRI PERSONALIZATE, ideea trebuie sa fie in felul următor: Eu când adaug ceva la Dotări Personalizate, ele automat trebuie sa plece la Dotări Standard si la fel sa aibă check (bifa) si sa se afișeze in aplicație ca si Dotările Standard
+Verifica ca toate butoanele Inapoi sa fie clicabile si sa duca cu un pas inapoi pentru ca uneori nu functioneaza. Si pe iphone trebuie sa dau swipe pe ecran ca sa ma duca cu un pas inapoi , iar daca sunt pe home screen si dau swipe la ecran gen cu pas inapoi, ma duc la login, dar nu trebuie sa fie asa
 </analysis>

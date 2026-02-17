@@ -161,10 +161,10 @@ export default function ContactsScreen() {
 
       {/* Messenger Buttons */}
       <View style={styles.section}>
-        <View style={styles.sectionHeader}>
+        {/* <View style={styles.sectionHeader}>
           <Ionicons name="chatbubbles" size={22} color="#4754eb" />
           <Text style={styles.sectionTitle}>{t('messageUs')}</Text>
-        </View>
+        </View> */}
         
         <View style={styles.messengerContainer}>
           {contacts?.whatsapp_link && (

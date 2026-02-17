@@ -9,7 +9,7 @@ import json
 from datetime import datetime, timedelta
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://auto-dotari.preview.emergentagent.com/api"
+BACKEND_URL = "https://swipe-gesture-qa.preview.emergentagent.com/api"
 
 def test_get_all_cars():
     """Test GET /api/cars endpoint"""
