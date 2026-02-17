@@ -271,10 +271,23 @@ export default function CarDetailScreen() {
     }
   };
 
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)');
+    }
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: texts.loading }} />
+        <Stack.Screen 
+          options={{ 
+            title: texts.loading,
+            headerLeft: () => <BackButton onPress={handleGoBack} label={texts.back} />,
+          }} 
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
           <Text style={styles.loadingText}>{texts.loadingDetails}</Text>
@@ -286,7 +299,12 @@ export default function CarDetailScreen() {
   if (!car) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: texts.error }} />
+        <Stack.Screen 
+          options={{ 
+            title: texts.error,
+            headerLeft: () => <BackButton onPress={handleGoBack} label={texts.back} />,
+          }} 
+        />
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={64} color="#FF3B30" />
           <Text style={styles.errorText}>{texts.carNotFound}</Text>
@@ -297,7 +315,12 @@ export default function CarDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: car.name }} />
+      <Stack.Screen 
+        options={{ 
+          title: car.name,
+          headerLeft: () => <BackButton onPress={handleGoBack} label={texts.back} />,
+        }} 
+      />
       
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Image Gallery */}
