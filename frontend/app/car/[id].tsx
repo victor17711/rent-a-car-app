@@ -59,6 +59,7 @@ export default function CarDetailScreen() {
 
   // Translations
   const texts = {
+    back: language === 'ro' ? 'Înapoi' : 'Назад',
     loading: language === 'ro' ? 'Se încarcă...' : 'Загрузка...',
     loadingDetails: language === 'ro' ? 'Se încarcă detaliile...' : 'Загрузка деталей...',
     error: language === 'ro' ? 'Eroare' : 'Ошибка',
