@@ -15,15 +15,28 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               contentStyle: { backgroundColor: '#f5f5f5' },
+              gestureEnabled: true,
+              headerBackVisible: true,
             }}
           >
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(tabs)" />
+            <Stack.Screen 
+              name="index" 
+              options={{
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen 
+              name="(tabs)" 
+              options={{
+                gestureEnabled: false,
+              }}
+            />
             <Stack.Screen 
               name="car/[id]" 
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -31,6 +44,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -38,6 +52,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -45,6 +60,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -52,6 +68,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -59,6 +76,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -66,6 +84,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
             <Stack.Screen 
@@ -73,6 +92,7 @@ export default function RootLayout() {
               options={{ 
                 headerShown: true,
                 headerBackTitle: 'Înapoi',
+                gestureEnabled: true,
               }} 
             />
           </Stack>
