@@ -42,7 +42,6 @@ export default function RootLayout() {
               name="car/[id]" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -50,7 +49,6 @@ export default function RootLayout() {
               name="partner" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -58,7 +56,6 @@ export default function RootLayout() {
               name="register" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -66,7 +63,6 @@ export default function RootLayout() {
               name="change-name" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -74,7 +70,6 @@ export default function RootLayout() {
               name="favorites" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -82,7 +77,6 @@ export default function RootLayout() {
               name="faq" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -90,7 +84,6 @@ export default function RootLayout() {
               name="terms" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
@@ -98,7 +91,6 @@ export default function RootLayout() {
               name="privacy" 
               options={{ 
                 headerShown: true,
-                headerBackTitle: 'Înapoi',
                 gestureEnabled: true,
               }} 
             />
