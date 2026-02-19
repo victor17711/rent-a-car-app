@@ -1087,6 +1087,7 @@
                     body: JSON.stringify(data) 
                 });
                 contactInfo = result;
+                loadContactsForm();
                 alert('Informațiile de contact au fost salvate!');
             } catch (error) { alert('Eroare: ' + error.message); }
         }
