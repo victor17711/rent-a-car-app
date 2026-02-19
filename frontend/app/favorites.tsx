@@ -82,7 +82,7 @@ export default function FavoritesScreen() {
             <Text style={styles.specText}>{item.fuel}</Text>
           </View>
         </View>
-        <Text style={styles.price}>de la {item.pricing.day_1}€/zi</Text>
+        <Text style={styles.price}>{t('fromPrice')} {item.pricing.day_1}€{t('perDayShort')}</Text>
       </View>
       <TouchableOpacity
         style={styles.favoriteButton}
