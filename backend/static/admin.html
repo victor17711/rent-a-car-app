@@ -757,7 +757,7 @@
 
         async function loadAllData() {
             try {
-                const [cars, bookings, partners, banners, faqs, terms, privacy] = await Promise.all([
+                const [cars, bookings, partners, banners, faqs, terms, privacy, users, stats] = await Promise.all([
                     apiCall('/cars?available_only=false'),
                     apiCall('/admin/bookings'),
                     apiCall('/admin/partner-requests'),
@@ -765,7 +765,8 @@
                     apiCall('/faqs?active_only=false').catch(() => []),
                     apiCall('/legal/terms').catch(() => ({ content_ro: '', content_ru: '' })),
                     apiCall('/legal/privacy').catch(() => ({ content_ro: '', content_ru: '' })),
-                    apiCall('/contacts').catch(() => ({ phone: '', email: '', address: '', map_embed_url: '', whatsapp_link: '', viber_link: '', telegram_link: '' }))
+                    apiCall('/admin/users').catch(() => []),
+                    apiCall('/admin/stats').catch(() => ({}))
                 ]);
                 allCars = cars;
                 allBookings = bookings;
@@ -774,7 +775,8 @@
                 allFaqs = faqs;
                 legalTerms = terms;
                 legalPrivacy = privacy;
-                contactInfo = contacts;
+                allUsers = users;
+                dashboardStats = stats;
             } catch (error) { console.error('Failed to load data:', error); }
         }
 
@@ -793,13 +795,178 @@
             if (section === 'faqs') renderFaqs();
             if (section === 'contacts') loadContactsForm();
             if (section === 'legal') loadLegalContent();
+            if (section === 'users') renderUsers();
         }
 
         function loadDashboard() {
+            // Update stats cards
             document.getElementById('stat-cars').textContent = allCars.length;
             document.getElementById('stat-bookings').textContent = allBookings.length;
-            document.getElementById('stat-pending').textContent = allBookings.filter(b => b.status === 'pending').length;
+            document.getElementById('stat-users').textContent = allUsers ? allUsers.filter(u => !u.is_admin).length : 0;
             document.getElementById('stat-partners').textContent = allPartners.filter(p => p.status === 'pending').length;
+            
+            // Get booking counts by status
+            const pending = allBookings.filter(b => b.status === 'pending').length;
+            const confirmed = allBookings.filter(b => b.status === 'confirmed').length;
+            const completed = allBookings.filter(b => b.status === 'completed').length;
+            const cancelled = allBookings.filter(b => b.status === 'cancelled').length;
+            
+            // Update chart labels
+            document.getElementById('chart-pending').textContent = pending;
+            document.getElementById('chart-confirmed').textContent = confirmed;
+            document.getElementById('chart-completed').textContent = completed;
+            document.getElementById('chart-cancelled').textContent = cancelled;
+            
+            // Update quick stats
+            document.getElementById('quick-pending').textContent = pending;
+            document.getElementById('quick-confirmed').textContent = confirmed;
+            document.getElementById('quick-completed').textContent = completed;
+            document.getElementById('quick-cancelled').textContent = cancelled;
+            
+            // Render recent bookings
+            renderRecentBookings();
+            
+            // Draw chart
+            drawBookingChart(pending, confirmed, completed, cancelled);
+        }
+        
+        function renderRecentBookings() {
+            const tbody = document.getElementById('recent-bookings-table');
+            const recentBookings = allBookings.slice(0, 5);
+            
+            if (recentBookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Nicio rezervare</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = recentBookings.map(booking => {
+                const statusClass = {
+                    'pending': 'badge-pending',
+                    'confirmed': 'badge-confirmed',
+                    'completed': 'badge-completed',
+                    'cancelled': 'badge-cancelled'
+                }[booking.status] || 'badge-pending';
+                
+                const statusText = {
+                    'pending': 'În Așteptare',
+                    'confirmed': 'Confirmată',
+                    'completed': 'Finalizată',
+                    'cancelled': 'Anulată'
+                }[booking.status] || booking.status;
+                
+                return `<tr>
+                    <td><strong>${booking.car_name || 'N/A'}</strong></td>
+                    <td>${booking.customer_name || 'N/A'}</td>
+                    <td>${booking.customer_phone || 'N/A'}</td>
+                    <td>${booking.start_date || 'N/A'} - ${booking.end_date || 'N/A'}</td>
+                    <td><strong>${booking.total_price || 0}€</strong></td>
+                    <td><span class="badge badge-status ${statusClass}">${statusText}</span></td>
+                </tr>`;
+            }).join('');
+        }
+        
+        function drawBookingChart(pending, confirmed, completed, cancelled) {
+            const canvas = document.getElementById('bookingStatusChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const total = pending + confirmed + completed + cancelled;
+            
+            if (total === 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '14px sans-serif';
+                ctx.fillStyle = '#666';
+                ctx.textAlign = 'center';
+                ctx.fillText('Nicio rezervare', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            const data = [
+                { value: pending, color: '#FF9500', label: 'În Așteptare' },
+                { value: confirmed, color: '#34C759', label: 'Confirmate' },
+                { value: completed, color: '#007AFF', label: 'Finalizate' },
+                { value: cancelled, color: '#FF3B30', label: 'Anulate' }
+            ].filter(d => d.value > 0);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+            
+            let startAngle = -Math.PI / 2;
+            
+            data.forEach(segment => {
+                const sliceAngle = (segment.value / total) * 2 * Math.PI;
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = segment.color;
+                ctx.fill();
+                
+                startAngle += sliceAngle;
+            });
+            
+            // Draw center circle (donut effect)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            
+            // Draw total in center
+            ctx.font = 'bold 24px sans-serif';
+            ctx.fillStyle = '#1a1a1a';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(total, centerX, centerY - 8);
+            ctx.font = '12px sans-serif';
+            ctx.fillStyle = '#666';
+            ctx.fillText('Total', centerX, centerY + 12);
+        }
+        
+        function renderUsers() {
+            const tbody = document.getElementById('users-table');
+            const usersCount = document.getElementById('users-count');
+            
+            // Filter out admins
+            const regularUsers = allUsers ? allUsers.filter(u => !u.is_admin) : [];
+            usersCount.textContent = regularUsers.length;
+            
+            if (regularUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Niciun utilizator înregistrat</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = regularUsers.map((user, index) => {
+                const createdAt = user.created_at ? new Date(user.created_at).toLocaleDateString('ro-RO') : 'N/A';
+                return `<tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${user.name || 'N/A'}</strong></td>
+                    <td>${user.phone || 'N/A'}</td>
+                    <td>${user.email || 'N/A'}</td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.user_id}')" title="Șterge">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+        
+        async function deleteUser(userId) {
+            if (!confirm('Sigur doriți să ștergeți acest utilizator?')) return;
+            
+            try {
+                await apiCall(`/admin/users/${userId}`, { method: 'DELETE' });
+                allUsers = allUsers.filter(u => u.user_id !== userId);
+                renderUsers();
+                alert('Utilizatorul a fost șters!');
+            } catch (error) {
+                alert('Eroare: ' + error.message);
+            }
         }
 
         function renderCars() {
