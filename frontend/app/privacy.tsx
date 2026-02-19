@@ -31,13 +31,7 @@ export default function PrivacyScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen 
-          options={{ 
-            title: t('privacyPolicy'), 
-            headerShown: true, 
-            headerBackTitle: t('back'),
-          }} 
-        />
+        <Stack.Screen options={{ title: t('privacyPolicy') }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4754eb" />
         </View>
@@ -47,13 +41,7 @@ export default function PrivacyScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen 
-        options={{ 
-          title: t('privacyPolicy'), 
-          headerShown: true, 
-          headerBackTitle: t('back'),
-        }} 
-      />
+      <Stack.Screen options={{ title: t('privacyPolicy') }} />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         <View style={styles.content}>
           {content ? (
