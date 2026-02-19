@@ -53,9 +53,7 @@ export default function RegisterScreen() {
     <SafeAreaView style={styles.container}>
       <Stack.Screen 
         options={{ 
-          headerShown: true,
           title: 'Înregistrare',
-          headerBackTitle: 'Înapoi',
         }} 
       />
       

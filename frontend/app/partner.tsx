@@ -62,7 +62,6 @@ export default function PartnerScreen() {
       <Stack.Screen 
         options={{ 
           title: 'Devino Partener',
-          headerBackTitle: 'Înapoi',
         }} 
       />
       
