@@ -147,7 +147,8 @@ export default function HomeScreen() {
     return Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
   };
 
-  const currentBannerData = banners[currentBanner] || banners[0];
+  // Only show banner if banners are loaded
+  const currentBannerData = banners.length > 0 ? (banners[currentBanner] || banners[0]) : null;
 
   // Filter cars by body type
   const filteredCars = selectedBodyType === 'all' 
