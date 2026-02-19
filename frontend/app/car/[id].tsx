@@ -244,21 +244,13 @@ export default function CarDetailScreen() {
     }
   };
 
-  const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(tabs)');
-    }
-  };
-
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
         <Stack.Screen 
           options={{ 
             title: texts.loading,
-            headerLeft: () => <BackButton onPress={handleGoBack} label={texts.back} />,
+            headerBackTitle: texts.back,
           }} 
         />
         <View style={styles.loadingContainer}>
@@ -275,7 +267,7 @@ export default function CarDetailScreen() {
         <Stack.Screen 
           options={{ 
             title: texts.error,
-            headerLeft: () => <BackButton onPress={handleGoBack} label={texts.back} />,
+            headerBackTitle: texts.back,
           }} 
         />
         <View style={styles.errorContainer}>
@@ -291,7 +283,7 @@ export default function CarDetailScreen() {
       <Stack.Screen 
         options={{ 
           title: car.name,
-          headerLeft: () => <BackButton onPress={handleGoBack} label={texts.back} />,
+          headerBackTitle: texts.back,
         }} 
       />
       
