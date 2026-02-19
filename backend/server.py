@@ -636,6 +636,67 @@ async def get_favorites(request: Request):
     cars = await db.cars.find({"car_id": {"$in": favorite_ids}}, {"_id": 0}).to_list(100)
     return cars
 
+# ==================== ADMIN USERS ENDPOINTS ====================
+
+@api_router.get("/admin/users")
+async def get_all_users(request: Request):
+    """Get all registered users (admin only)"""
+    await require_admin(request)
+    users = await db.users.find({}, {"_id": 0, "password": 0}).sort("created_at", -1).to_list(1000)
+    return users
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, request: Request):
+    """Delete a user (admin only)"""
+    await require_admin(request)
+    
+    # Don't allow deleting admin users
+    user = await db.users.find_one({"user_id": user_id})
+    if user and user.get("is_admin"):
+        raise HTTPException(status_code=400, detail="Nu poți șterge un administrator")
+    
+    result = await db.users.delete_one({"user_id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Utilizatorul nu a fost găsit")
+    
+    return {"message": "Utilizatorul a fost șters"}
+
+@api_router.get("/admin/stats")
+async def get_admin_stats(request: Request):
+    """Get dashboard statistics (admin only)"""
+    await require_admin(request)
+    
+    # Get counts
+    total_cars = await db.cars.count_documents({})
+    total_bookings = await db.bookings.count_documents({})
+    total_users = await db.users.count_documents({"is_admin": {"$ne": True}})
+    pending_bookings = await db.bookings.count_documents({"status": "pending"})
+    confirmed_bookings = await db.bookings.count_documents({"status": "confirmed"})
+    completed_bookings = await db.bookings.count_documents({"status": "completed"})
+    cancelled_bookings = await db.bookings.count_documents({"status": "cancelled"})
+    pending_partners = await db.partner_requests.count_documents({"status": "pending"})
+    
+    # Get recent bookings
+    recent_bookings = await db.bookings.find({}, {"_id": 0}).sort("created_at", -1).limit(5).to_list(5)
+    
+    # Get booking stats by status for chart
+    booking_stats = {
+        "pending": pending_bookings,
+        "confirmed": confirmed_bookings,
+        "completed": completed_bookings,
+        "cancelled": cancelled_bookings
+    }
+    
+    return {
+        "total_cars": total_cars,
+        "total_bookings": total_bookings,
+        "total_users": total_users,
+        "pending_bookings": pending_bookings,
+        "pending_partners": pending_partners,
+        "booking_stats": booking_stats,
+        "recent_bookings": recent_bookings
+    }
+
 # ==================== FAQ ENDPOINTS ====================
 
 @api_router.get("/faqs")
