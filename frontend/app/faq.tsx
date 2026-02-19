@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '../src/utils/api';
 import { useAuth } from '../src/context/AuthContext';
@@ -19,29 +19,9 @@ interface FAQ {
 export default function FAQScreen() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
-  const router = useRouter();
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(tabs)/profile');
-    }
-  };
-
-  const BackButton = () => (
-    <TouchableOpacity 
-      onPress={handleGoBack}
-      style={backStyles.button}
-      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-    >
-      <Ionicons name="chevron-back" size={28} color="#4754eb" />
-      <Text style={backStyles.label}>{t('back')}</Text>
-    </TouchableOpacity>
-  );
 
   useEffect(() => {
     loadFaqs();
@@ -70,7 +50,6 @@ export default function FAQScreen() {
             title: t('help'), 
             headerShown: true, 
             headerBackTitle: t('back'),
-            headerLeft: () => <BackButton />,
           }} 
         />
         <View style={styles.loadingContainer}>
@@ -87,7 +66,6 @@ export default function FAQScreen() {
           title: t('help'), 
           headerShown: true, 
           headerBackTitle: t('back'),
-          headerLeft: () => <BackButton />,
         }} 
       />
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -138,21 +116,6 @@ export default function FAQScreen() {
     </SafeAreaView>
   );
 }
-
-const backStyles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: Platform.OS === 'ios' ? -8 : 0,
-    paddingVertical: 8,
-    paddingRight: 16,
-  },
-  label: {
-    fontSize: 17,
-    color: '#4754eb',
-    marginLeft: -4,
-  },
-});
 
 const styles = StyleSheet.create({
   container: {
