@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: rentmoldova-backend
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/rentmoldova
+      - DB_NAME=rentmoldova
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+    depends_on:
+      - mongo
+    volumes:
+      - ./static:/app/static
+    restart: unless-stopped
+    networks:
+      - rentmoldova-network
+
+  mongo:
+    image: mongo:7.0
+    container_name: rentmoldova-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - rentmoldova-network
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  rentmoldova-network:
+    driver: bridge
