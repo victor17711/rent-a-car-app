@@ -165,7 +165,7 @@ export default function BookingsScreen() {
                 </View>
                 
                 <View style={styles.bookingFooter}>
-                  <Text style={styles.totalLabel}>Total</Text>
+                  <Text style={styles.totalLabel}>{t('total')}</Text>
                   <Text style={styles.totalPrice}>{booking.total_price} €</Text>
                 </View>
               </View>
