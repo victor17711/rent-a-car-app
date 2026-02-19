@@ -63,7 +63,7 @@ export default function HomeScreen() {
   const { t } = useLanguage();
   const router = useRouter();
   const [cars, setCars] = useState<Car[]>([]);
-  const [banners, setBanners] = useState<Banner[]>(DEFAULT_BANNERS);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [seeded, setSeeded] = useState(false);
@@ -85,7 +85,11 @@ export default function HomeScreen() {
         const activeBanners = bannersData.filter((b: Banner) => b.active);
         if (activeBanners.length > 0) {
           setBanners(activeBanners);
+        } else {
+          setBanners(DEFAULT_BANNERS);
         }
+      } else {
+        setBanners(DEFAULT_BANNERS);
       }
       
       // Auto-seed if no cars
