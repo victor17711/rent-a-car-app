@@ -108,10 +108,10 @@ export default function ContactsScreen() {
           >
             <View style={styles.mapPlaceholder}>
               <Ionicons name="map" size={48} color="#4754eb" />
-              <Text style={styles.mapText}>{contacts.address || 'Apasă pentru a vedea harta'}</Text>
+              <Text style={styles.mapText}>{contacts.address || t('ourLocation')}</Text>
               <View style={styles.mapButton}>
                 <Ionicons name="open-outline" size={16} color="#fff" />
-                <Text style={styles.mapButtonText}>Deschide în Maps</Text>
+                <Text style={styles.mapButtonText}>{t('openInMaps')}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -125,7 +125,7 @@ export default function ContactsScreen() {
             <Ionicons name="business" size={24} color="#4754eb" />
           </View>
           <View style={styles.infoContent}>
-            <Text style={styles.infoLabel}>Adresă</Text>
+            <Text style={styles.infoLabel}>{t('address')}</Text>
             <Text style={styles.infoValue}>{contacts.address}</Text>
           </View>
         </View>
