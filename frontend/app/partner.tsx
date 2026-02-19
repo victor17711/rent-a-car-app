@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '../src/utils/api';
+import { useLanguage } from '../src/context/LanguageContext';
 
 export default function PartnerScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: '',
@@ -19,19 +21,19 @@ export default function PartnerScreen() {
   const handleSubmit = async () => {
     // Validate
     if (!form.name.trim()) {
-      Alert.alert('Eroare', 'Vă rugăm introduceți numele.');
+      Alert.alert(t('error'), t('partnerErrorName'));
       return;
     }
     if (!form.email.trim() || !form.email.includes('@')) {
-      Alert.alert('Eroare', 'Vă rugăm introduceți un email valid.');
+      Alert.alert(t('error'), t('partnerErrorEmail'));
       return;
     }
     if (!form.phone.trim()) {
-      Alert.alert('Eroare', 'Vă rugăm introduceți numărul de telefon.');
+      Alert.alert(t('error'), t('partnerErrorPhone'));
       return;
     }
     if (!form.message.trim()) {
-      Alert.alert('Eroare', 'Vă rugăm introduceți un mesaj.');
+      Alert.alert(t('error'), t('partnerErrorMessage'));
       return;
     }
 
@@ -46,12 +48,12 @@ export default function PartnerScreen() {
       });
       
       Alert.alert(
-        'Succes!',
-        'Cererea dumneavoastră a fost trimisă cu succes. Vă vom contacta în cel mai scurt timp.',
+        t('success'),
+        t('partnerSuccess'),
         [{ text: 'OK', onPress: () => router.back() }]
       );
     } catch (error: any) {
-      Alert.alert('Eroare', error.message || 'Nu s-a putut trimite cererea. Încercați din nou.');
+      Alert.alert(t('error'), error.message || t('partnerErrorGeneral'));
     } finally {
       setLoading(false);
     }
@@ -61,7 +63,8 @@ export default function PartnerScreen() {
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <Stack.Screen 
         options={{ 
-          title: 'Devino Partener',
+          title: t('partnerTitle'),
+          headerBackTitle: t('back'),
         }} 
       />
       
@@ -76,18 +79,16 @@ export default function PartnerScreen() {
           {/* Header Info */}
           <View style={styles.headerInfo}>
             <View style={styles.iconContainer}>
-              <Ionicons name="people-outline" size={48} color="#007AFF" />
+              <Ionicons name="people-outline" size={48} color="#4754eb" />
             </View>
-            <Text style={styles.headerTitle}>Devino Partener RentMoldova</Text>
-            <Text style={styles.headerText}>
-              Ai o flotă de mașini și vrei să colaborezi cu noi? Completează formularul de mai jos și echipa noastră te va contacta în cel mai scurt timp.
-            </Text>
+            <Text style={styles.headerTitle}>{t('partnerSubtitle')}</Text>
+            <Text style={styles.headerText}>{t('partnerDescription')}</Text>
           </View>
 
           {/* Form */}
           <View style={styles.formSection}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Nume complet *</Text>
+              <Text style={styles.label}>{t('partnerFullName')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Ex: Ion Popescu"
@@ -98,7 +99,7 @@ export default function PartnerScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email *</Text>
+              <Text style={styles.label}>{t('partnerEmail')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Ex: ion@email.com"
@@ -111,7 +112,7 @@ export default function PartnerScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Telefon *</Text>
+              <Text style={styles.label}>{t('partnerPhone')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Ex: +373 69 123 456"
@@ -123,7 +124,7 @@ export default function PartnerScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Companie (opțional)</Text>
+              <Text style={styles.label}>{t('partnerCompany')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Ex: Auto SRL"
@@ -134,10 +135,10 @@ export default function PartnerScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Mesaj *</Text>
+              <Text style={styles.label}>{t('partnerMessage')}</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Spuneți-ne despre flota dumneavoastră, câte mașini aveți, ce tipuri de vehicule..."
+                placeholder={t('partnerMessagePlaceholder')}
                 placeholderTextColor="#999"
                 multiline
                 numberOfLines={4}
@@ -150,22 +151,22 @@ export default function PartnerScreen() {
 
           {/* Benefits */}
           <View style={styles.benefitsSection}>
-            <Text style={styles.benefitsTitle}>De ce să devii partener?</Text>
+            <Text style={styles.benefitsTitle}>{t('partnerWhyTitle')}</Text>
             <View style={styles.benefit}>
               <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-              <Text style={styles.benefitText}>Acces la mii de clienți potențiali</Text>
+              <Text style={styles.benefitText}>{t('partnerBenefit1')}</Text>
             </View>
             <View style={styles.benefit}>
               <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-              <Text style={styles.benefitText}>Gestionare simplă a flotei</Text>
+              <Text style={styles.benefitText}>{t('partnerBenefit2')}</Text>
             </View>
             <View style={styles.benefit}>
               <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-              <Text style={styles.benefitText}>Plăți sigure și rapide</Text>
+              <Text style={styles.benefitText}>{t('partnerBenefit3')}</Text>
             </View>
             <View style={styles.benefit}>
               <Ionicons name="checkmark-circle" size={24} color="#34C759" />
-              <Text style={styles.benefitText}>Suport dedicat pentru parteneri</Text>
+              <Text style={styles.benefitText}>{t('partnerBenefit4')}</Text>
             </View>
           </View>
 
@@ -180,7 +181,7 @@ export default function PartnerScreen() {
             ) : (
               <>
                 <Ionicons name="send-outline" size={20} color="#fff" />
-                <Text style={styles.submitButtonText}>Trimite Cererea</Text>
+                <Text style={styles.submitButtonText}>{t('partnerSubmit')}</Text>
               </>
             )}
           </TouchableOpacity>
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#4754eb',
     paddingVertical: 18,
     borderRadius: 12,
   },
