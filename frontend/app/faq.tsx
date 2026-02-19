@@ -45,7 +45,7 @@ export default function FAQScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: t('help') }} />
+        <Stack.Screen options={{ title: t('help'), headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4754eb" />
         </View>
@@ -55,7 +55,7 @@ export default function FAQScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: t('help') }} />
+      <Stack.Screen options={{ title: t('help'), headerBackTitle: t('back') }} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.title}>

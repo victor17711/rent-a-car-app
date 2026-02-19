@@ -31,7 +31,7 @@ export default function TermsScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: t('termsAndConditions') }} />
+        <Stack.Screen options={{ title: t('termsAndConditions'), headerBackTitle: t('back') }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4754eb" />
         </View>
@@ -41,7 +41,7 @@ export default function TermsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Stack.Screen options={{ title: t('termsAndConditions') }} />
+      <Stack.Screen options={{ title: t('termsAndConditions'), headerBackTitle: t('back') }} />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         <View style={styles.content}>
           {content ? (
