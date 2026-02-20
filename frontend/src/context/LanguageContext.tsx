@@ -173,6 +173,10 @@ const translations = {
     languageChanged: 'Limba a fost schimbată în',
     romanian: 'Română',
     russian: 'Русский',
+    deleteAccount: 'Șterge contul',
+    deleteAccountConfirm: 'Sigur doriți să ștergeți contul? Această acțiune este ireversibilă și toate datele vor fi pierdute.',
+    deleteAccountSuccess: 'Contul a fost șters cu succes.',
+    deleteAccountError: 'Nu s-a putut șterge contul. Încercați din nou.',
   },
   ru: {
     // Navigation & Tabs
@@ -335,6 +339,10 @@ const translations = {
     languageChanged: 'Язык изменён на',
     romanian: 'Română',
     russian: 'Русский',
+    deleteAccount: 'Удалить аккаунт',
+    deleteAccountConfirm: 'Вы уверены, что хотите удалить аккаунт? Это действие необратимо, и все данные будут потеряны.',
+    deleteAccountSuccess: 'Аккаунт успешно удалён.',
+    deleteAccountError: 'Не удалось удалить аккаунт. Попробуйте ещё раз.',
   }
 };
 
