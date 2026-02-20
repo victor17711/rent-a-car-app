@@ -558,9 +558,8 @@ async def delete_account(request: Request, response: Response):
     if not user:
         raise HTTPException(status_code=401, detail="Nu ești autentificat")
     
-    # Check if user is admin from database
-    user_doc = await db.users.find_one({"user_id": user.user_id})
-    if user_doc and user_doc.get("is_admin"):
+    # Check if user is admin
+    if user.is_admin:
         raise HTTPException(status_code=400, detail="Nu poți șterge un cont de administrator")
     
     # Delete user sessions
