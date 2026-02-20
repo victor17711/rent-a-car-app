@@ -550,6 +550,29 @@ async def logout(request: Request, response: Response):
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
 
+@api_router.delete("/auth/delete-account")
+async def delete_account(request: Request, response: Response):
+    """Delete user account permanently"""
+    user = await get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Nu ești autentificat")
+    
+    # Don't allow deleting admin accounts
+    if user.is_admin:
+        raise HTTPException(status_code=400, detail="Nu poți șterge un cont de administrator")
+    
+    # Delete user sessions
+    await db.user_sessions.delete_many({"user_id": user.user_id})
+    
+    # Delete user bookings (optional - you might want to keep them)
+    # await db.bookings.delete_many({"user_id": user.user_id})
+    
+    # Delete user account
+    await db.users.delete_one({"user_id": user.user_id})
+    
+    response.delete_cookie(key="session_token", path="/")
+    return {"message": "Contul a fost șters cu succes"}
+
 @api_router.put("/users/profile-picture")
 async def update_profile_picture(data: ProfilePictureUpdate, request: Request):
     """Update user's profile picture"""
