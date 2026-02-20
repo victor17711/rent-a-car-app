@@ -67,6 +67,8 @@ export const api = {
   
   logout: () => apiCall('/auth/logout', { method: 'POST' }),
   
+  deleteAccount: () => apiCall('/auth/delete-account', { method: 'DELETE' }),
+  
   // Cars
   getCars: (filters?: Record<string, any>) => {
     const params = new URLSearchParams();
