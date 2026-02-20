@@ -42,11 +42,12 @@ logger = logging.getLogger(__name__)
 
 class User(BaseModel):
     user_id: str
-    phone: str
+    phone: Optional[str] = None
     email: Optional[str] = None
     name: str
     picture: Optional[str] = None
     role: str = "user"  # user or admin
+    is_admin: bool = False
     language: str = "ro"  # ro or ru
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
