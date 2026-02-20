@@ -40,6 +40,30 @@ export default function ProfileScreen() {
     );
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      t('deleteAccount'),
+      t('deleteAccountConfirm'),
+      [
+        { text: t('cancel'), style: 'cancel' },
+        { 
+          text: t('delete'), 
+          style: 'destructive', 
+          onPress: async () => {
+            try {
+              await api.deleteAccount();
+              Alert.alert(t('success'), t('deleteAccountSuccess'));
+              await logout();
+              router.replace('/');
+            } catch (error: any) {
+              Alert.alert(t('error'), error.message || t('deleteAccountError'));
+            }
+          }
+        },
+      ]
+    );
+  };
+
   const handleLanguageChange = async (newLang: 'ro' | 'ru') => {
     try {
       setLocalLanguage(newLang);
