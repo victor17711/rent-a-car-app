@@ -454,6 +454,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FF3B30',
   },
+  deleteAccountButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+    marginHorizontal: 16,
+    padding: 12,
+  },
+  deleteAccountText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#FF3B30',
+  },
   versionText: {
     textAlign: 'center',
     fontSize: 12,
