@@ -33,7 +33,9 @@ export default function ProfileScreen() {
           style: 'destructive', 
           onPress: async () => {
             await logout();
-            router.replace('/');
+            // Force navigation to login screen
+            router.dismissAll();
+            router.replace('/index');
           }
         },
       ]
@@ -52,9 +54,16 @@ export default function ProfileScreen() {
           onPress: async () => {
             try {
               await api.deleteAccount();
-              Alert.alert(t('success'), t('deleteAccountSuccess'));
               await logout();
-              router.replace('/');
+              Alert.alert(t('success'), t('deleteAccountSuccess'), [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    router.dismissAll();
+                    router.replace('/index');
+                  }
+                }
+              ]);
             } catch (error: any) {
               Alert.alert(t('error'), error.message || t('deleteAccountError'));
             }
