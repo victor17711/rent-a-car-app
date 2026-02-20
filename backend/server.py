@@ -557,15 +557,13 @@ async def delete_account(request: Request, response: Response):
     if not user:
         raise HTTPException(status_code=401, detail="Nu ești autentificat")
     
-    # Don't allow deleting admin accounts
-    if user.is_admin:
+    # Check if user is admin from database
+    user_doc = await db.users.find_one({"user_id": user.user_id})
+    if user_doc and user_doc.get("is_admin"):
         raise HTTPException(status_code=400, detail="Nu poți șterge un cont de administrator")
     
     # Delete user sessions
     await db.user_sessions.delete_many({"user_id": user.user_id})
-    
-    # Delete user bookings (optional - you might want to keep them)
-    # await db.bookings.delete_many({"user_id": user.user_id})
     
     # Delete user account
     await db.users.delete_one({"user_id": user.user_id})
