@@ -269,6 +269,11 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>{t('logout')}</Text>
         </TouchableOpacity>
 
+        {/* Delete Account Button */}
+        <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
+          <Text style={styles.deleteAccountText}>{t('deleteAccount')}</Text>
+        </TouchableOpacity>
+
         <Text style={styles.versionText}>
   RentMoldova v1.0.0{"\n"}
   © 2026 Creat de Nextify
